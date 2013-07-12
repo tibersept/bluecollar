@@ -1,0 +1,116 @@
+{
+  "extends" : "thirdParty.api",
+  "abstract" : false,
+  "root" : "https://mavicollar.appspot.com/_ah/api",
+  "name" : "bluecollar",
+  "version" : "v1",
+  "defaultVersion" : false,
+  "adapter" : {
+    "bns" : "https://mavicollar.appspot.com/_ah/spi",
+    "deadline" : 10.0,
+    "type" : "lily"
+  },
+  "auth" : {
+    "allowCookieAuth" : false
+  },
+  "frontendLimits" : {
+    "unregisteredUserQps" : -1,
+    "unregisteredQps" : -1,
+    "unregisteredDaily" : -1,
+    "rules" : [ ]
+  },
+  "cacheControl" : {
+    "type" : "no-cache",
+    "maxAge" : 0
+  },
+  "methods" : {
+    "bluecollar.wcard.checkout" : {
+      "path" : "checkout",
+      "httpMethod" : "POST",
+      "scopes" : [ ],
+      "audiences" : [ "458645171438.apps.googleusercontent.com" ],
+      "clientIds" : [ "458645171438.apps.googleusercontent.com", "replace this with your Android client ID", "replace this with your iOS client ID" ],
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.checkout",
+      "request" : {
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "bluecollar.wcard.list" : {
+      "path" : "list",
+      "httpMethod" : "POST",
+      "scopes" : [ ],
+      "audiences" : [ "458645171438.apps.googleusercontent.com" ],
+      "clientIds" : [ "458645171438.apps.googleusercontent.com", "replace this with your Android client ID", "replace this with your iOS client ID" ],
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.list",
+      "request" : {
+        "body" : "autoTemplate(backendRequest)",
+        "bodyName" : "resource"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "bluecollar.wcard.checkin" : {
+      "path" : "checkin",
+      "httpMethod" : "POST",
+      "scopes" : [ ],
+      "audiences" : [ "458645171438.apps.googleusercontent.com" ],
+      "clientIds" : [ "458645171438.apps.googleusercontent.com", "replace this with your Android client ID", "replace this with your iOS client ID" ],
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.checkin",
+      "request" : {
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    }
+  },
+  "descriptor" : {
+    "schemas" : {
+      "JsonDate" : {
+        "id" : "JsonDate",
+        "type" : "object",
+        "properties" : {
+          "date" : {
+            "type" : "string"
+          }
+        }
+      },
+      "JsonRange" : {
+        "id" : "JsonRange",
+        "type" : "object",
+        "properties" : {
+          "begin" : {
+            "type" : "string"
+          },
+          "end" : {
+            "type" : "string"
+          }
+        }
+      }
+    },
+    "methods" : {
+      "com.isd.bluecollar.spi.WorkCardV1.checkout" : {
+        "response" : {
+          "$ref" : "JsonDate"
+        }
+      },
+      "com.isd.bluecollar.spi.WorkCardV1.list" : {
+        "request" : {
+          "$ref" : "JsonDate"
+        },
+        "response" : {
+          "$ref" : "JsonRange"
+        }
+      },
+      "com.isd.bluecollar.spi.WorkCardV1.checkin" : {
+        "response" : {
+          "$ref" : "JsonDate"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,140 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+body {
+	padding-top: 40px;
+	padding-bottom: 40px;
+	background-color: #f5f5f5;
+}
+
+div.main-content {
+	display: none;
+}
+
+.form-signin {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	max-width: 300px;
+	padding: 19px 29px 29px;
+	margin: -143px 0 0 -150px;
+	background-color: #fff;
+	border: 1px solid #e5e5e5;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+	-moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+	box-shadow: 0 1px 2px rgba(0,0,0,.05);
+}
+	  
+.form-signin .form-signin-heading,
+.form-manage-project-time .form-manage-project-time-heading,
+.form-generate-report .form-generate-report-heading,
+.form-add-projects .form-add-projects-heading{
+  margin-bottom: 10px;
+}
+
+.form-signin input[type="text"],
+.form-add-projects input[type="text"],
+.form-signin input[type="password"] {
+  font-size: 16px;
+  height: auto;
+  margin-bottom: 15px;
+  padding: 7px 9px;
+}
+
+.form-signin button,
+.form-manage-project-time button,
+.form-generate-report button,
+.form-add-projects button{
+	width: 300px;
+	padding: 9px 19px;
+}
+
+.blue-collar-tabs {
+	width: 100%;
+	overflow: hidden;
+	height: 42px;
+}
+
+.blue-collar-tab {
+	margin-left: 10%;
+}
+
+.navbar .nav > li.blue-collar-tab > a {
+	padding: 10px 35px;
+}
+
+.tab-pane .container {
+	margin-left: auto;
+	margin-right: auto;
+	padding-top: 50px;
+	min-height: 300px;
+}
+
+.tab-pane .well {
+	width: 320px;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: #fff;
+	text-align: center;
+}
+
+.form-manage-project-time,
+.form-generate-report,
+.form-add-projects{
+	max-width: 300px;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 19px 29px 29px;
+	background-color: #fff;
+	border: 1px solid #e5e5e5;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+	-moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+	box-shadow: 0 1px 2px rgba(0,0,0,.05);
+}
+
+.form-manage-project-time select {
+  font-size: 16px;
+  height: auto;
+  margin-bottom: 15px;
+  padding: 7px 9px;
+  width: 300px;
+}
+
+.form-manage-project-time .btn-stop {
+	display: none;
+}
+
+.form-generate-report label {
+	display: inline;
+	font-size: 20px;
+	font-weight: bold;
+	line-height: 0px;
+	margin-right: 10px;
+}
+
+#label-dp-end {
+	margin-right: 28px;
+}
+
+.form-generate-report input.date-input {
+	display: inline;
+	width: 110px;
+}
+
+.form-generate-report .bootstrap-timepicker {
+	display: inline;
+}
+
+.form-generate-report .bootstrap-timepicker input {
+	width: 60px;
+}
+
+.form-add-projects textarea {
+	resize: none;
+	height: 200px;
+}

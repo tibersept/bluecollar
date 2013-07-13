@@ -74,24 +74,17 @@ com.isd.bluecollar.userAuthed = function() {
   });
 };
 
-com.isd.bluecollar.signinCallback = function() {
-	if (typeof (console) !== "undefined") {
-		console.info("User authentication callback called!!!!");
-	}
-	com.isd.bluecollar.userAuthed();
-};
-
 /**
  * Handles the authentication flow, with the given value for immediate mode.
  * @param {boolean} mode Whether or not to use immediate mode.
  * @param {Function} callback Callback to call on completion.
  */
 com.isd.bluecollar.signin = function(mode, callback) {
-  gapi.auth.authorize({client_id: com.isd.bluecollar.CLIENT_ID,
-      scope: com.isd.bluecollar.SCOPES,
-      immediate: mode,
-      response_type: com.isd.bluecollar.RESPONSE_TYPE},
-      callback);
+	gapi.auth.authorize({client_id: com.isd.bluecollar.CLIENT_ID,
+		scope: com.isd.bluecollar.SCOPES,
+		immediate: mode,
+		response_type: com.isd.bluecollar.RESPONSE_TYPE},
+		callback);
 };
 
 /**
@@ -99,10 +92,11 @@ com.isd.bluecollar.signin = function(mode, callback) {
  */
 com.isd.bluecollar.auth = function() {
   if (!com.isd.bluecollar.signedIn) {
-	  com.isd.bluecollar.signin(false,com.isd.bluecollar.signinCallback);
+	  com.isd.bluecollar.signin(false,com.isd.bluecollar.userAuthed);
   } else {
 	  com.isd.bluecollar.signedIn = false;
   }
+  return false;
 };
 
 /**

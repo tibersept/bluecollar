@@ -24,6 +24,20 @@
     "maxAge" : 0
   },
   "methods" : {
+    "bluecollar.wcard.checkout" : {
+      "path" : "checkout",
+      "httpMethod" : "POST",
+      "scopes" : [ ],
+      "audiences" : [ ],
+      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.checkout",
+      "request" : {
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
     "bluecollar.wcard.list" : {
       "path" : "list",
       "httpMethod" : "POST",
@@ -34,20 +48,6 @@
       "request" : {
         "body" : "autoTemplate(backendRequest)",
         "bodyName" : "resource"
-      },
-      "response" : {
-        "body" : "autoTemplate(backendResponse)"
-      }
-    },
-    "bluecollar.wcard.checkout" : {
-      "path" : "checkout",
-      "httpMethod" : "POST",
-      "scopes" : [ ],
-      "audiences" : [ ],
-      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.checkout",
-      "request" : {
-        "body" : "empty"
       },
       "response" : {
         "body" : "autoTemplate(backendResponse)"
@@ -93,17 +93,17 @@
       }
     },
     "methods" : {
+      "com.isd.bluecollar.spi.WorkCardV1.checkout" : {
+        "response" : {
+          "$ref" : "JsonDate"
+        }
+      },
       "com.isd.bluecollar.spi.WorkCardV1.list" : {
         "request" : {
           "$ref" : "JsonDate"
         },
         "response" : {
           "$ref" : "JsonRange"
-        }
-      },
-      "com.isd.bluecollar.spi.WorkCardV1.checkout" : {
-        "response" : {
-          "$ref" : "JsonDate"
         }
       },
       "com.isd.bluecollar.spi.WorkCardV1.checkin" : {

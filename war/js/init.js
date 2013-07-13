@@ -6,8 +6,5 @@ $(document).ready(function(){
 });
 
 function init() {
-	if (typeof (console) !== "undefined") {
-		console.info("The fucking shit is being initialized!!!");
-	}
 	com.isd.bluecollar.init('https://' + window.location.host + '/_ah/api');
 }

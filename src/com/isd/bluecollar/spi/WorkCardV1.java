@@ -14,9 +14,9 @@ import com.isd.bluecollar.datatype.JsonDate;
 import com.isd.bluecollar.datatype.JsonRange;
 import com.isd.bluecollar.datatype.Range;
 
-@Api(name = "bluecollar",version = "v1",
-	clientIds = {ClientIds.WEB_CLIENT_ID, ClientIds.ANDROID_CLIENT_ID, ClientIds.IOS_CLIENT_ID},
-	audiences = {ClientIds.ANDROID_AUDIENCE}
+@Api(
+	name = "bluecollar",version = "v1",
+	clientIds = {ClientIds.WEB_CLIENT_ID}
 )
 public class WorkCardV1 {
 

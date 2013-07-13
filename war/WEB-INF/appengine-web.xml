@@ -31,6 +31,7 @@
   <static-files>
     <include path="/js/**.js"/>
 	<include path="/css/**.css"/>
+	<include path="/images/**.png"/>
 	<include path="/favicon.ico"/>
   </static-files>
 

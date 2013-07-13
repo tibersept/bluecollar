@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"s1omim4x8ymp9_6H8kBMkfEDqpo/zUvIaC6nrJ4eVmHa28IC-8k3a9c\"",
+ "etag": "\"s1omim4x8ymp9_6H8kBMkfEDqpo/2LL2HrTUHxtHJUK8me9SBE5X1oM\"",
  "discoveryVersion": "v1",
  "id": "bluecollar:v1",
  "name": "bluecollar",

@@ -67,19 +67,29 @@ com.isd.bluecollar.userAuthed = function() {
       var token = gapi.auth.getToken();
       token.access_token = token.id_token;
       gapi.auth.setToken(token);
-      com.isd.bluecollar.signedIn = true;      
+      com.isd.bluecollar.signedIn = true;
+	  $('.login-content').hide();
+      $('.main-content').show();
     }
   });
 };
 
+com.isd.bluecollar.signinCallback = function() {
+	if (typeof (console) !== "undefined") {
+		console.info("User authentication callback called!!!!");
+	}
+	com.isd.bluecollar.userAuthed();
+};
+
 /**
- * Handles the auth flow, with the given value for immediate mode.
+ * Handles the authentication flow, with the given value for immediate mode.
  * @param {boolean} mode Whether or not to use immediate mode.
  * @param {Function} callback Callback to call on completion.
  */
 com.isd.bluecollar.signin = function(mode, callback) {
   gapi.auth.authorize({client_id: com.isd.bluecollar.CLIENT_ID,
-      scope: com.isd.bluecollar.SCOPES, immediate: mode,
+      scope: com.isd.bluecollar.SCOPES,
+      immediate: mode,
       response_type: com.isd.bluecollar.RESPONSE_TYPE},
       callback);
 };
@@ -89,7 +99,7 @@ com.isd.bluecollar.signin = function(mode, callback) {
  */
 com.isd.bluecollar.auth = function() {
   if (!com.isd.bluecollar.signedIn) {
-	  com.isd.bluecollar.signin(false,com.isd.bluecollar.userAuthed);
+	  com.isd.bluecollar.signin(false,com.isd.bluecollar.signinCallback);
   } else {
 	  com.isd.bluecollar.signedIn = false;
   }
@@ -106,7 +116,7 @@ com.isd.bluecollar.init = function(apiRoot) {
 			com.isd.bluecollar.signin(true,com.isd.bluecollar.userAuthed);
 		}
 	}
-
+	
 	apisToLoad = 2;
 	gapi.client.load('bluecollar', 'v1', callback, apiRoot);
 	gapi.client.load('oauth2', 'v2', callback);

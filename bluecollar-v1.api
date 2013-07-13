@@ -24,12 +24,26 @@
     "maxAge" : 0
   },
   "methods" : {
+    "bluecollar.wcard.checkout" : {
+      "path" : "checkout",
+      "httpMethod" : "POST",
+      "scopes" : [ ],
+      "audiences" : [ ],
+      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.checkout",
+      "request" : {
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
     "bluecollar.wcard.list" : {
       "path" : "list",
       "httpMethod" : "POST",
       "scopes" : [ ],
-      "audiences" : [ "458645171438.apps.googleusercontent.com" ],
-      "clientIds" : [ "458645171438.apps.googleusercontent.com", "replace this with your Android client ID", "replace this with your iOS client ID" ],
+      "audiences" : [ ],
+      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
       "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.list",
       "request" : {
         "body" : "autoTemplate(backendRequest)",
@@ -39,26 +53,12 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
-    "bluecollar.wcard.checkout" : {
-      "path" : "checkout",
-      "httpMethod" : "POST",
-      "scopes" : [ ],
-      "audiences" : [ "458645171438.apps.googleusercontent.com" ],
-      "clientIds" : [ "458645171438.apps.googleusercontent.com", "replace this with your Android client ID", "replace this with your iOS client ID" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.checkout",
-      "request" : {
-        "body" : "empty"
-      },
-      "response" : {
-        "body" : "autoTemplate(backendResponse)"
-      }
-    },
     "bluecollar.wcard.checkin" : {
       "path" : "checkin",
       "httpMethod" : "POST",
       "scopes" : [ ],
-      "audiences" : [ "458645171438.apps.googleusercontent.com" ],
-      "clientIds" : [ "458645171438.apps.googleusercontent.com", "replace this with your Android client ID", "replace this with your iOS client ID" ],
+      "audiences" : [ ],
+      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
       "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.checkin",
       "request" : {
         "body" : "empty"
@@ -93,17 +93,17 @@
       }
     },
     "methods" : {
+      "com.isd.bluecollar.spi.WorkCardV1.checkout" : {
+        "response" : {
+          "$ref" : "JsonDate"
+        }
+      },
       "com.isd.bluecollar.spi.WorkCardV1.list" : {
         "request" : {
           "$ref" : "JsonDate"
         },
         "response" : {
           "$ref" : "JsonRange"
-        }
-      },
-      "com.isd.bluecollar.spi.WorkCardV1.checkout" : {
-        "response" : {
-          "$ref" : "JsonDate"
         }
       },
       "com.isd.bluecollar.spi.WorkCardV1.checkin" : {

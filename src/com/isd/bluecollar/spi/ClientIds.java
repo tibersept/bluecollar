@@ -1,7 +1,7 @@
 package com.isd.bluecollar.spi;
 
 /**
- * Provides a list of authorization & authentification client ids. 
+ * Provides a list of authorization & authentication client ids. 
  * @author doan
  */
 public class ClientIds {

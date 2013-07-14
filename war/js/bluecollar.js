@@ -26,29 +26,41 @@ com.isd.bluecollar.RESPONSE_TYPE = 'token id_token';
 com.isd.bluecollar.signedIn = false;
 
 /**
- * Checks into a workday.
+ * REST call. Checks into a workday.
  */
 com.isd.bluecollar.checkin = function() {
-	gapi.client.bluecollar.wcard.checkin().execute(function(resp){		  
+	var combo = $('.combo-project-selection');
+	var currentProject = combo.find(':selected').val();
+	gapi.client.bluecollar.wcard.checkin({'project': currentProject}).execute(function(resp){		  
 		if(console) {
 			console.log(resp);
 		}
+		combo.prop('disabled',true);
+		$('.btn-start').hide();
+		$('.btn-stop').show();
 	});
+	return false;
 };
 
 /**
- * Checks out of a workday.
+ * REST call. Checks out of a workday.
  */
 com.isd.bluecollar.checkout = function() {
-	gapi.client.bluecollar.wcard.checkout().execute(function(resp){
+	var combo = $('.combo-project-selection');
+	var currentProject = combo.find(':selected').val();
+	gapi.client.bluecollar.wcard.checkout({'project': currentProject}).execute(function(resp){
 		if(console) {
 			console.log(resp);
 		}
+		combo.prop('disabled',false);
+		$('.btn-stop').hide();
+		$('.btn-start').show();
 	});
+	return false;
 };
 
 /**
- * Lists the current workday.
+ * REST call. Lists the current workday.
  */
 com.isd.bluecollar.list = function() {
 	gapi.client.bluecollar.wcard.list({'date':'23-01-2013'}).execute(function(resp){
@@ -59,7 +71,30 @@ com.isd.bluecollar.list = function() {
 };
 
 /**
- * Loads the application UI after the user has completed auth.
+ * REST call. Adds a project to the list of user projects.
+ */
+com.isd.bluecollar.addProject = function( name, description ) {
+	gapi.client.bluecollar.wcard.addproject({'name':name,'description':description}).execute(function(resp){
+		if( resp ) {
+			com.isd.bluecollar.updateProjectList(resp.items);
+			com.isd.bluecollar.clearProjectForm();
+		}
+	});
+};
+
+/**
+ * REST call. Lists the projects of the user. 
+ */
+com.isd.bluecollar.listProjects = function() {
+	gapi.client.bluecollar.wcard.listprojects().execute(function(resp){
+		if( resp ) {
+			com.isd.bluecollar.updateProjectList(resp.items);
+		}
+	});
+}
+
+/**
+ * Authentication. Loads the application UI after the user has completed auth.
  */
 com.isd.bluecollar.userAuthed = function() {
   var request = gapi.client.oauth2.userinfo.get().execute(function(resp) {
@@ -68,14 +103,13 @@ com.isd.bluecollar.userAuthed = function() {
       token.access_token = token.id_token;
       gapi.auth.setToken(token);
       com.isd.bluecollar.signedIn = true;
-	  $('.login-content').hide();
-      $('.main-content').show();
+      com.isd.bluecollar.switchToMain();
     }
   });
 };
 
 /**
- * Handles the authentication flow, with the given value for immediate mode.
+ * Authentication. Handles the authentication flow, with the given value for immediate mode.
  * @param {boolean} mode Whether or not to use immediate mode.
  * @param {Function} callback Callback to call on completion.
  */
@@ -88,7 +122,7 @@ com.isd.bluecollar.signin = function(mode, callback) {
 };
 
 /**
- * Presents the user with the authorization popup.
+ * Authentication. Presents the user with the authorization popup.
  */
 com.isd.bluecollar.auth = function() {
   if (!com.isd.bluecollar.signedIn) {
@@ -98,6 +132,102 @@ com.isd.bluecollar.auth = function() {
   }
   return false;
 };
+
+/**
+ * Switches to main perspective.
+ * @return returns <code>false</code> in case method is invoked directly from a button
+ */
+com.isd.bluecollar.switchToMain = function() {
+	  $('.login-content').hide();
+      $('.main-content').show();
+      com.isd.bluecollar.listProjects();
+      return false;
+};
+
+/**
+ * Switches to login perspective.
+ * @return returns <code>false</code> in case method is invoked directly from a button
+ */
+com.isd.bluecollar.swtichToLogin = function() {
+	$('.main-content').hide();
+	$('.login-content').show();
+	return false;
+};
+
+/**
+ * Submits a new project.
+ */
+com.isd.bluecollar.submitNewProject = function() {
+	var name = $('.input-project-name').val();
+	var description = $('.input-project-description').val();
+	com.isd.bluecollar.addProject(name,description);
+	return false;
+};
+
+/**
+ * Updates the project list with the projects provided in the array.
+ * @param projects the project list
+ */
+com.isd.bluecollar.updateProjectList = function( projects ) {
+	com.isd.bluecollar.updateProjectSelection( projects );
+	com.isd.bluecollar.updateProjectTable( projects );
+};
+
+/**
+ * Updates the project selection combo box in the main screen.
+ * @param projects the project list
+ */
+com.isd.bluecollar.updateProjectSelection = function( projects ) {
+	if( projects ) {
+		var content = '';
+		for( var i=0; i<projects.length; i++ ) {
+			var project = projects[i];
+			content += '<option value="'+project+'">'+project+'</option>';
+		}
+		$('.combo-project-selection').html(content);
+	}
+};
+
+/**
+ * Updates the project table on the settings page.
+ * @param projects the project list
+ */
+com.isd.bluecollar.updateProjectTable = function( projects ) {
+	if( projects ) {
+		var content = '';
+		for( var i=0; i<projects.length; i++ ) {
+			var project = projects[i];
+			content += '<tr><td>'+project+'</td></tr>';
+		}
+		$('.table-projects').html(content);
+	}
+};
+
+/**
+ * Clears the project form.
+ */
+com.isd.bluecollar.clearProjectForm = function() {
+	 $('.input-project-name').val('');
+	 $('.input-project-description').val('');
+};
+
+/**
+ * Handles tab activation.
+ * @param e the tab activation event
+ */
+com.isd.bluecollar.onTabActivation = function( e ) {	
+	var tabAnchor = $(e.target);	
+	if ( tabAnchor ) {
+		var href = tabAnchor.attr('href');
+		switch(href) {
+		case "#settings":
+			com.isd.bluecollar.listProjects();
+			break;
+		default:
+			break;
+		}
+	}
+}
 
 /**
  * Initializes the application.
@@ -118,4 +248,9 @@ com.isd.bluecollar.init = function(apiRoot) {
 	$('.btn-start').click(com.isd.bluecollar.checkin);
 	$('.btn-stop').click(com.isd.bluecollar.checkout);
 	$('.btn-signin').click(com.isd.bluecollar.auth);
+	$('.btn-tryit').click(com.isd.bluecollar.switchToMain);
+	$('.btn-add-project').click(com.isd.bluecollar.submitNewProject);
+	
+	// Tab activation handling
+	$('a[data-toggle="tab"]').on('show', com.isd.bluecollar.onTabActivation);
 };

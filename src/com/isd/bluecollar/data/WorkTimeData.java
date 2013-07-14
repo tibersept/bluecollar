@@ -3,14 +3,18 @@
  */
 package com.isd.bluecollar.data;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
@@ -37,42 +41,87 @@ public class WorkTimeData {
 	
 	
 	/**
-	 * Sets the start of a workday.
-	 * @param aUserName the username
+	 * Sets the start of a workday for a given project.
+	 * @param aUser the username
+	 * @param aProject the project name
 	 * @param aTimestamp the timestamp
 	 */
-	public void setDayStart( String aUser, Date aTimestamp ) {
-		updateDay(aUser,aTimestamp,true);
+	public void setDayStart( String aUser, String aProject, Date aTimestamp ) {
+		updateDay(aUser,aProject,aTimestamp,true);
 	}
 	
 	/**
-	 * Sets the end of a workday.
-	 * @param aUserName the username
+	 * Sets the end of a workday for a given project.
+	 * @param aUser the username
+	 * @param aProject the project name
 	 * @param aTimestamp the timestamp
 	 */
-	public void setDayEnd( String aUser, Date aTimestamp ) {
-		updateDay(aUser,aTimestamp,false);
+	public void setDayEnd( String aUser, String aProject, Date aTimestamp ) {
+		updateDay(aUser,aProject,aTimestamp,false);
+	}
+	
+	/**
+	 * Adds a new project to the list of projects of this user.
+	 * @param aUser the username
+	 * @param aName the project name
+	 * @param aDescription the project description
+	 */
+	public void addProject( String aUser, String aName, String aDescription ) {
+		Key key = getUserKey(aUser);
+		if( key!=null ) {
+			Entity project = getProject(key,aName);
+			if( project!=null ) {
+				project.setProperty("projectDescription", aDescription);
+				service.put(project);
+			} else {
+				createNewProject(aName, aDescription, key);
+			}
+		}
+	}
+	
+	/**
+	 * Returns a list of all projects assigned to user.
+	 * @param aUser the user
+	 * @param anAlphaSorted flag indicates whether list should be sorted
+	 * @return the list of all projects
+	 */
+	public List<String> getProjectList( String aUser, boolean anAlphaSorted ) {
+		Key key = getUserKey(aUser);
+		if( key!=null ) {
+			List<String> list = new ArrayList<String>();
+			List<Entity> projects = getAllProjects(key);
+			for( Entity project : projects ) {
+				String projectName = (String) project.getProperty("projectName");
+				list.add(projectName);
+			}
+			if( anAlphaSorted ) {
+				Collections.sort(list);
+			}
+			return list;
+		}
+		return Collections.emptyList();
 	}
 
 	/**
-	 * Updates one of the timestamp on a workday. 
+	 * Updates one of the timestamp on a workday for a given project. 
 	 * @param aUser the username
+	 * @param aProject the project name
 	 * @param aDate the timestamp
 	 * @param aStart flag indicating whether this is check-in or check-out
 	 */
-	public void updateDay( String aUser, Date aDate, boolean aStart ) {
+	public void updateDay( String aUser, String aProject, Date aDate, boolean aStart ) {
 		Key key = getUserKey(aUser);
 		if (key!=null) {
 			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 			cal.setTime(aDate);
-			Entity workday = getDayByCalendar(key,cal);
-			if (workday!=null) {
+			Entity workproject = getWorkdayProject(key,aProject,cal);
+			if (workproject!=null) {
 				if( aStart ) {
-					workday.setProperty("start", cal.getTimeInMillis());
+					workproject.setProperty("start", cal.getTimeInMillis());
 				} else {
-					workday.setProperty("end", cal.getTimeInMillis());
+					workproject.setProperty("end", cal.getTimeInMillis());
 				}
-				service.put(workday);
+				service.put(workproject);
 			}
 		}
 	}
@@ -112,7 +161,37 @@ public class WorkTimeData {
 			aCal.setTimeInMillis(((Long)object).longValue());
 		}
 	}
+	
+	/**
+	 * Returns the project matching the name attached to the workday that matches
+	 * the current time set in the calendar.
+	 * @param aUserKey the user key
+	 * @param aProject the project
+	 * @param aCal the calendar
+	 * @return the workday project
+	 */
+	private Entity getWorkdayProject(Key aUserKey, String aProject, Calendar aCal) {
+		Key key = getDayKeyByCalendar(aUserKey,aCal);
+		if( key!=null ) {
+			return doGetWorkdayProject(key, aProject);
+		}
+		return null;
+	}
 
+	/**
+	 * Returns the workday key using the current time set in the calendar.
+	 * @param aUserKey the user key
+	 * @param aCal the calendar
+	 * @return the workday key
+	 */
+	private Key getDayKeyByCalendar(Key aUserKey, Calendar aCal) {
+		Entity workday = getDayByCalendar(aUserKey, aCal);
+		if( workday!=null ) {
+			return workday.getKey();
+		}
+		return null;
+	}
+	
 	/**
 	 * Retrieves the workday by the current time set in the calendar.
 	 * @param aUserKey the user key
@@ -141,6 +220,29 @@ public class WorkTimeData {
 			return doGetDay(monthKey, aDay, aMonth, aYear);
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns a project entity matching the project name.
+	 * @param aUserKey the user key
+	 * @param aName the project name
+	 * @return the project matching the project name
+	 */
+	private Entity getProject( Key aUserKey, String aName ) {
+		Filter filter = new FilterPredicate("projectName", FilterOperator.EQUAL, aName);
+		Query q = new Query("Project",aUserKey).setAncestor(aUserKey).setFilter(filter);
+		Entity project = service.prepare(q).asSingleEntity();
+		return project;
+	}
+	
+	/**
+	 * Returns all projects which belong to the given user.
+	 * @param aUserKey the user key
+	 * @return all projects of the user
+	 */
+	private List<Entity> getAllProjects( Key aUserKey ) {
+		Query q = new Query("Project",aUserKey).setAncestor(aUserKey);
+		return service.prepare(q).asList(FetchOptions.Builder.withDefaults());
 	}
 	
 	/**
@@ -197,6 +299,23 @@ public class WorkTimeData {
 	}
 	
 	/**
+	 * Returns the workday project or creates one if a project with the given name does
+	 * not exist for the provided name.
+	 * @param aWorkdayKey the workday key
+	 * @param aProject the project name
+	 * @return the workday project entity
+	 */
+	private Entity doGetWorkdayProject( Key aWorkdayKey, String aProject ) {
+		Filter filter = new FilterPredicate("projectName", FilterOperator.EQUAL, aProject);
+		Query q = new Query("WorkdayProject",aWorkdayKey).setAncestor(aWorkdayKey).setFilter(filter);
+		Entity project = service.prepare(q).asSingleEntity();
+		if (project==null) {
+			return createNewWorkdayProject(aProject, aWorkdayKey);
+		}
+		return project;
+	}
+	
+	/**
 	 * Returns a string combination of the month + year combination.
 	 * @param aMonth the month
 	 * @param aYear the year
@@ -226,8 +345,6 @@ public class WorkTimeData {
 	private Entity createNewWorkday( String aDmy, Key aMonthKey ) {
 		Entity workday = new Entity("Workday", aDmy, aMonthKey);
 		workday.setProperty("dayMonthYear", aDmy);
-		workday.setProperty("start", null);
-		workday.setProperty("end", null);
 		service.put(workday);
 		return workday;
 	}
@@ -257,6 +374,36 @@ public class WorkTimeData {
 		user.setProperty("currentMonth", null);
 		service.put(user);
 		return user.getKey();
+	}
+	
+	/**
+	 * Creates a new project attached to the user.
+	 * @param aName the project name
+	 * @param aDescription the project description
+	 * @param aUserKey the user key
+	 * @return the newly created project entity
+	 */
+	private Entity createNewProject(String aName, String aDescription, Key aUserKey) {
+		Entity project = new Entity("Project", aName, aUserKey);
+		project.setProperty("projectName", aName);
+		project.setProperty("projectDescription", aDescription);
+		service.put(project);
+		return project;
+	}
+	
+	/**
+	 * Creates a new project attached to the workday with start and end times.
+	 * @param aName the project name
+	 * @param aWorkdayKey the workday key
+	 * @return the newly created workday project
+	 */
+	private Entity createNewWorkdayProject(String aName, Key aWorkdayKey) {
+		Entity project = new Entity("WorkdayProject", aName, aWorkdayKey);
+		project.setProperty("projectName", aName);
+		project.setProperty("start", null);
+		project.setProperty("end",null);
+		service.put(project);
+		return project;
 	}
 	
 }

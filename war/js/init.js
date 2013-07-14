@@ -11,8 +11,9 @@ $(document).ready(function(){
 /**
  * Initializes the google authorization and endpoint apis.
  */
-function init() {
-	com.isd.bluecollar.init('https://' + window.location.host + '/_ah/api');
+function init() {	
+	var protocol = window.location.protocol;
+	com.isd.bluecollar.init(protocol + '//' + window.location.host + '/_ah/api');
 }
 
 /**

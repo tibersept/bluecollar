@@ -24,13 +24,13 @@
     "maxAge" : 0
   },
   "methods" : {
-    "bluecollar.wcard.checkout" : {
-      "path" : "checkout",
+    "bluecollar.wcard.listprojects" : {
+      "path" : "string",
       "httpMethod" : "POST",
       "scopes" : [ ],
       "audiences" : [ ],
       "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.checkout",
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.listProjects",
       "request" : {
         "body" : "empty"
       },
@@ -53,6 +53,44 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
+    "bluecollar.wcard.addproject" : {
+      "path" : "addProjects/{name}/{description}",
+      "httpMethod" : "POST",
+      "scopes" : [ ],
+      "audiences" : [ ],
+      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.addProjects",
+      "request" : {
+        "parameters" : {
+          "name" : {
+            "type" : "string",
+            "required" : true
+          },
+          "description" : {
+            "type" : "string",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "bluecollar.wcard.checkout" : {
+      "path" : "checkout",
+      "httpMethod" : "POST",
+      "scopes" : [ ],
+      "audiences" : [ ],
+      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.checkout",
+      "request" : {
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
     "bluecollar.wcard.checkin" : {
       "path" : "checkin",
       "httpMethod" : "POST",
@@ -70,6 +108,18 @@
   },
   "descriptor" : {
     "schemas" : {
+      "StringCollection" : {
+        "id" : "StringCollection",
+        "type" : "object",
+        "properties" : {
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
       "JsonDate" : {
         "id" : "JsonDate",
         "type" : "object",
@@ -93,9 +143,9 @@
       }
     },
     "methods" : {
-      "com.isd.bluecollar.spi.WorkCardV1.checkout" : {
+      "com.isd.bluecollar.spi.WorkCardV1.listProjects" : {
         "response" : {
-          "$ref" : "JsonDate"
+          "$ref" : "StringCollection"
         }
       },
       "com.isd.bluecollar.spi.WorkCardV1.list" : {
@@ -104,6 +154,16 @@
         },
         "response" : {
           "$ref" : "JsonRange"
+        }
+      },
+      "com.isd.bluecollar.spi.WorkCardV1.addProjects" : {
+        "response" : {
+          "$ref" : "StringCollection"
+        }
+      },
+      "com.isd.bluecollar.spi.WorkCardV1.checkout" : {
+        "response" : {
+          "$ref" : "JsonDate"
         }
       },
       "com.isd.bluecollar.spi.WorkCardV1.checkin" : {

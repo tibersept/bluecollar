@@ -17,13 +17,14 @@
 		<body>
 				<div class="container login-content">
 						<form class="form-signin">
-								<h2 class="form-signin-heading">Please sign in</h2>
-								<input type="text" class="input-block-level" 
-								placeholder="Email address"/>
-								<input type="password" class="input-block-level"
-								placeholder="Password"/>
+								<h3 class="form-signin-heading">Mavicollar Time Tracker</h3>
+								<h6>Sign in using your Google Account:</h6>
 								<button class="btn btn-large btn-primary btn-signin" type="submit">
 										Sign in
+								</button>
+								<h6>Or just try it:</h6>
+								<button class="btn btn-large btn-tryit" type="submit">
+										Try it
 								</button>
 						</form>	
 				</div>
@@ -44,10 +45,9 @@
 										<div class="container">												
 												<form class="form-manage-project-time">
 														<h2 class="form-manage-project-time-heading">Select a project</h2>
-														<select id="project-selection" class="combobox">
+														<select id="project-selection" class="combobox combo-project-selection">
 																<option>Default</option>
-																<option value="first">First project</option>
-																<option value="second">Second project</option>
+																<!-- Content is added here -->
 														</select>
 														<button class="btn btn-large btn-primary btn-start" type="submit"> 
 																Start work on project
@@ -91,21 +91,16 @@
 										<div class="container">
 												<form class="form-add-projects">
 														<h2 class="form-add-projects-heading">Add a project</h2>
-														<input class="input-block-level" type="text" placeholder="Enter project name here">
-														<textarea class="input-block-level" placeholder="Enter the project description here"></textarea>
-														<button class="btn btn-large btn-primary" type="submit"> 
+														<input class="input-block-level input-project-name" type="text" placeholder="Enter project name here">
+														<textarea class="input-block-level input-project-description" placeholder="Enter the project description here"></textarea>
+														<button class="btn btn-large btn-primary btn-add-project" type="submit"> 
 																Add project
 														</button>
 												</form>
 												<div class="well">
 														<h2>List of projects</h2>
-														<table class="table table-hover">
-																<tr>
-																		<td>PiSA sales Web Client</td>
-																</tr>
-																<tr>
-																		<td>PiSA sales Pocket Client</td>
-																</tr>
+														<table class="table table-hover table-projects">
+																<!-- Content is added here -->
 														</table>
 												</div>
 										</div>

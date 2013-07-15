@@ -239,9 +239,7 @@ com.isd.bluecollar.startTimer = function( dateString ) {
 	var utcMilliseconds = Date.parse(dateString);
 	var dte = new Date(0);
 	dte.setUTCMilliseconds(utcMilliseconds);
-	
-	
-	com.isd.bluecollar.timer = window.setInterval(function(){com.isd.bluecollar.updateTimer(dte);}, 1000);	
+	com.isd.bluecollar.timer = window.setInterval(function(){com.isd.bluecollar.updateTimer(dte);}, 5000);
 };
 
 /**
@@ -283,6 +281,10 @@ com.isd.bluecollar.updateTimer = function( start ) {
  */
 com.isd.bluecollar.stopTimer = function( dateString ) {
 	window.clearInterval(com.isd.bluecollar.timer);
+	var elm = $('#time-display');
+	if( elm ) {
+		elm.html("00:00:00");
+	}
 };
 
 /**

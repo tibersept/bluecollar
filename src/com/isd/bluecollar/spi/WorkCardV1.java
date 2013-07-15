@@ -30,7 +30,7 @@ public class WorkCardV1 {
 	@ApiMethod(name = "wcard.checkin", httpMethod = "POST")
 	public JsonDate checkin(@Named("project") String aProject, User aUser) {
 		Date rightNow = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy-HH-mm-ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String username = getUserName(aUser);
 		
 		WorkTimeData wtd = new WorkTimeData();
@@ -46,7 +46,7 @@ public class WorkCardV1 {
 	@ApiMethod(name = "wcard.checkout", httpMethod = "POST")
 	public JsonDate checkout(@Named("project") String aProject, User aUser) {
 		Date rightNow = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy-HH-mm-ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String username = getUserName(aUser);
 		
 		WorkTimeData wtd = new WorkTimeData();
@@ -62,7 +62,7 @@ public class WorkCardV1 {
 	@ApiMethod(name = "wcard.list", httpMethod = "POST" )
 	public JsonRange list(JsonDate aDate, User aUser) {
 		Date rightNow = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy-HH-mm-ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		Logger.getLogger(getClass().getName()).info("Received date:" + aDate.getDate());
 		
@@ -80,7 +80,7 @@ public class WorkCardV1 {
 	 * @return <code>true</code> on success
 	 */
 	@ApiMethod(name = "wcard.addproject", httpMethod = "POST" )
-	public List<String> addProjects( @Named("name") String aName, @Named("description") String aDescription, User aUser ) {
+	public List<String> addProject( @Named("name") String aName, @Named("description") String aDescription, User aUser ) {
 		String username = getUserName(aUser);
 		
 		WorkTimeData wtd = new WorkTimeData();

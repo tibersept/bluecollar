@@ -18,6 +18,7 @@ import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
@@ -114,12 +115,14 @@ public class WorkTimeData {
 		if (key!=null) {
 			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 			cal.setTime(aDate);
-			Entity workproject = getWorkdayProject(key,aProject,cal);
+			Entity workproject = getWorkdayProject(key,aProject,cal,aStart);
 			if (workproject!=null) {
 				if( aStart ) {
 					workproject.setProperty("start", cal.getTimeInMillis());
+					workproject.setProperty("state", "open");
 				} else {
 					workproject.setProperty("end", cal.getTimeInMillis());
+					workproject.setProperty("state", "finished");
 				}
 				service.put(workproject);
 			}
@@ -168,12 +171,13 @@ public class WorkTimeData {
 	 * @param aUserKey the user key
 	 * @param aProject the project
 	 * @param aCal the calendar
+	 * @param aStart indicates whether event is started or finished
 	 * @return the workday project
 	 */
-	private Entity getWorkdayProject(Key aUserKey, String aProject, Calendar aCal) {
+	private Entity getWorkdayProject(Key aUserKey, String aProject, Calendar aCal, boolean aStart) {
 		Key key = getDayKeyByCalendar(aUserKey,aCal);
 		if( key!=null ) {
-			return doGetWorkdayProject(key, aProject);
+			return doGetWorkdayProject(key, aProject, aStart);
 		}
 		return null;
 	}
@@ -303,11 +307,14 @@ public class WorkTimeData {
 	 * not exist for the provided name.
 	 * @param aWorkdayKey the workday key
 	 * @param aProject the project name
+	 * @param aStart indicates whether project is being started or finished
 	 * @return the workday project entity
 	 */
-	private Entity doGetWorkdayProject( Key aWorkdayKey, String aProject ) {
-		Filter filter = new FilterPredicate("projectName", FilterOperator.EQUAL, aProject);
-		Query q = new Query("WorkdayProject",aWorkdayKey).setAncestor(aWorkdayKey).setFilter(filter);
+	private Entity doGetWorkdayProject( Key aWorkdayKey, String aProject, boolean aStart ) {
+		Filter nameFilter = new FilterPredicate("projectName", FilterOperator.EQUAL, aProject);
+		Filter stateFilter = new FilterPredicate("state", FilterOperator.EQUAL, aStart ? "initial" : "open");
+		Filter compositeFilter = CompositeFilterOperator.and(nameFilter,stateFilter);
+		Query q = new Query("WorkdayProject",aWorkdayKey).setAncestor(aWorkdayKey).setFilter(compositeFilter);
 		Entity project = service.prepare(q).asSingleEntity();
 		if (project==null) {
 			return createNewWorkdayProject(aProject, aWorkdayKey);
@@ -400,6 +407,7 @@ public class WorkTimeData {
 	private Entity createNewWorkdayProject(String aName, Key aWorkdayKey) {
 		Entity project = new Entity("WorkdayProject", aName, aWorkdayKey);
 		project.setProperty("projectName", aName);
+		project.setProperty("state", "initial");
 		project.setProperty("start", null);
 		project.setProperty("end",null);
 		service.put(project);

@@ -32,12 +32,13 @@ com.isd.bluecollar.checkin = function() {
 	var combo = $('.combo-project-selection');
 	var currentProject = combo.find(':selected').val();
 	gapi.client.bluecollar.wcard.checkin({'project': currentProject}).execute(function(resp){		  
-		if(console) {
-			console.log(resp);
+		if( resp ) {
+			var dateString = resp.date;			
+			com.isd.bluecollar.startTimer( dateString );
+			combo.prop('disabled',true);
+			$('.btn-start').hide();
+			$('.btn-stop').show();
 		}
-		combo.prop('disabled',true);
-		$('.btn-start').hide();
-		$('.btn-stop').show();
 	});
 	return false;
 };
@@ -49,12 +50,13 @@ com.isd.bluecollar.checkout = function() {
 	var combo = $('.combo-project-selection');
 	var currentProject = combo.find(':selected').val();
 	gapi.client.bluecollar.wcard.checkout({'project': currentProject}).execute(function(resp){
-		if(console) {
-			console.log(resp);
+		if(resp) {
+			var dateString = resp.date;
+			com.isd.bluecollar.stopTimer( dateString ); 
+			combo.prop('disabled',false);
+			$('.btn-stop').hide();
+			$('.btn-start').show();
 		}
-		combo.prop('disabled',false);
-		$('.btn-stop').hide();
-		$('.btn-start').show();
 	});
 	return false;
 };
@@ -227,7 +229,61 @@ com.isd.bluecollar.onTabActivation = function( e ) {
 			break;
 		}
 	}
-}
+};
+
+/**
+ * Starts the project timer.
+ * @param dateString the date string
+ */
+com.isd.bluecollar.startTimer = function( dateString ) {
+	var utcMilliseconds = Date.parse(dateString);
+	var dte = new Date(0);
+	dte.setUTCMilliseconds(utcMilliseconds);
+	
+	
+	com.isd.bluecollar.timer = window.setInterval(function(){com.isd.bluecollar.updateTimer(dte);}, 1000);	
+};
+
+/**
+ * Updates the project timer.
+ * @param start the start date
+ */
+com.isd.bluecollar.updateTimer = function( start ) {
+	var elm = $('#time-display');
+	if( start && elm ) {
+		var now = new Date();
+		var dif = now.getTime() - start.getTime();
+		var hrs = Math.floor(dif/3600000);
+		dif = dif - (hrs*3600000);
+		var min = Math.floor(dif/60000);
+		dif = dif - (min*60000);
+		var sec = Math.round(dif/1000);
+		if( hrs<10 ) {
+			hrs = "0"+hrs;
+		}
+		if( min<10 ) {
+			min = "0"+min;
+		}
+		if( min > 59 ) {
+			min = "59";
+		}
+		if( sec<10 ) {
+			sec = "0"+sec;
+		}
+		if( sec > 59 ) {
+			sec = "59";
+		}
+		var content = hrs + ":" + min + ":" + sec;
+		elm.html(content);
+	}
+};
+
+/**
+ * Stops the project timer.
+ */
+com.isd.bluecollar.stopTimer = function( dateString ) {
+	window.clearInterval(com.isd.bluecollar.timer);
+};
 
 /**
  * Initializes the application.

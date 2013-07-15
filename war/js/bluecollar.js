@@ -261,14 +261,12 @@ com.isd.bluecollar.updateTimer = function( start ) {
 		}
 		if( min<10 ) {
 			min = "0"+min;
-		}
-		if( min > 59 ) {
+		} else if( min > 59 ) {
 			min = "59";
 		}
 		if( sec<10 ) {
 			sec = "0"+sec;
-		}
-		if( sec > 59 ) {
+		} else if( sec > 59 ) {
 			sec = "59";
 		}
 		var content = hrs + ":" + min + ":" + sec;

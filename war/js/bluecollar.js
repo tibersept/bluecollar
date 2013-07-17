@@ -14,7 +14,7 @@ com.isd.bluecollar = com.isd.bluecollar || {};
 com.isd.bluecollar.CLIENT_ID ='458645171438.apps.googleusercontent.com';
 
 /** Scopes used by the application */
-com.isd.bluecollar.SCOPES = 'https://www.googleapis.com/auth/userinfo.email';
+com.isd.bluecollar.SCOPES = ['https://www.googleapis.com/auth/userinfo.email','https://www.googleapis.com/auth/drive'];
 
 /** Response type of the auth token */
 com.isd.bluecollar.RESPONSE_TYPE = 'token id_token';
@@ -24,6 +24,18 @@ com.isd.bluecollar.RESPONSE_TYPE = 'token id_token';
  * @type {boolean}
  */
 com.isd.bluecollar.signedIn = false;
+
+/**
+ * Indicates whether the Drive API is loaded.
+ * @type {boolean}
+ */
+com.isd.bluecollar.driveOk = false;
+
+/**
+ * Original access token provided on authorization.
+ * @type {String}
+ */
+com.isd.bluecollar.originalAccessToken = null;
 
 /**
  * REST call. Checks into a workday.
@@ -100,13 +112,15 @@ com.isd.bluecollar.listProjects = function() {
  */
 com.isd.bluecollar.userAuthed = function() {
   var request = gapi.client.oauth2.userinfo.get().execute(function(resp) {
-    if (!resp.code) {
-      var token = gapi.auth.getToken();
-      token.access_token = token.id_token;
-      gapi.auth.setToken(token);
-      com.isd.bluecollar.signedIn = true;
-      com.isd.bluecollar.switchToMain();
-    }
+	  if (!resp.code) {
+		  var token = gapi.auth.getToken();
+		  com.isd.bluecollar.originalAccessToken = token.access_token;
+		  token.access_token = token.id_token;
+		  gapi.auth.setToken(token);
+		  com.isd.bluecollar.loadAdditionalApis();
+		  com.isd.bluecollar.signedIn = true;	
+		  com.isd.bluecollar.switchToMain();
+	  }
   });
 };
 
@@ -232,6 +246,26 @@ com.isd.bluecollar.onTabActivation = function( e ) {
 };
 
 /**
+ * Generates a report.
+ */
+com.isd.bluecollar.generateReport = function() {
+	if( com.isd.bluecollar.driveOk ) {
+		var token = gapi.auth.getToken();
+		token.access_token = com.isd.bluecollar.originalAccessToken;
+		gapi.auth.setToken(token);
+		com.isd.bluecollar.writeTestFile();
+		var token = gapi.auth.getToken();
+		token.access_token = token.id_token;
+		gapi.auth.setToken(token);
+	} else {
+		if (typeof (console) !== "undefined") {
+			console.info("Report generation is not supported without authorized access to Google Drive!");
+		}
+	}
+	return false;
+};
+
+/**
  * Starts the project timer.
  * @param dateString the date string
  */
@@ -286,6 +320,16 @@ com.isd.bluecollar.stopTimer = function( dateString ) {
 };
 
 /**
+ * Loads additional APIs.
+ */
+com.isd.bluecollar.loadAdditionalApis = function() {
+	var driveCallback = function() {
+		com.isd.bluecollar.driveOk = true;
+	};
+	gapi.client.load('drive', 'v2', driveCallback);
+};
+
+/**
  * Initializes the application.
  * @param {string} apiRoot Root of the API's path.
  */
@@ -299,14 +343,15 @@ com.isd.bluecollar.init = function(apiRoot) {
 	
 	apisToLoad = 2;
 	gapi.client.load('bluecollar', 'v1', callback, apiRoot);
-	gapi.client.load('oauth2', 'v2', callback);
+	gapi.client.load('oauth2', 'v2', callback);	
 
 	$('.btn-start').click(com.isd.bluecollar.checkin);
 	$('.btn-stop').click(com.isd.bluecollar.checkout);
 	$('.btn-signin').click(com.isd.bluecollar.auth);
 	$('.btn-tryit').click(com.isd.bluecollar.switchToMain);
 	$('.btn-add-project').click(com.isd.bluecollar.submitNewProject);
+	$('.btn-generate-report').click(com.isd.bluecollar.generateReport);
 	
-	// Tab activation handling
+	/* Tab activation handling */
 	$('a[data-toggle="tab"]').on('show', com.isd.bluecollar.onTabActivation);
 };

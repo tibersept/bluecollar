@@ -3,6 +3,10 @@
  */
 package com.isd.bluecollar.datatype;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * JSON date range wrapper. Internally the dates are represented as strings.
  * @author doan
@@ -39,6 +43,19 @@ public class JsonRange {
 	public String getBegin() {
 		return begin;
 	}
+	
+	/**
+	 * Returns the begin date as a date object.
+	 * @param aSdf the date formatter
+	 * @return the date object
+	 */
+	public Date getBeginDate( SimpleDateFormat aSdf ) {
+		try {
+			return aSdf.parse(begin);
+		} catch( ParseException e ) {
+			return new Date();
+		}
+	}
 
 	/**
 	 * Sets the range begin
@@ -56,6 +73,19 @@ public class JsonRange {
 		return end;
 	}
 
+	/**
+	 * Returns the end date as a date object.
+	 * @param aSdf the date formatter
+	 * @return the date object
+	 */
+	public Date getEndDate( SimpleDateFormat aSdf ) {
+		try {
+			return aSdf.parse(end);
+		} catch( ParseException e ) {
+			return new Date();
+		}
+	}
+	
 	/**
 	 * Sets the range end.
 	 * @param anEnd the range end

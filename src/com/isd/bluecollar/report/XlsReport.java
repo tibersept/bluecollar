@@ -6,13 +6,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -24,13 +21,86 @@ import org.apache.poi.ss.util.CellRangeAddress;
  */
 public class XlsReport {
 	
+	/** Missing user constant */
+	private static final String NO_USER = "missing user";
+	/** Missing month constant */
+	private static final String NO_MONTH = "missing month";
+	/** Missing year constant */
+	private static final String NO_YEAR = "missing year";
+	
+	/** List of invalid columns when generating a report. */
 	private HashSet<Integer> invalidColumns;
+	/** The owner of the report */
+	private String user;
+	/** The month range */
+	private String monthRange;
+	/** The year range */
+	private String yearRange;
+	/** The cell styler */
+	private XlsCellStyler styler;
 	
 	/**
 	 * Create a new test class.
 	 */
 	public XlsReport() {
 		invalidColumns = new HashSet<Integer>();
+	}
+	
+	/**
+	 * Returns the user of the report.
+	 * @return the report user
+	 */
+	public String getUser() {
+		if( user!=null ) {
+			return user;
+		}
+		return NO_USER;
+	}
+	
+	/**
+	 * Sets the user of the report.
+	 * @param aUser the user
+	 */
+	public void setUser(String aUser) {
+		user = aUser;
+	}
+	
+	/**
+	 * Returns the month range as a string.
+	 * @return the month range
+	 */
+	public String getMonthRange() {
+		if( monthRange!=null ) {
+			return monthRange;
+		}
+		return NO_MONTH;
+	}
+	
+	/**
+	 * Sets the month range.
+	 * @param aMonthRange the month range
+	 */
+	public void setMonthRange(String aMonthRange) {
+		monthRange = aMonthRange;
+	}
+	
+	/**
+	 * Returns the year range as a string.
+	 * @return the year range
+	 */
+	public String getYearRange() {
+		if( yearRange!=null ) {
+			return yearRange;
+		}
+		return NO_YEAR;
+	}
+	
+	/**
+	 * Sets the year range as a string.
+	 * @param aYearRange the year range
+	 */
+	public void setYearRange(String aYearRange) {
+		yearRange = aYearRange;
 	}
 
 	/**
@@ -41,27 +111,60 @@ public class XlsReport {
 		Workbook wb = new HSSFWorkbook();
 		CreationHelper createHelper = wb.getCreationHelper();
 		Sheet sheet = createSheet(wb);
-
-		CellStyle infoStyle = getInfoCellStyle(wb);
-		CellStyle infoSmallStyle = getInfoSmallCellStyle(wb);
-		CellStyle inputStyleLeft = getInputStyle(wb, CellStyle.ALIGN_LEFT);
-		CellStyle inputStyleCenter = getInputStyle(wb, CellStyle.ALIGN_CENTER);
-		CellStyle columnStyle = getColumnCellStyle(wb,false,false);
-		CellStyle filledColumnStyle = getColumnCellStyle(wb,true,false);
-		CellStyle grayedColumnStyle = getColumnCellStyle(wb, false, true);
-		CellStyle grayedFilledColumnStyle = getColumnCellStyle(wb, true, true);
-		
-		createTopRow(createHelper, sheet, infoStyle, inputStyleLeft, inputStyleCenter);
+		setStyler(new XlsCellStyler(wb));
+		createTopRow(createHelper, sheet);
 		
 		int beg = 1;
 		int end = 31;
 		int projectCount = 4;
 		
-		markInvalidColumns(beg,end);		
-		createTable(createHelper, sheet, columnStyle, filledColumnStyle, grayedColumnStyle, grayedFilledColumnStyle, beg, end, projectCount);		
-		createFooter(createHelper, sheet, infoStyle, infoSmallStyle, inputStyleCenter, columnStyle, filledColumnStyle, beg, end, projectCount);
+		markInvalidColumns(beg,end);
+		createTable(createHelper, sheet, beg, end, projectCount);		
+		createFooter(createHelper, sheet, beg, end, projectCount);
 		
 		return convertToBase64(wb); 
+	}
+	
+	/**
+	 * Retrieves the cell styler.
+	 * @return the cell styler
+	 */
+	private XlsCellStyler getStyler() {
+		return styler;
+	}
+	
+	/**
+	 * Sets the cell styler.
+	 * @param aStyler the styler
+	 */
+	private void setStyler(XlsCellStyler aStyler) {
+		styler = aStyler;
+	}
+	
+	/**
+	 * Creates the top row containing user information, and time range information.
+	 * @param aCreateHelper the workbook creation helper
+	 * @param aSheet the worksheet
+	 */
+	private void createTopRow(CreationHelper aCreateHelper, Sheet aSheet) {
+		Row row = aSheet.createRow(2);
+		Cell cell = row.createCell(0);
+		CellStyle infoStyle = getStyler().getStyle(XlsCellStyler.INFO);
+		CellStyle inputLeftStyle = getStyler().getStyle(XlsCellStyler.INPUT_LEFT);
+		CellStyle inputCenterStyle = getStyler().getStyle(XlsCellStyler.INPUT_CENTER);
+		cell.setCellStyle(infoStyle);
+		cell.setCellValue(aCreateHelper.createRichTextString("Name:"));
+		createTextInputField(aSheet, aCreateHelper, inputLeftStyle, row, 2, 4, 11, getUser());
+				
+		cell = row.createCell(13);
+		cell.setCellStyle(infoStyle);
+		cell.setCellValue(aCreateHelper.createRichTextString("Monat:"));
+		createTextInputField(aSheet, aCreateHelper, inputCenterStyle, row, 2, 17, 24, getMonthRange());
+				
+		cell = row.createCell(26);
+		cell.setCellStyle(infoStyle);
+		cell.setCellValue(aCreateHelper.createRichTextString("Jahr:"));
+		createIntegerInputField(aSheet, aCreateHelper, inputCenterStyle, row, 2, 29, 33, getYearRange());
 	}
 	
 	/**
@@ -77,22 +180,24 @@ public class XlsReport {
 	 * @param end
 	 * @param projectCount
 	 */
-	private void createFooter(CreationHelper createHelper, Sheet sheet,
-			CellStyle infoStyle, CellStyle infoSmallStyle,
-			CellStyle inputStyleCenter, CellStyle columnStyle,
-			CellStyle filledColumnStyle, int beg, int end, int projectCount) {
+	private void createFooter(CreationHelper createHelper, Sheet sheet, int beg, int end, int projectCount) {
+		CellStyle infoStyle = getStyler().getStyle(XlsCellStyler.INFO);
+		CellStyle infoSmallStyle = getStyler().getStyle(XlsCellStyler.SMALL_INFO);
+		CellStyle inputCenterStyle = getStyler().getStyle(XlsCellStyler.INPUT_CENTER);
+		CellStyle columnStyle = getStyler().getStyle(XlsCellStyler.COLUMN);
+		CellStyle filledColumnStyle = getStyler().getStyle(XlsCellStyler.COLUMN_FILLED);
 		Row row = sheet.createRow(12+projectCount);
 		Cell cell = row.createCell(0);
 		cell.setCellStyle(infoStyle);
 		cell.setCellValue(createHelper.createRichTextString("Überstundenausgleich:"));		
 		createTableFooterRow(createHelper, sheet, columnStyle, filledColumnStyle, 13+projectCount, beg, end);
 		
-		createFooterItem(createHelper, sheet, infoStyle, inputStyleCenter, 17+projectCount, 8, 14, "Gesamtstunden:");
-		createFooterItem(createHelper, sheet, infoStyle, inputStyleCenter, 19+projectCount, 8, 14, "Sollstunden:");
+		createFooterItem(createHelper, sheet, infoStyle, inputCenterStyle, 17+projectCount, 8, 14, "Gesamtstunden:");
+		createFooterItem(createHelper, sheet, infoStyle, inputCenterStyle, 19+projectCount, 8, 14, "Sollstunden:");
 		
 		int rowIndex = 21+projectCount;
-		row = createFooterItem(createHelper, sheet, infoStyle, inputStyleCenter, rowIndex, 8, 14, "Überstunden:");		
-		createTextInputField(sheet, createHelper, inputStyleCenter, row, rowIndex, 20, 33, "");
+		row = createFooterItem(createHelper, sheet, infoStyle, inputCenterStyle, rowIndex, 8, 14, "Überstunden:");		
+		createTextInputField(sheet, createHelper, inputCenterStyle, row, rowIndex, 20, 33, "");
 		
 		rowIndex = 22+projectCount;
 		row = sheet.createRow(rowIndex);
@@ -125,32 +230,34 @@ public class XlsReport {
 	 * Creates the main table.
 	 * @param createHelper the workbook create helper
 	 * @param sheet the worksheet
-	 * @param columnStyle the column style
-	 * @param filledColumnStyle the filled column style
-	 * @param grayedColumnStyle the grayed column style
-	 * @param grayedFilledColumnStyle the grayed filled column style
 	 * @param beg the range begin
 	 * @param end the range end
 	 * @param projectCount the project count
 	 */
-	private void createTable(CreationHelper createHelper, Sheet sheet,
-			CellStyle columnStyle, CellStyle filledColumnStyle,
-			CellStyle grayedColumnStyle, CellStyle grayedFilledColumnStyle,
-			int beg, int end, int projectCount) {
+	private void createTable(CreationHelper createHelper, Sheet sheet, int beg, int end, int projectCount) {
+		CellStyle columnStyle = getStyler().getStyle(XlsCellStyler.COLUMN);
+		CellStyle filledColumnStyle = getStyler().getStyle(XlsCellStyler.COLUMN_FILLED);
+		CellStyle grayedColumnStyle = getStyler().getStyle(XlsCellStyler.COLUMN_GRAYED);
+		CellStyle grayedFilledColumnStyle = getStyler().getStyle(XlsCellStyler.COLUMN_FILLED_AND_GRAYED);
+		
 		createTableHeaderRow(createHelper, sheet, columnStyle, filledColumnStyle, 5, beg, end);
 				
 		for( int i=0; i<projectCount; i++ ) {
 			int rowIndex = 6+i;
 			if( i%2 == 0 ) {
-				
 				createTableRow(createHelper, sheet, columnStyle, filledColumnStyle, rowIndex, beg, end,"PiSA sales Web Client Entwicklung");
 			} else {
 				createTableRow(createHelper, sheet, grayedColumnStyle, grayedFilledColumnStyle, rowIndex, beg, end,"PiSA sales Web Client Entwicklung");
 			}		
 		}
 		
-		createTableRow(createHelper, sheet, grayedColumnStyle, grayedFilledColumnStyle, 6+projectCount, beg, end, "Krankheit");
-		createTableRow(createHelper, sheet, grayedColumnStyle, grayedFilledColumnStyle, 7+projectCount, beg, end, "Urlaub");
+		if( projectCount%2==0 ) {
+			createTableRow(createHelper, sheet, columnStyle, filledColumnStyle, 6+projectCount, beg, end, "Krankheit");
+			createTableRow(createHelper, sheet, grayedColumnStyle, grayedFilledColumnStyle, 7+projectCount, beg, end, "Urlaub");
+		} else {
+			createTableRow(createHelper, sheet, grayedColumnStyle, grayedFilledColumnStyle, 6+projectCount, beg, end, "Krankheit");
+			createTableRow(createHelper, sheet, columnStyle, filledColumnStyle, 7+projectCount, beg, end, "Urlaub");
+		}
 				
 		createTableFooterRow(createHelper, sheet, columnStyle, filledColumnStyle, 9+projectCount, beg, end);
 	}
@@ -293,34 +400,7 @@ public class XlsReport {
 		return invalidColumns.contains(day);
 	}
 
-	/**
-	 * Creates the top row.
-	 * @param createHelper the workbook creation helper
-	 * @param sheet the worksheet
-	 * @param infoStyle the info style
-	 * @param inputStyleLeft the left aligned input style
-	 * @param inputStyleCenter the centered input style
-	 */
-	private void createTopRow(CreationHelper createHelper, Sheet sheet,
-			CellStyle infoStyle, CellStyle inputStyleLeft,
-			CellStyle inputStyleCenter) {
-		Row row = sheet.createRow(2);
-		Cell cell = row.createCell(0);
-		cell.setCellStyle(infoStyle);
-		cell.setCellValue(createHelper.createRichTextString("Name:"));		
-		createTextInputField(sheet, createHelper, inputStyleLeft, row, 2, 4, 11, "Isakov, Doan");
-		
-		
-		cell = row.createCell(13);
-		cell.setCellStyle(infoStyle);
-		cell.setCellValue(createHelper.createRichTextString("Monat:"));
-		createTextInputField(sheet, createHelper, inputStyleCenter, row, 2, 17, 24, "Juli");
-				
-		cell = row.createCell(26);
-		cell.setCellStyle(infoStyle);
-		cell.setCellValue(createHelper.createRichTextString("Jahr:"));
-		createIntegerInputField(sheet, createHelper, inputStyleCenter, row, 2, 29, 33, "2013");
-	}
+	
 
 	/**
 	 * Creates an input field marking in the provided region.
@@ -368,90 +448,6 @@ public class XlsReport {
 		sheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, beg, end));				
 	}
 
-	/**
-	 * Creates and returns the input cell style
-	 * @param wb the workbook
-	 * @param alignment the alignment
-	 * @return the input cell style
-	 */
-	private CellStyle getInputStyle(Workbook wb, short alignment) {
-		CellStyle inputStyle = wb.createCellStyle();		
-		Font font = wb.createFont();
-		font.setFontName(HSSFFont.FONT_ARIAL);
-		font.setFontHeightInPoints((short)12);
-		font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-		inputStyle.setBorderBottom(CellStyle.BORDER_THIN);
-		inputStyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-		inputStyle.setFont(font);
-		inputStyle.setAlignment(alignment);		
-		return inputStyle;
-	}
-
-	/**
-	 * Creates and returns info cell style.
-	 * @param wb the workbook
-	 * @return the info cell style
-	 */
-	private CellStyle getInfoCellStyle(Workbook wb) {
-		CellStyle infoStyle = wb.createCellStyle();		
-		Font font = wb.createFont();
-		font.setFontName(HSSFFont.FONT_ARIAL);
-		font.setFontHeightInPoints((short)12);
-		font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-		infoStyle.setFont(font);		
-		return infoStyle;
-	}
-	
-	/**
-	 * Creates and returns small info cell style.
-	 * @param wb the workbook
-	 * @return the info cell style
-	 */
-	private CellStyle getInfoSmallCellStyle(Workbook wb) {
-		CellStyle infoStyle = wb.createCellStyle();		
-		Font font = wb.createFont();
-		font.setFontName(HSSFFont.FONT_ARIAL);
-		font.setFontHeightInPoints((short)10);
-		infoStyle.setFont(font);
-		infoStyle.setAlignment(CellStyle.ALIGN_CENTER);
-		return infoStyle;
-	}
-	
-	/**
-	 * Creates and returns the column cell style.
-	 * @param wb the workbook
-	 * @param filled <code>true</code> to fill cell content
-	 * @param grayed <code>true</code> to gray background
-	 * @return the column cell style
-	 */
-	private CellStyle getColumnCellStyle(Workbook wb, boolean filled, boolean grayed) {
-		CellStyle columnStyle = wb.createCellStyle();		
-		Font font = wb.createFont();
-		font.setFontName(HSSFFont.FONT_ARIAL);
-		font.setFontHeightInPoints((short)10);
-		columnStyle.setFont(font);		
-		columnStyle.setAlignment(CellStyle.ALIGN_CENTER);
-		columnStyle.setBorderTop(CellStyle.BORDER_THIN);
-		columnStyle.setBorderBottom(CellStyle.BORDER_THIN);
-		columnStyle.setBorderLeft(CellStyle.BORDER_THIN);
-		columnStyle.setBorderRight(CellStyle.BORDER_THIN);
-		
-		if( grayed ) {
-			columnStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);			
-			if( filled ) {
-				columnStyle.setFillForegroundColor(IndexedColors.BLACK.getIndex());
-				columnStyle.setFillPattern(CellStyle.THIN_HORZ_BANDS);
-				columnStyle.setFillBackgroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-			} else {
-				columnStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());	
-			}
-		} else if( filled ) {
-			columnStyle.setFillPattern(CellStyle.THIN_HORZ_BANDS);
-		}
-		
-		return columnStyle;
-	}
-	
 	/**
 	 * Converts the workbook first to a byte array and then to a BASE64 encoded string.
 	 * @param aWb the workbook

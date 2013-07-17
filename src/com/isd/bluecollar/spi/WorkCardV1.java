@@ -15,7 +15,7 @@ import com.isd.bluecollar.data.WorkTimeData;
 import com.isd.bluecollar.datatype.JsonByteArray;
 import com.isd.bluecollar.datatype.JsonDate;
 import com.isd.bluecollar.datatype.JsonRange;
-import com.isd.bluecollar.report.XlsReport;
+import com.isd.bluecollar.report.ReportGenerator;
 
 @Api(
 	name = "bluecollar",version = "v1",
@@ -23,6 +23,8 @@ import com.isd.bluecollar.report.XlsReport;
 )
 public class WorkCardV1 {
 
+	private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	
 	/**
 	 * Checks in at this current time.
 	 * @return the time of checking specified as distance in milliseconds from the EPOCH
@@ -30,7 +32,7 @@ public class WorkCardV1 {
 	@ApiMethod(name = "wcard.checkin", httpMethod = "POST")
 	public JsonDate checkin(@Named("project") String aProject, User aUser) {
 		Date rightNow = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 		String username = getUserName(aUser);
 		
 		WorkTimeData wtd = new WorkTimeData();
@@ -46,7 +48,7 @@ public class WorkCardV1 {
 	@ApiMethod(name = "wcard.checkout", httpMethod = "POST")
 	public JsonDate checkout(@Named("project") String aProject, User aUser) {
 		Date rightNow = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 		String username = getUserName(aUser);
 		
 		WorkTimeData wtd = new WorkTimeData();
@@ -63,8 +65,9 @@ public class WorkCardV1 {
 	 */
 	@ApiMethod(name = "wcard.generatereport", httpMethod = "POST" )
 	public JsonByteArray generateReport(JsonRange aRange, User aUser ) {
-		XlsReport report = new XlsReport();
-		return new JsonByteArray(report.generateReport());
+		ReportGenerator reporter = new ReportGenerator(aRange,DATE_FORMAT);
+		reporter.setUser(getUserName(aUser));
+		return new JsonByteArray(reporter.generateReport());
 	}
 	
 	/**

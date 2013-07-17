@@ -144,6 +144,15 @@
           }
         }
       },
+      "JsonByteArray" : {
+        "id" : "JsonByteArray",
+        "type" : "object",
+        "properties" : {
+          "byteArray" : {
+            "type" : "string"
+          }
+        }
+      },
       "JsonDate" : {
         "id" : "JsonDate",
         "type" : "object",
@@ -165,7 +174,7 @@
           "$ref" : "JsonRange"
         },
         "response" : {
-          "$ref" : "JsonRange"
+          "$ref" : "JsonByteArray"
         }
       },
       "com.isd.bluecollar.spi.WorkCardV1.checkout" : {

@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"s1omim4x8ymp9_6H8kBMkfEDqpo/t_vBF8hj0p2877HKpeB2yNecL3w\"",
+ "etag": "\"s1omim4x8ymp9_6H8kBMkfEDqpo/60-FdhES0LocEINyNKTAiHfOhn0\"",
  "discoveryVersion": "v1",
  "id": "bluecollar:v1",
  "name": "bluecollar",
@@ -64,6 +64,15 @@
   }
  },
  "schemas": {
+  "JsonByteArray": {
+   "id": "JsonByteArray",
+   "type": "object",
+   "properties": {
+    "byteArray": {
+     "type": "string"
+    }
+   }
+  },
   "JsonDate": {
    "id": "JsonDate",
    "type": "object",
@@ -170,7 +179,7 @@
       "parameterName": "resource"
      },
      "response": {
-      "$ref": "JsonRange"
+      "$ref": "JsonByteArray"
      }
     },
     "listprojects": {

@@ -12,6 +12,7 @@ import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.appengine.api.users.User;
 import com.isd.bluecollar.data.WorkTimeData;
+import com.isd.bluecollar.datatype.JsonByteArray;
 import com.isd.bluecollar.datatype.JsonDate;
 import com.isd.bluecollar.datatype.JsonRange;
 import com.isd.bluecollar.report.XlsReport;
@@ -61,13 +62,9 @@ public class WorkCardV1 {
 	 * @return
 	 */
 	@ApiMethod(name = "wcard.generatereport", httpMethod = "POST" )
-	public JsonRange generateReport(JsonRange aRange, User aUser ) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		
+	public JsonByteArray generateReport(JsonRange aRange, User aUser ) {
 		XlsReport report = new XlsReport();
-		report.generateReport();
-		
-		return new JsonRange(sdf.format(new Date()), sdf.format(new Date()));
+		return new JsonByteArray(report.generateReport());
 	}
 	
 	/**

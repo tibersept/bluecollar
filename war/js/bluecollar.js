@@ -78,8 +78,16 @@ com.isd.bluecollar.checkout = function() {
  */
 com.isd.bluecollar.generateReport = function() {
 	gapi.client.bluecollar.wcard.generatereport({'begin':'2013-01-23 00:00:00','end':'2013-01-26 00:00:00'}).execute(function(resp){
-		if(console) {
-			console.log(resp);
+		if( resp.byteArray ) {
+			var token = gapi.auth.getToken();
+			token.access_token = com.isd.bluecollar.originalAccessToken;			
+			gapi.auth.setToken(token);
+			
+			com.isd.bluecollar.storeFile( resp.byteArray );
+			
+			var token = gapi.auth.getToken();
+			token.access_token = token.id_token;
+			gapi.auth.setToken(token);
 		}
 	});
 };
@@ -249,20 +257,13 @@ com.isd.bluecollar.onTabActivation = function( e ) {
  * Generates a report.
  */
 com.isd.bluecollar.provideReport = function() {
-//	if( com.isd.bluecollar.driveOk ) {
+	if( com.isd.bluecollar.driveOk ) {
 		com.isd.bluecollar.generateReport();
-//		var token = gapi.auth.getToken();
-//		token.access_token = com.isd.bluecollar.originalAccessToken;
-//		gapi.auth.setToken(token);
-//		com.isd.bluecollar.writeTestFile();
-//		var token = gapi.auth.getToken();
-//		token.access_token = token.id_token;
-//		gapi.auth.setToken(token);
-//	} else {
-//		if (typeof (console) !== "undefined") {
-//			console.info("Report generation is not supported without authorized access to Google Drive!");
-//		}
-//	}
+	} else {
+		if (typeof (console) !== "undefined") {
+			console.info("Report generation is not supported without authorized access to Google Drive!");
+		}
+	}
 	return false;
 };
 

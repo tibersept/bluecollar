@@ -1,16 +1,17 @@
 if( com.isd.bluecollar ) {
-	com.isd.bluecollar.writeTestFile = function() {
+	com.isd.bluecollar.storeFile = function( report ) {
 		const boundary = '-------314159265358979323846';
 		const delimiter = "\r\n--" + boundary + "\r\n";
 		const close_delim = "\r\n--" + boundary + "--";
 
 		var contentType = 'application/octet-stream';
 		var metadata = {
-				'title': 'helloworld.txt',
+				'title': 'helloworld.xls',
 				'mimeType': contentType
 		};
 
-		var base64Data = btoa("Hello World! This is a test, stay tuned!");
+		//var base64Data = btoa("Hello World! This is a test, stay tuned!");
+		var base64Data = report;
 		var multipartRequestBody =
 			delimiter +
 			'Content-Type: application/json\r\n\r\n' +

@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"s1omim4x8ymp9_6H8kBMkfEDqpo/vpg1RqLrjXVczF7VyWWlqzzg-5A\"",
+ "etag": "\"s1omim4x8ymp9_6H8kBMkfEDqpo/t_vBF8hj0p2877HKpeB2yNecL3w\"",
  "discoveryVersion": "v1",
  "id": "bluecollar:v1",
  "name": "bluecollar",
@@ -119,21 +119,39 @@
   },
   "bluecollar.wcard.checkin": {
    "id": "bluecollar.wcard.checkin",
+   "parameters": {
+    "project": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "project"
+   ],
    "returns": {
     "$ref": "JsonDate"
    }
   },
   "bluecollar.wcard.checkout": {
    "id": "bluecollar.wcard.checkout",
+   "parameters": {
+    "project": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "project"
+   ],
    "returns": {
     "$ref": "JsonDate"
    }
   },
-  "bluecollar.wcard.list": {
-   "id": "bluecollar.wcard.list",
+  "bluecollar.wcard.generatereport": {
+   "id": "bluecollar.wcard.generatereport",
    "parameters": {
     "resource": {
-     "$ref": "JsonDate"
+     "$ref": "JsonRange"
     }
    },
    "parameterOrder": [

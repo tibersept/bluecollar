@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"s1omim4x8ymp9_6H8kBMkfEDqpo/vpg1RqLrjXVczF7VyWWlqzzg-5A\"",
+ "etag": "\"s1omim4x8ymp9_6H8kBMkfEDqpo/t_vBF8hj0p2877HKpeB2yNecL3w\"",
  "discoveryVersion": "v1",
  "id": "bluecollar:v1",
  "name": "bluecollar",
@@ -103,7 +103,7 @@
    "methods": {
     "addproject": {
      "id": "bluecollar.wcard.addproject",
-     "path": "addProjects/{name}/{description}",
+     "path": "addProject/{name}/{description}",
      "httpMethod": "POST",
      "parameters": {
       "description": {
@@ -127,26 +127,46 @@
     },
     "checkin": {
      "id": "bluecollar.wcard.checkin",
-     "path": "checkin",
+     "path": "checkin/{project}",
      "httpMethod": "POST",
+     "parameters": {
+      "project": {
+       "type": "string",
+       "required": true,
+       "location": "path"
+      }
+     },
+     "parameterOrder": [
+      "project"
+     ],
      "response": {
       "$ref": "JsonDate"
      }
     },
     "checkout": {
      "id": "bluecollar.wcard.checkout",
-     "path": "checkout",
+     "path": "checkout/{project}",
      "httpMethod": "POST",
+     "parameters": {
+      "project": {
+       "type": "string",
+       "required": true,
+       "location": "path"
+      }
+     },
+     "parameterOrder": [
+      "project"
+     ],
      "response": {
       "$ref": "JsonDate"
      }
     },
-    "list": {
-     "id": "bluecollar.wcard.list",
-     "path": "list",
+    "generatereport": {
+     "id": "bluecollar.wcard.generatereport",
+     "path": "generateReport",
      "httpMethod": "POST",
      "request": {
-      "$ref": "JsonDate",
+      "$ref": "JsonRange",
       "parameterName": "resource"
      },
      "response": {

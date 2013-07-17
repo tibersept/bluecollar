@@ -38,13 +38,13 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
-    "bluecollar.wcard.list" : {
-      "path" : "list",
+    "bluecollar.wcard.generatereport" : {
+      "path" : "generateReport",
       "httpMethod" : "POST",
       "scopes" : [ ],
       "audiences" : [ ],
       "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.list",
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.generateReport",
       "request" : {
         "body" : "autoTemplate(backendRequest)",
         "bodyName" : "resource"
@@ -132,15 +132,6 @@
           }
         }
       },
-      "JsonDate" : {
-        "id" : "JsonDate",
-        "type" : "object",
-        "properties" : {
-          "date" : {
-            "type" : "string"
-          }
-        }
-      },
       "JsonRange" : {
         "id" : "JsonRange",
         "type" : "object",
@@ -152,6 +143,15 @@
             "type" : "string"
           }
         }
+      },
+      "JsonDate" : {
+        "id" : "JsonDate",
+        "type" : "object",
+        "properties" : {
+          "date" : {
+            "type" : "string"
+          }
+        }
       }
     },
     "methods" : {
@@ -160,9 +160,9 @@
           "$ref" : "StringCollection"
         }
       },
-      "com.isd.bluecollar.spi.WorkCardV1.list" : {
+      "com.isd.bluecollar.spi.WorkCardV1.generateReport" : {
         "request" : {
-          "$ref" : "JsonDate"
+          "$ref" : "JsonRange"
         },
         "response" : {
           "$ref" : "JsonRange"

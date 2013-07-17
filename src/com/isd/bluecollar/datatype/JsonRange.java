@@ -15,7 +15,15 @@ public class JsonRange {
 	private String end;
 	
 	/**
-	 * The JSON range.
+	 * Creates a new JSON range with empty begin and end strings.
+	 */
+	public JsonRange() {
+		begin = "";
+		end = "";
+	}
+	
+	/**
+	 * Creates a new JSON range with the given begin and end strings.
 	 * @param aBegin the range begin
 	 * @param anEnd the range end
 	 */

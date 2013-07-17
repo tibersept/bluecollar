@@ -76,8 +76,8 @@ com.isd.bluecollar.checkout = function() {
 /**
  * REST call. Lists the current workday.
  */
-com.isd.bluecollar.list = function() {
-	gapi.client.bluecollar.wcard.list({'date':'23-01-2013'}).execute(function(resp){
+com.isd.bluecollar.generateReport = function() {
+	gapi.client.bluecollar.wcard.generatereport({'begin':'2013-01-23 00:00:00','end':'2013-01-26 00:00:00'}).execute(function(resp){
 		if(console) {
 			console.log(resp);
 		}
@@ -248,20 +248,21 @@ com.isd.bluecollar.onTabActivation = function( e ) {
 /**
  * Generates a report.
  */
-com.isd.bluecollar.generateReport = function() {
-	if( com.isd.bluecollar.driveOk ) {
-		var token = gapi.auth.getToken();
-		token.access_token = com.isd.bluecollar.originalAccessToken;
-		gapi.auth.setToken(token);
-		com.isd.bluecollar.writeTestFile();
-		var token = gapi.auth.getToken();
-		token.access_token = token.id_token;
-		gapi.auth.setToken(token);
-	} else {
-		if (typeof (console) !== "undefined") {
-			console.info("Report generation is not supported without authorized access to Google Drive!");
-		}
-	}
+com.isd.bluecollar.provideReport = function() {
+//	if( com.isd.bluecollar.driveOk ) {
+		com.isd.bluecollar.generateReport();
+//		var token = gapi.auth.getToken();
+//		token.access_token = com.isd.bluecollar.originalAccessToken;
+//		gapi.auth.setToken(token);
+//		com.isd.bluecollar.writeTestFile();
+//		var token = gapi.auth.getToken();
+//		token.access_token = token.id_token;
+//		gapi.auth.setToken(token);
+//	} else {
+//		if (typeof (console) !== "undefined") {
+//			console.info("Report generation is not supported without authorized access to Google Drive!");
+//		}
+//	}
 	return false;
 };
 
@@ -350,7 +351,7 @@ com.isd.bluecollar.init = function(apiRoot) {
 	$('.btn-signin').click(com.isd.bluecollar.auth);
 	$('.btn-tryit').click(com.isd.bluecollar.switchToMain);
 	$('.btn-add-project').click(com.isd.bluecollar.submitNewProject);
-	$('.btn-generate-report').click(com.isd.bluecollar.generateReport);
+	$('.btn-generate-report').click(com.isd.bluecollar.provideReport);
 	
 	/* Tab activation handling */
 	$('a[data-toggle="tab"]').on('show', com.isd.bluecollar.onTabActivation);

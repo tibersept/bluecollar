@@ -10,6 +10,13 @@ public class JsonDate {
 	private String date;
 	
 	/**
+	 * Creates a new date wrapper with empty date string.
+	 */
+	public JsonDate() {
+		date = "";
+	}
+	
+	/**
 	 * Creates a new date wrapper.
 	 */
 	public JsonDate( String aDate) {

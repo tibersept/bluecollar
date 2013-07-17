@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.logging.Logger;
 
 import javax.inject.Named;
 
@@ -15,7 +14,7 @@ import com.google.appengine.api.users.User;
 import com.isd.bluecollar.data.WorkTimeData;
 import com.isd.bluecollar.datatype.JsonDate;
 import com.isd.bluecollar.datatype.JsonRange;
-import com.isd.bluecollar.datatype.Range;
+import com.isd.bluecollar.report.XlsReport;
 
 @Api(
 	name = "bluecollar",version = "v1",
@@ -53,23 +52,22 @@ public class WorkCardV1 {
 		wtd.setDayEnd(username, aProject, rightNow);
 		
 		return new JsonDate(sdf.format(rightNow));
-	}
+	}		
 	
 	/**
-	 * Lists all workcard data that falls into a given range.
-	 * @return the workcard range data
+	 * Generates an EXCEL report and returns the generated report as a byte array. 
+	 * @param aRange the range 
+	 * @param aUser the user 
+	 * @return
 	 */
-	@ApiMethod(name = "wcard.list", httpMethod = "POST" )
-	public JsonRange list(JsonDate aDate, User aUser) {
-		Date rightNow = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
+	@ApiMethod(name = "wcard.generatereport", httpMethod = "POST" )
+	public JsonRange generateReport(JsonRange aRange, User aUser ) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
-		Logger.getLogger(getClass().getName()).info("Received date:" + aDate.getDate());
+		XlsReport report = new XlsReport();
+		report.generateReport();
 		
-		WorkTimeData wtd = new WorkTimeData();
-		Range<Date> range = wtd.getRangeForDay("bluecollar-default", rightNow);
-		
-		return new JsonRange(sdf.format(range.getBegin()), sdf.format(range.getEnd()));
+		return new JsonRange(sdf.format(new Date()), sdf.format(new Date()));
 	}
 	
 	/**

@@ -78,10 +78,7 @@ com.isd.bluecollar.checkout = function() {
  * @param start the report range start
  * @param end the report range end
  */
-com.isd.bluecollar.generateReport = function( start, end ) {
-	if (typeof (console) !== "undefined") {
-		console.info("Begin ["+start+"] End ["+end+"]");
-	}
+com.isd.bluecollar.generateReport = function( start, end ) {	
 	gapi.client.bluecollar.wcard.generatereport({'begin':start,'end':end}).execute(function(resp){
 //		if( resp.byteArray ) {
 //			var token = gapi.auth.getToken();
@@ -94,9 +91,7 @@ com.isd.bluecollar.generateReport = function( start, end ) {
 //			token.access_token = token.id_token;
 //			gapi.auth.setToken(token);
 //		}
-		if (typeof (console) !== "undefined") {
-			console.info("Report generation completed!");
-		}
+		com.isd.bluecollar.displayMessage("Info", "Report has been genrated");
 	});
 };
 
@@ -117,7 +112,7 @@ com.isd.bluecollar.addProject = function( name, description ) {
  */
 com.isd.bluecollar.listProjects = function() {
 	gapi.client.bluecollar.wcard.listprojects().execute(function(resp){
-		if( resp ) {
+		if( resp ) {			
 			com.isd.bluecollar.updateProjectList(resp.items);
 		}
 	});
@@ -201,8 +196,12 @@ com.isd.bluecollar.submitNewProject = function() {
  * @param projects the project list
  */
 com.isd.bluecollar.updateProjectList = function( projects ) {
-	com.isd.bluecollar.updateProjectSelection( projects );
-	com.isd.bluecollar.updateProjectTable( projects );
+	if( projects.length==0) {
+		com.isd.bluecollar.displayMessage("Info", "No projects were found! You can add projects in settings.");
+	} else {
+		com.isd.bluecollar.updateProjectSelection( projects );
+		com.isd.bluecollar.updateProjectTable( projects );	
+	}
 };
 
 /**
@@ -265,7 +264,7 @@ com.isd.bluecollar.onTabActivation = function( e ) {
  * Generates a report on activation of the generate report button.
  */
 com.isd.bluecollar.provideReport = function() {
-//	if( com.isd.bluecollar.driveOk ) {
+	if( com.isd.bluecollar.driveOk ) {
 		var dateStart = $('#dp-start').val();
 		var timeStart = $('#tp-start').val();
 		var start = com.isd.bluecollar.date.parseDate(dateStart, timeStart);
@@ -273,11 +272,9 @@ com.isd.bluecollar.provideReport = function() {
 		var timeEnd = $('#tp-end').val();
 		var end = com.isd.bluecollar.date.parseDate(dateEnd, timeEnd);
 		com.isd.bluecollar.generateReport(start,end);
-//	} else {
-//		if (typeof (console) !== "undefined") {
-//			console.info("Report generation is not supported without authorized access to Google Drive!");
-//		}
-//	}
+	} else {
+		com.isd.bluecollar.displayMessage("Error", "Report generation is not supported without authorized access to Google Drive!");
+	}
 	return false;
 };
 
@@ -314,6 +311,29 @@ com.isd.bluecollar.stopTimer = function( utcTimestamp ) {
 };
 
 /**
+ * Displays a message to the user in the alert box.
+ * @param type the main type of the message, e.g. info, warning, debug, etc.
+ * @param message the message
+ */
+com.isd.bluecollar.displayMessage = function( type, message ) {
+	var box = $('.alert-box');
+	if( box ) {
+		box.children().remove();
+		var content = '<div class="alert alert-info"><button type="button" class="close" data-dismiss="alert">&times;</button><strong>'+
+			type + '!</strong> ' + message + '</div>';
+		box.append(content);
+	}
+};
+
+/**
+ * Enables the login buttons on login screen.
+ */
+com.isd.bluecollar.enableLogin = function() {
+	$('.btn-signin').prop('disabled', false);
+	$('.btn-tryit').prop('disabled', false);
+};
+
+/**
  * Loads additional APIs.
  */
 com.isd.bluecollar.loadAdditionalApis = function() {
@@ -332,12 +352,15 @@ com.isd.bluecollar.init = function(apiRoot) {
 	var callback = function() {
 		if (--apisToLoad == 0) {
 			com.isd.bluecollar.signin(true,com.isd.bluecollar.userAuthed);
+			if( !com.isd.bluecollar.signedIn ) {
+				com.isd.bluecollar.enableLogin();
+			}
 		}
 	}
 	
 	apisToLoad = 2;
 	gapi.client.load('bluecollar', 'v1', callback, apiRoot);
-	gapi.client.load('oauth2', 'v2', callback);	
+	gapi.client.load('oauth2', 'v2', callback);
 
 	$('.btn-start').click(com.isd.bluecollar.checkin);
 	$('.btn-stop').click(com.isd.bluecollar.checkout);

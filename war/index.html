@@ -19,11 +19,11 @@
 						<form class="form-signin">
 								<h3 class="form-signin-heading">Mavicollar Time Tracker</h3>
 								<h6>Sign in using your Google Account:</h6>
-								<button class="btn btn-large btn-primary btn-signin" type="submit">
+								<button class="btn btn-large btn-primary btn-signin" type="submit" disabled>
 										Sign in
 								</button>
 								<h6>Or just try it:</h6>
-								<button class="btn btn-large btn-tryit" type="submit">
+								<button class="btn btn-large btn-tryit" type="submit" disabled>
 										Try it
 								</button>
 						</form>	
@@ -39,10 +39,14 @@
 										</ul>
 								</div>
 						</div>
+						
+						<div class="alert-box">
+							<!-- Empty -->							
+						</div>
 
 						<div class="tab-content">
 								<div class="tab-pane active" id="home">
-										<div class="container">												
+										<div class="container">
 												<form class="form-manage-project-time">
 														<h2 class="form-manage-project-time-heading">Select a project</h2>
 														<select id="project-selection" class="combobox combo-project-selection">

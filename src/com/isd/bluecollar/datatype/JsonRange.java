@@ -3,9 +3,9 @@
  */
 package com.isd.bluecollar.datatype;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * JSON date range wrapper. Internally the dates are represented as strings.
@@ -46,15 +46,10 @@ public class JsonRange {
 	
 	/**
 	 * Returns the begin date as a date object.
-	 * @param aSdf the date formatter
 	 * @return the date object
 	 */
-	public Date getBeginDate( SimpleDateFormat aSdf ) {
-		try {
-			return aSdf.parse(begin);
-		} catch( ParseException e ) {
-			return new Date();
-		}
+	public Date getBeginDate() {
+		return getDateFromTimestamp(getBegin());
 	}
 
 	/**
@@ -75,15 +70,10 @@ public class JsonRange {
 
 	/**
 	 * Returns the end date as a date object.
-	 * @param aSdf the date formatter
 	 * @return the date object
 	 */
-	public Date getEndDate( SimpleDateFormat aSdf ) {
-		try {
-			return aSdf.parse(end);
-		} catch( ParseException e ) {
-			return new Date();
-		}
+	public Date getEndDate() {
+		return getDateFromTimestamp(getEnd());
 	}
 	
 	/**
@@ -92,6 +82,22 @@ public class JsonRange {
 	 */
 	public void setEnd(String anEnd) {
 		this.end = anEnd;
+	}
+	
+	/**
+	 * Parses the timestamp string and converts into a Java data object.
+	 * @param the timestamp
+	 * @return the date object
+	 */
+	private Date getDateFromTimestamp( String aTimestamp ) {
+		try {
+			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+			long timestamp = Long.parseLong(aTimestamp);
+			cal.setTimeInMillis(timestamp);
+			return cal.getTime();
+		} catch( NumberFormatException e ) {
+			return new Date();
+		}
 	}
 	
 }

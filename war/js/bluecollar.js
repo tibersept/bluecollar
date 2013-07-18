@@ -75,19 +75,27 @@ com.isd.bluecollar.checkout = function() {
 
 /**
  * REST call. Lists the current workday.
+ * @param start the report range start
+ * @param end the report range end
  */
-com.isd.bluecollar.generateReport = function() {
-	gapi.client.bluecollar.wcard.generatereport({'begin':'2013-01-23 00:00:00','end':'2013-01-26 00:00:00'}).execute(function(resp){
-		if( resp.byteArray ) {
-			var token = gapi.auth.getToken();
-			token.access_token = com.isd.bluecollar.originalAccessToken;			
-			gapi.auth.setToken(token);
-			
-			com.isd.bluecollar.storeFile( resp.byteArray );
-			
-			var token = gapi.auth.getToken();
-			token.access_token = token.id_token;
-			gapi.auth.setToken(token);
+com.isd.bluecollar.generateReport = function( start, end ) {
+	if (typeof (console) !== "undefined") {
+		console.info("Begin ["+start+"] End ["+end+"]");
+	}
+	gapi.client.bluecollar.wcard.generatereport({'begin':start,'end':end}).execute(function(resp){
+//		if( resp.byteArray ) {
+//			var token = gapi.auth.getToken();
+//			token.access_token = com.isd.bluecollar.originalAccessToken;			
+//			gapi.auth.setToken(token);
+//			
+//			com.isd.bluecollar.filemanager.storeFile( resp.byteArray );
+//			
+//			var token = gapi.auth.getToken();
+//			token.access_token = token.id_token;
+//			gapi.auth.setToken(token);
+//		}
+		if (typeof (console) !== "undefined") {
+			console.info("Report generation completed!");
 		}
 	});
 };
@@ -254,66 +262,50 @@ com.isd.bluecollar.onTabActivation = function( e ) {
 };
 
 /**
- * Generates a report.
+ * Generates a report on activation of the generate report button.
  */
 com.isd.bluecollar.provideReport = function() {
-	if( com.isd.bluecollar.driveOk ) {
-		com.isd.bluecollar.generateReport();
-	} else {
-		if (typeof (console) !== "undefined") {
-			console.info("Report generation is not supported without authorized access to Google Drive!");
-		}
-	}
+//	if( com.isd.bluecollar.driveOk ) {
+		var dateStart = $('#dp-start').val();
+		var timeStart = $('#tp-start').val();
+		var start = com.isd.bluecollar.date.parseDate(dateStart, timeStart);
+		var dateEnd = $('#dp-end').val();
+		var timeEnd = $('#tp-end').val();
+		var end = com.isd.bluecollar.date.parseDate(dateEnd, timeEnd);
+		com.isd.bluecollar.generateReport(start,end);
+//	} else {
+//		if (typeof (console) !== "undefined") {
+//			console.info("Report generation is not supported without authorized access to Google Drive!");
+//		}
+//	}
 	return false;
 };
 
 /**
  * Starts the project timer.
- * @param dateString the date string
+ * @param utcTimestamp the UTC timestamp for start time
  */
-com.isd.bluecollar.startTimer = function( dateString ) {
-	var utcMilliseconds = Date.parse(dateString);
-	var dte = new Date(0);
-	dte.setUTCMilliseconds(utcMilliseconds);
-	com.isd.bluecollar.timer = window.setInterval(function(){com.isd.bluecollar.updateTimer(dte);}, 5000);
+com.isd.bluecollar.startTimer = function( utcTimestamp ) {		
+	com.isd.bluecollar.timer = window.setInterval(function(){com.isd.bluecollar.updateTimer(utcTimestamp);}, 5000);
 };
 
 /**
  * Updates the project timer.
  * @param start the start date
  */
-com.isd.bluecollar.updateTimer = function( start ) {
+com.isd.bluecollar.updateTimer = function( utcStartTimestamp ) {
 	var elm = $('#time-display');
-	if( start && elm ) {
-		var now = new Date();
-		var dif = now.getTime() - start.getTime();
-		var hrs = Math.floor(dif/3600000);
-		dif = dif - (hrs*3600000);
-		var min = Math.floor(dif/60000);
-		dif = dif - (min*60000);
-		var sec = Math.round(dif/1000);
-		if( hrs<10 ) {
-			hrs = "0"+hrs;
-		}
-		if( min<10 ) {
-			min = "0"+min;
-		} else if( min > 59 ) {
-			min = "59";
-		}
-		if( sec<10 ) {
-			sec = "0"+sec;
-		} else if( sec > 59 ) {
-			sec = "59";
-		}
-		var content = hrs + ":" + min + ":" + sec;
-		elm.html(content);
+	if( utcStartTimestamp && elm ) {
+		var value = com.isd.bluecollar.date.getFormattedClockDiff(utcStartTimestamp);		
+		elm.html(value);
 	}
 };
 
 /**
  * Stops the project timer.
+ * @param utcTimestamp the UTC timestamp for end time
  */
-com.isd.bluecollar.stopTimer = function( dateString ) {
+com.isd.bluecollar.stopTimer = function( utcTimestamp ) {
 	window.clearInterval(com.isd.bluecollar.timer);
 	var elm = $('#time-display');
 	if( elm ) {

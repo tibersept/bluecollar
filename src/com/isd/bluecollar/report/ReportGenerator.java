@@ -4,7 +4,6 @@
 package com.isd.bluecollar.report;
 
 import java.text.DateFormatSymbols;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -30,9 +29,9 @@ public class ReportGenerator {
 	 * @param aRange the date range for the report 
 	 * @param aFormat the date format parser
 	 */
-	public ReportGenerator( JsonRange aRange, String aFormat ) {
+	public ReportGenerator( JsonRange aRange ) {
 		initializeMonthNames();
-		parseRange(aRange, aFormat);
+		parseRange(aRange);
 	}
 	
 	
@@ -100,12 +99,10 @@ public class ReportGenerator {
 	/**
 	 * Parses the report date range.
 	 * @param aRange the range
-	 * @param aFormat the date format
 	 */
-	private void parseRange(JsonRange aRange, String aFormat) {
-		SimpleDateFormat sdf = new SimpleDateFormat(aFormat);
-		setBegin(aRange.getBeginDate(sdf));
-		setEnd(aRange.getEndDate(sdf));
+	private void parseRange(JsonRange aRange) {
+		setBegin(aRange.getBeginDate());
+		setEnd(aRange.getEndDate());
 	}
 	
 	/**

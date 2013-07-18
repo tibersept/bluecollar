@@ -1,5 +1,11 @@
 if( com.isd.bluecollar ) {
-	com.isd.bluecollar.storeFile = function( report ) {
+	com.isd.bluecollar.filemanager = com.isd.bluecollar.filemanager || {};
+	
+	/**
+	 * Stores a file's BASE64 content on the user's Google Drive.
+	 * @param report the BASE64 encoded content of the report
+	 */
+	com.isd.bluecollar.filemanager.storeFile = function( report ) {
 		const boundary = '-------314159265358979323846';
 		const delimiter = "\r\n--" + boundary + "\r\n";
 		const close_delim = "\r\n--" + boundary + "--";
@@ -10,7 +16,6 @@ if( com.isd.bluecollar ) {
 				'mimeType': contentType
 		};
 
-		//var base64Data = btoa("Hello World! This is a test, stay tuned!");
 		var base64Data = report;
 		var multipartRequestBody =
 			delimiter +

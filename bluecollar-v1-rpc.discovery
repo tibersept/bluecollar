@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"s1omim4x8ymp9_6H8kBMkfEDqpo/60-FdhES0LocEINyNKTAiHfOhn0\"",
+ "etag": "\"s1omim4x8ymp9_6H8kBMkfEDqpo/d_fW4YyUPzKjdGSj8lB3LIwo_M0\"",
  "discoveryVersion": "v1",
  "id": "bluecollar:v1",
  "name": "bluecollar",
@@ -87,8 +87,16 @@
     "begin": {
      "type": "string"
     },
+    "beginDate": {
+     "type": "string",
+     "format": "date-time"
+    },
     "end": {
      "type": "string"
+    },
+    "endDate": {
+     "type": "string",
+     "format": "date-time"
     }
    }
   },

@@ -1,6 +1,5 @@
 package com.isd.bluecollar.spi;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -22,8 +21,6 @@ import com.isd.bluecollar.report.ReportGenerator;
 	clientIds = {ClientIds.WEB_CLIENT_ID}
 )
 public class WorkCardV1 {
-
-	private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	
 	/**
 	 * Checks in at this current time.
@@ -32,13 +29,12 @@ public class WorkCardV1 {
 	@ApiMethod(name = "wcard.checkin", httpMethod = "POST")
 	public JsonDate checkin(@Named("project") String aProject, User aUser) {
 		Date rightNow = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
-		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 		String username = getUserName(aUser);
 		
 		WorkTimeData wtd = new WorkTimeData();
 		wtd.setDayStart(username, aProject, rightNow);
 
-		return new JsonDate(sdf.format(rightNow));
+		return new JsonDate(String.valueOf(rightNow.getTime()));
 	}
 	
 	/**
@@ -47,14 +43,13 @@ public class WorkCardV1 {
 	 */
 	@ApiMethod(name = "wcard.checkout", httpMethod = "POST")
 	public JsonDate checkout(@Named("project") String aProject, User aUser) {
-		Date rightNow = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
-		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+		Date rightNow = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();		
 		String username = getUserName(aUser);
 		
 		WorkTimeData wtd = new WorkTimeData();
 		wtd.setDayEnd(username, aProject, rightNow);
 		
-		return new JsonDate(sdf.format(rightNow));
+		return new JsonDate(String.valueOf(rightNow.getTime()));
 	}		
 	
 	/**
@@ -65,7 +60,7 @@ public class WorkCardV1 {
 	 */
 	@ApiMethod(name = "wcard.generatereport", httpMethod = "POST" )
 	public JsonByteArray generateReport(JsonRange aRange, User aUser ) {
-		ReportGenerator reporter = new ReportGenerator(aRange,DATE_FORMAT);
+		ReportGenerator reporter = new ReportGenerator(aRange);
 		reporter.setUser(getUserName(aUser));
 		return new JsonByteArray(reporter.generateReport());
 	}

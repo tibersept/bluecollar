@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.logging.Logger;
 
 import javax.inject.Named;
 
@@ -55,13 +56,15 @@ public class WorkCardV1 {
 	/**
 	 * Generates an EXCEL report and returns the generated report as a byte array. 
 	 * @param aRange the range 
+	 * @param aTimezone the time zone
 	 * @param aUser the user 
 	 * @return
 	 */
 	@ApiMethod(name = "wcard.generatereport", httpMethod = "POST" )
-	public JsonByteArray generateReport(JsonRange aRange, User aUser ) {
+	public JsonByteArray generateReport( JsonRange aRange, User aUser ) {
 		ReportGenerator reporter = new ReportGenerator(aRange);
 		reporter.setUser(getUserName(aUser));
+		Logger.getLogger("[Report generation]").info("Timezone[" + aRange.getTimezone()+"]");
 		return new JsonByteArray(reporter.generateReport());
 	}
 	

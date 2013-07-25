@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"s1omim4x8ymp9_6H8kBMkfEDqpo/d_fW4YyUPzKjdGSj8lB3LIwo_M0\"",
+ "etag": "\"s1omim4x8ymp9_6H8kBMkfEDqpo/W77p40CoLvgbdJ-gET5MmQmyLkg\"",
  "discoveryVersion": "v1",
  "id": "bluecollar:v1",
  "name": "bluecollar",
@@ -99,6 +99,9 @@
     "endDate": {
      "type": "string",
      "format": "date-time"
+    },
+    "timezone": {
+     "type": "string"
     }
    }
   },

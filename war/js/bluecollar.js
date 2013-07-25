@@ -77,9 +77,10 @@ com.isd.bluecollar.checkout = function() {
  * REST call. Lists the current workday.
  * @param start the report range start
  * @param end the report range end
+ * @param timezone the user time zone as string
  */
-com.isd.bluecollar.generateReport = function( start, end ) {	
-	gapi.client.bluecollar.wcard.generatereport({'begin':start,'end':end}).execute(function(resp){
+com.isd.bluecollar.generateReport = function( start, end, timezone ) {	
+	gapi.client.bluecollar.wcard.generatereport({'begin':start,'end':end,'timezone':timezone}).execute(function(resp){
 //		if( resp.byteArray ) {
 //			var token = gapi.auth.getToken();
 //			token.access_token = com.isd.bluecollar.originalAccessToken;			
@@ -264,17 +265,18 @@ com.isd.bluecollar.onTabActivation = function( e ) {
  * Generates a report on activation of the generate report button.
  */
 com.isd.bluecollar.provideReport = function() {
-	if( com.isd.bluecollar.driveOk ) {
+//	if( com.isd.bluecollar.driveOk ) {
 		var dateStart = $('#dp-start').val();
 		var timeStart = $('#tp-start').val();
 		var start = com.isd.bluecollar.date.parseDate(dateStart, timeStart);
 		var dateEnd = $('#dp-end').val();
 		var timeEnd = $('#tp-end').val();
 		var end = com.isd.bluecollar.date.parseDate(dateEnd, timeEnd);
-		com.isd.bluecollar.generateReport(start,end);
-	} else {
-		com.isd.bluecollar.displayMessage("Error", "Report generation is not supported without authorized access to Google Drive!");
-	}
+		var timezone = jstz.determine();
+		com.isd.bluecollar.generateReport(start,end, timezone.name());
+//	} else {
+//		com.isd.bluecollar.displayMessage("Error", "Report generation is not supported without authorized access to Google Drive!");
+//	}
 	return false;
 };
 

@@ -142,6 +142,9 @@
           "end" : {
             "type" : "string"
           },
+          "timezone" : {
+            "type" : "string"
+          },
           "beginDate" : {
             "type" : "string",
             "format" : "date-time"

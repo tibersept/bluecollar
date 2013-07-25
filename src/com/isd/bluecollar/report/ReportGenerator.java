@@ -34,8 +34,6 @@ public class ReportGenerator {
 		parseRange(aRange);
 	}
 	
-	
-	
 	/**
 	 * Generates the EXCEL report in BASE64 encoding.
 	 * @return the generated report

@@ -17,6 +17,8 @@ public class JsonRange {
 	private String begin;
 	/** The range end */
 	private String end;
+	/** The timezone string */
+	private String timezone;
 	
 	/**
 	 * Creates a new JSON range with empty begin and end strings.
@@ -24,6 +26,7 @@ public class JsonRange {
 	public JsonRange() {
 		begin = "";
 		end = "";
+		timezone = "UTC";
 	}
 	
 	/**
@@ -34,6 +37,7 @@ public class JsonRange {
 	public JsonRange( String aBegin, String anEnd ) {
 		begin = aBegin;
 		end = anEnd;
+		timezone = "UTC";
 	}
 
 	/**
@@ -82,6 +86,22 @@ public class JsonRange {
 	 */
 	public void setEnd(String anEnd) {
 		this.end = anEnd;
+	}
+	
+	/**
+	 * Returns the user timezone
+	 * @return the user timezone
+	 */
+	public String getTimezone() {
+		return timezone;
+	}
+	
+	/**
+	 * Sets the user timezone.
+	 * @param timezone the timezone
+	 */
+	public void setTimezone(String timezone) {
+		this.timezone = timezone;
 	}
 	
 	/**

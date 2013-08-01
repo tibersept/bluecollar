@@ -272,8 +272,13 @@ com.isd.bluecollar.provideReport = function() {
 		var dateEnd = $('#dp-end').val();
 		var timeEnd = $('#tp-end').val();
 		var end = com.isd.bluecollar.date.parseDate(dateEnd, timeEnd);
-		var timezone = jstz.determine();
-		com.isd.bluecollar.generateReport(start,end, timezone.name());
+		
+		if( com.isd.bluecollar.date.checkRangeValidity(start, end) ) {
+			var timezone = jstz.determine();
+			com.isd.bluecollar.generateReport(start,end, timezone.name());	
+		} else {
+			com.isd.bluecollar.displayMessage("Error", "The selected range for report generation is invalid!");
+		}		
 //	} else {
 //		com.isd.bluecollar.displayMessage("Error", "Report generation is not supported without authorized access to Google Drive!");
 //	}

@@ -3,7 +3,7 @@ package com.isd.bluecollar.report;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.HashSet;
+import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -14,6 +14,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+
+import com.isd.bluecollar.data.ReportData;
 
 /**
  * Excel report generator.
@@ -28,14 +30,14 @@ public class XlsReport {
 	/** Missing year constant */
 	private static final String NO_YEAR = "missing year";
 	
-	/** List of invalid columns when generating a report. */
-	private HashSet<Integer> invalidColumns;
 	/** The owner of the report */
 	private String user;
 	/** The month range */
 	private String monthRange;
 	/** The year range */
 	private String yearRange;
+	/** The report data - day & project hours */
+	private ReportData reportData;
 	/** The cell styler */
 	private XlsCellStyler styler;
 	
@@ -43,7 +45,7 @@ public class XlsReport {
 	 * Create a new test class.
 	 */
 	public XlsReport() {
-		invalidColumns = new HashSet<Integer>();
+		// do nothing
 	}
 	
 	/**
@@ -64,7 +66,7 @@ public class XlsReport {
 	public void setUser(String aUser) {
 		user = aUser;
 	}
-	
+		
 	/**
 	 * Returns the month range as a string.
 	 * @return the month range
@@ -102,27 +104,53 @@ public class XlsReport {
 	public void setYearRange(String aYearRange) {
 		yearRange = aYearRange;
 	}
-
+	
 	/**
-	 * Generates a new report and return the result as a byte stream.
+	 * Returns the report data.
+	 * @return the report data
+	 */
+	public ReportData getReportData() {
+		return reportData;
+	}
+	
+	/**
+	 * Sets the report data.
+	 * @param aData the report data
+	 */
+	public void setReportData( ReportData aData ) {
+		reportData = aData;
+	}
+	
+	/**
+	 * Generates a new report and return the result as a byte stream. If the
+	 * input data of the report is invalid then this method returns an empty
+	 * string.
 	 * @return BASE64 encoded version of the byte array
 	 */
-	public String generateReport() {		
-		Workbook wb = new HSSFWorkbook();
-		CreationHelper createHelper = wb.getCreationHelper();
-		Sheet sheet = createSheet(wb);
-		setStyler(new XlsCellStyler(wb));
-		createTopRow(createHelper, sheet);
-		
-		int beg = 1;
-		int end = 31;
-		int projectCount = 4;
-		
-		markInvalidColumns(beg,end);
-		createTable(createHelper, sheet, beg, end, projectCount);		
-		createFooter(createHelper, sheet, beg, end, projectCount);
-		
-		return convertToBase64(wb); 
+	public String generateReport() {
+		if( validateInputData() ) {
+			Workbook wb = new HSSFWorkbook();
+			CreationHelper createHelper = wb.getCreationHelper();
+			Sheet sheet = createSheet(wb);
+			setStyler(new XlsCellStyler(wb));
+			
+			createTopRow(createHelper, sheet);
+			createTable(createHelper, sheet);
+			createFooter(createHelper, sheet);
+			
+			return convertToBase64(wb);
+		} else {
+			return "";
+		}
+	}
+	
+	/**
+	 * Validates the report input data.
+	 * @return <code>true</code> if input data is valid
+	 */
+	private boolean validateInputData() {
+		return getUser()!=null && getMonthRange()!=null 
+				&& getYearRange()!=null && getReportData()!=null; 
 	}
 	
 	/**
@@ -170,27 +198,21 @@ public class XlsReport {
 	/**
 	 * Creates the footer of the worksheet.
 	 * @param createHelper the create helper
-	 * @param sheet
-	 * @param infoStyle
-	 * @param infoSmallStyle
-	 * @param inputStyleCenter
-	 * @param columnStyle
-	 * @param filledColumnStyle
-	 * @param beg
-	 * @param end
-	 * @param projectCount
+	 * @param sheet the worksheet
 	 */
-	private void createFooter(CreationHelper createHelper, Sheet sheet, int beg, int end, int projectCount) {
+	private void createFooter( CreationHelper createHelper, Sheet sheet ) {
 		CellStyle infoStyle = getStyler().getStyle(XlsCellStyler.INFO);
 		CellStyle infoSmallStyle = getStyler().getStyle(XlsCellStyler.SMALL_INFO);
 		CellStyle inputCenterStyle = getStyler().getStyle(XlsCellStyler.INPUT_CENTER);
 		CellStyle columnStyle = getStyler().getStyle(XlsCellStyler.COLUMN);
 		CellStyle filledColumnStyle = getStyler().getStyle(XlsCellStyler.COLUMN_FILLED);
+		int projectCount = getReportData().getProjectCount();
+		
 		Row row = sheet.createRow(12+projectCount);
 		Cell cell = row.createCell(0);
 		cell.setCellStyle(infoStyle);
 		cell.setCellValue(createHelper.createRichTextString("Überstundenausgleich:"));		
-		createTableFooterRow(createHelper, sheet, columnStyle, filledColumnStyle, 13+projectCount, beg, end);
+		createTableFooterRow(createHelper, sheet, columnStyle, filledColumnStyle, 13+projectCount);
 		
 		createFooterItem(createHelper, sheet, infoStyle, inputCenterStyle, 17+projectCount, 8, 14, "Gesamtstunden:");
 		createFooterItem(createHelper, sheet, infoStyle, inputCenterStyle, 19+projectCount, 8, 14, "Sollstunden:");
@@ -230,52 +252,37 @@ public class XlsReport {
 	 * Creates the main table.
 	 * @param createHelper the workbook create helper
 	 * @param sheet the worksheet
-	 * @param beg the range begin
-	 * @param end the range end
-	 * @param projectCount the project count
 	 */
-	private void createTable(CreationHelper createHelper, Sheet sheet, int beg, int end, int projectCount) {
+	private void createTable(CreationHelper createHelper, Sheet sheet) {
 		CellStyle columnStyle = getStyler().getStyle(XlsCellStyler.COLUMN);
 		CellStyle filledColumnStyle = getStyler().getStyle(XlsCellStyler.COLUMN_FILLED);
 		CellStyle grayedColumnStyle = getStyler().getStyle(XlsCellStyler.COLUMN_GRAYED);
 		CellStyle grayedFilledColumnStyle = getStyler().getStyle(XlsCellStyler.COLUMN_FILLED_AND_GRAYED);
 		
-		createTableHeaderRow(createHelper, sheet, columnStyle, filledColumnStyle, 5, beg, end);
-				
-		for( int i=0; i<projectCount; i++ ) {
-			int rowIndex = 6+i;
-			if( i%2 == 0 ) {
-				createTableRow(createHelper, sheet, columnStyle, filledColumnStyle, rowIndex, beg, end,"PiSA sales Web Client Entwicklung");
-			} else {
-				createTableRow(createHelper, sheet, grayedColumnStyle, grayedFilledColumnStyle, rowIndex, beg, end,"PiSA sales Web Client Entwicklung");
-			}		
-		}
+		createTableHeaderRow(createHelper, sheet, columnStyle, filledColumnStyle, 5);
 		
-		if( projectCount%2==0 ) {
-			createTableRow(createHelper, sheet, columnStyle, filledColumnStyle, 6+projectCount, beg, end, "Krankheit");
-			createTableRow(createHelper, sheet, grayedColumnStyle, grayedFilledColumnStyle, 7+projectCount, beg, end, "Urlaub");
-		} else {
-			createTableRow(createHelper, sheet, grayedColumnStyle, grayedFilledColumnStyle, 6+projectCount, beg, end, "Krankheit");
-			createTableRow(createHelper, sheet, columnStyle, filledColumnStyle, 7+projectCount, beg, end, "Urlaub");
-		}
-				
-		createTableFooterRow(createHelper, sheet, columnStyle, filledColumnStyle, 9+projectCount, beg, end);
-	}
-	
-	/**
-	 * Marks all invalid days between beg and end.
-	 * @param beg the begin date
-	 * @param end the end date
-	 */
-	private void markInvalidColumns( int beg, int end ) {
-		if( beg<end ) {
-			for( int i=beg; i<=end; i++ ) {
-				if( Math.random() > 0.5 ) {
-					invalidColumns.add(i);
-				}
+		List<String> projectList = getReportData().getProjectTitles();
+		int rowIndex = 6;
+		for( String project : projectList ) {
+			if( rowIndex%2 == 0 ) {
+				createTableRow(createHelper, sheet, columnStyle, filledColumnStyle, rowIndex, project);
+			} else {
+				createTableRow(createHelper, sheet, grayedColumnStyle, grayedFilledColumnStyle, rowIndex, project);
 			}
 		}
+		
+		int projectCount = getReportData().getProjectCount();
+		if( projectCount%2==0 ) {
+			createTableRow(createHelper, sheet, columnStyle, filledColumnStyle, projectCount+6, "Krankheit");
+			createTableRow(createHelper, sheet, grayedColumnStyle, grayedFilledColumnStyle, projectCount+7, "Urlaub");
+		} else {
+			createTableRow(createHelper, sheet, grayedColumnStyle, grayedFilledColumnStyle, projectCount+6, "Krankheit");
+			createTableRow(createHelper, sheet, columnStyle, filledColumnStyle, projectCount+7, "Urlaub");
+		}
+				
+		createTableFooterRow(createHelper, sheet, columnStyle, filledColumnStyle, projectCount+9);
 	}
+
 
 	/**
 	 * Creates the worksheet.
@@ -287,8 +294,9 @@ public class XlsReport {
 		sheet.setDisplayGridlines(false);
 		sheet.setDefaultColumnWidth(4);
 		sheet.setDefaultRowHeight((short)340);
-		sheet.setColumnWidth(33, 15*256);
-		sheet.setColumnWidth(34, 40*256);
+		int dayCount = getReportData().getDayCount();
+		sheet.setColumnWidth(dayCount+2, 15*256);
+		sheet.setColumnWidth(dayCount+3, 40*256);
 		return sheet;
 	}
 	
@@ -299,31 +307,35 @@ public class XlsReport {
 	 * @param columnStyle the column style
 	 * @param filledColumnStyle the filled column style
 	 * @param rowIndex the row index
-	 * @param beg the range begin
-	 * @param end the range end
 	 * @param title the project title
 	 */
-	private void createTableRow(CreationHelper createHelper, Sheet sheet, CellStyle columnStyle, CellStyle filledColumnStyle, int rowIndex, int beg, int end, String title) {
+	private void createTableRow(CreationHelper createHelper, Sheet sheet, CellStyle columnStyle, CellStyle filledColumnStyle, int rowIndex, String title) {
 		Row row = sheet.createRow(rowIndex);
 		
-		for( int i=0,j=beg; j<=end; i++,j++ ) {			
-			Cell cell = row.createCell(i);
-			if( isInvalidColumn(j) ) {
+		List<String> dayList = getReportData().getDayTitles();
+		int cellColumn = 0;
+		for( String day : dayList ) {			
+			Cell cell = row.createCell(cellColumn);
+			if( isInvalidDay(day) ) {
 				cell.setCellStyle(filledColumnStyle);
 			} else {
 				cell.setCellStyle(columnStyle);
-			}			
+			}
+			cell.setCellValue(getReportData().getHours(day, title));
+			cellColumn++;
 		}
 		
-		Cell cell = row.createCell(end+1);
+		int dayCount = getReportData().getDayCount();
+		
+		Cell cell = row.createCell(dayCount+1);
 		cell.setCellStyle(columnStyle);
 		cell.setCellValue(0.0);
 		
-		cell = row.createCell(end+2);
+		cell = row.createCell(dayCount+2);
 		cell.setCellStyle(columnStyle);
 		cell.setCellValue(rowIndex);
 		
-		cell = row.createCell(end+3);
+		cell = row.createCell(dayCount+3);
 		cell.setCellStyle(columnStyle);
 		cell.setCellValue(title);
 	}
@@ -335,24 +347,26 @@ public class XlsReport {
 	 * @param columnStyle the column style
 	 * @param filledColumnStyle the filled column style
 	 * @param rowIndex the row index
-	 * @param beg the range begin
-	 * @param end the range end
 	 */
-	private void createTableFooterRow(CreationHelper createHelper, Sheet sheet, CellStyle columnStyle, CellStyle filledColumnStyle, int rowIndex, int beg, int end) {
+	private void createTableFooterRow(CreationHelper createHelper, Sheet sheet, CellStyle columnStyle, CellStyle filledColumnStyle, int rowIndex) {
 		Row row = sheet.createRow(rowIndex);
 		
-		for( int i=0,j=beg; j<=end; i++,j++ ) {			
-			Cell cell = row.createCell(i);
-			if( isInvalidColumn(j) ) {
+		List<String> dayList = getReportData().getDayTitles();
+		int cellColumn=0;
+		for( String day : dayList ) {			
+			Cell cell = row.createCell(cellColumn);
+			if( isInvalidDay(day) ) {
 				cell.setCellStyle(filledColumnStyle);
 			} else {
 				cell.setCellStyle(columnStyle);
-			}			
+			}
 		}
 		
-		Cell cell = row.createCell(end+1);
+		int dayCount = getReportData().getDayCount();
+		
+		Cell cell = row.createCell(dayCount+1);
 		cell.setCellStyle(columnStyle);
-		cell.setCellValue(0.0);		
+		cell.setCellValue(0.0);
 	}
 
 	/**
@@ -362,45 +376,46 @@ public class XlsReport {
 	 * @param columnStyle the column style
 	 * @param filledColumnStyle the filled column style
 	 * @param rowIndex the row index
-	 * @param beg the range begin
-	 * @param end the range end
 	 */
-	private void createTableHeaderRow(CreationHelper createHelper, Sheet sheet, CellStyle columnStyle, CellStyle filledColumnStyle, int rowIndex, int beg, int end) {
+	private void createTableHeaderRow(CreationHelper createHelper, Sheet sheet, CellStyle columnStyle, CellStyle filledColumnStyle, int rowIndex) {
 		Row row = sheet.createRow(rowIndex);
 		
-		for( int i=0,j=beg; j<=end; i++,j++ ) {			
-			Cell cell = row.createCell(i);
-			if( isInvalidColumn(j) ) {
+		List<String> dayList = getReportData().getDayTitles();
+		int cellColumn = 0;
+		for( String day : dayList ) {
+			Cell cell = row.createCell(cellColumn);
+			if( isInvalidDay(day) ) {
 				cell.setCellStyle(filledColumnStyle);
 			} else {
 				cell.setCellStyle(columnStyle);
 			}
-			cell.setCellValue(j);			
+			cell.setCellValue(createHelper.createRichTextString(day));						
+			cellColumn++;
 		}
 		
-		Cell cell = row.createCell(end+1);
+		int dayCount = getReportData().getDayCount();
+		
+		Cell cell = row.createCell(dayCount+2);
 		cell.setCellStyle(columnStyle);
 		cell.setCellValue(createHelper.createRichTextString("Std."));
 		
-		cell = row.createCell(end+2);
+		cell = row.createCell(dayCount+3);
 		cell.setCellStyle(columnStyle);
 		cell.setCellValue(createHelper.createRichTextString("Nr."));
 		
-		cell = row.createCell(end+3);
+		cell = row.createCell(dayCount+4);
 		cell.setCellStyle(columnStyle);
 		cell.setCellValue(createHelper.createRichTextString("Name"));
 	}
 	
 	/**
 	 * Checks whether the column maps to a holiday or weekend.
-	 * @param day the day
+	 * @param aDay the day
 	 * @return <code>true</code> if day maps to a holiday or weekend
 	 */
-	private boolean isInvalidColumn( int day ) {
-		return invalidColumns.contains(day);
+	private boolean isInvalidDay( String aDay ) {
+		return getReportData().isInvalidDay(aDay);
 	}
-
-	
 
 	/**
 	 * Creates an input field marking in the provided region.

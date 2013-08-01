@@ -22,7 +22,6 @@ import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-import com.isd.bluecollar.datatype.Range;
 
 /**
  * This is the time data manager. 
@@ -113,7 +112,7 @@ public class WorkTimeData {
 	public void updateDay( String aUser, String aProject, Date aDate, boolean aStart ) {
 		Key key = getUserKey(aUser);
 		if (key!=null) {
-			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+			Calendar cal = getCal();
 			cal.setTime(aDate);
 			Entity workproject = getWorkdayProject(key,aProject,cal,aStart);
 			if (workproject!=null) {
@@ -130,28 +129,29 @@ public class WorkTimeData {
 	}
 	
 	/**
-	 * Returns the time range for the given day contained in the passed date. 
-	 * @param aUser the username
-	 * @param aDate the timestamp indicating the day
-	 * @return the date range
+	 * Retrieves all workday projects.
+	 * @param aUser the user
+	 * @param aDate the timestamp indicating the workday
+	 * @return the list of workday projects 
 	 */
-	public Range<Date> getRangeForDay( String aUser, Date aDate ) {
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+	public List<String> getWorkdayProjects( String aUser, Date aDate ) {
 		Key key = getUserKey(aUser);
 		if (key!=null) {
+			Calendar cal = getCal();
 			cal.setTime(aDate);
 			Entity workday = getDayByCalendar(key, cal);
-			if (workday!=null) {
-				setCalendarTimeByProperty(cal, workday, "start");
-				Date begin = cal.getTime();
-				setCalendarTimeByProperty(cal, workday, "end");
-				Date end = cal.getTime();
-				return new Range<Date>(begin,end);
+			if( workday!=null ) {
+				List<String> projects = new ArrayList<String>();
+				List<Entity> workdayProjects = getAllWorkdayProjects(workday.getKey());
+				for( Entity workdayProject : workdayProjects ) {
+					String project = String.valueOf(workdayProject.getProperty("projectName"));
+					projects.add(project);
+				}
 			}
 		}
-		return new Range<Date>(cal.getTime(),cal.getTime());
+		return Collections.emptyList();
 	}
-
+	
 	/**
 	 * Sets the calendar time based on the property value in the current entity.
 	 * @param aCal the calendar 
@@ -246,6 +246,16 @@ public class WorkTimeData {
 	 */
 	private List<Entity> getAllProjects( Key aUserKey ) {
 		Query q = new Query("Project",aUserKey).setAncestor(aUserKey);
+		return service.prepare(q).asList(FetchOptions.Builder.withDefaults());
+	}
+	
+	/**
+	 * Returns all workday projects for the day.
+	 * @param aWorkdayKey the workday key
+	 * @return the workday projects
+	 */
+	private List<Entity> getAllWorkdayProjects( Key aWorkdayKey ) {
+		Query q = new Query("WorkdayProject", aWorkdayKey).setAncestor(aWorkdayKey);
 		return service.prepare(q).asList(FetchOptions.Builder.withDefaults());
 	}
 	
@@ -414,4 +424,11 @@ public class WorkTimeData {
 		return project;
 	}
 	
+	/**
+	 * Returns a UTC calendar instance.
+	 * @return the UTC calendar instance
+	 */
+	private Calendar getCal() {
+		return Calendar.getInstance( TimeZone.getTimeZone("UTC") );
+	}
 }

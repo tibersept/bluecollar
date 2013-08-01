@@ -4,7 +4,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.logging.Logger;
 
 import javax.inject.Named;
 
@@ -64,8 +63,11 @@ public class WorkCardV1 {
 	public JsonByteArray generateReport( JsonRange aRange, User aUser ) {
 		ReportGenerator reporter = new ReportGenerator(aRange);
 		reporter.setUser(getUserName(aUser));
-		Logger.getLogger("[Report generation]").info("Timezone[" + aRange.getTimezone()+"]");
-		return new JsonByteArray(reporter.generateReport());
+		if( aRange.validateRange() ) {
+			return new JsonByteArray(reporter.generateReport());
+		} else {
+			return new JsonByteArray();
+		}
 	}
 	
 	/**

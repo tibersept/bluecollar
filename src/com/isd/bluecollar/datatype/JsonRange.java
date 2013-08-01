@@ -98,10 +98,20 @@ public class JsonRange {
 	
 	/**
 	 * Sets the user timezone.
-	 * @param timezone the timezone
+	 * @param aTimezone the timezone
 	 */
-	public void setTimezone(String timezone) {
-		this.timezone = timezone;
+	public void setTimezone(String aTimezone) {
+		this.timezone = aTimezone;
+	}
+	
+	/**
+	 * Validates the json range.
+	 * @return <code>true</code> if range begin lies before range end
+	 */
+	public boolean validateRange() {
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		cal.setTime(getBeginDate());
+		return cal.before(getEndDate());
 	}
 	
 	/**

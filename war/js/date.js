@@ -22,7 +22,7 @@ if( com.isd.bluecollar ) {
 	 */
 	com.isd.bluecollar.date.setDate = function( date, dateString ) {
 		var els = dateString.split("/");
-		date.setMonth(els[0]);
+		date.setMonth(els[0]-1);
 		date.setDate(els[1]);
 		date.setYear(els[2]);
 	};
@@ -51,6 +51,17 @@ if( com.isd.bluecollar ) {
 		}
 		date.setMinutes(els[1]);
 		date.setSeconds(0);
+	};
+	
+	/**
+	 * Checks whether the range provided by the begin and end dates is a valid
+	 * one, i.e. start date should lie before end date.
+	 * @param start start timestamp
+	 * @param end end timestamp
+	 * @return <code>true</code> when range is valid
+	 */
+	com.isd.bluecollar.date.checkRangeValidity = function( start, end ) {
+		return (start < end);
 	};
 	
 	/**

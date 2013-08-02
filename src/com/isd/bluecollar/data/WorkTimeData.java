@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import com.google.appengine.api.datastore.DatastoreFailureException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -129,40 +130,30 @@ public class WorkTimeData {
 	}
 	
 	/**
-	 * Retrieves all workday projects.
+	 * Retrieves all workday projects with begin and end times.
 	 * @param aUser the user
 	 * @param aDate the timestamp indicating the workday
-	 * @return the list of workday projects 
+	 * @return the workday data 
 	 */
-	public List<String> getWorkdayProjects( String aUser, Date aDate ) {
+	public WorkdayData getWorkdayProjects( String aUser, Date aDate ) {
 		Key key = getUserKey(aUser);
 		if (key!=null) {
 			Calendar cal = getCal();
 			cal.setTime(aDate);
 			Entity workday = getDayByCalendar(key, cal);
 			if( workday!=null ) {
-				List<String> projects = new ArrayList<String>();
+				WorkdayData data = new WorkdayData();
 				List<Entity> workdayProjects = getAllWorkdayProjects(workday.getKey());
 				for( Entity workdayProject : workdayProjects ) {
 					String project = String.valueOf(workdayProject.getProperty("projectName"));
-					projects.add(project);
+					Long begin = (Long)workdayProject.getProperty("start");
+					Long end = (Long)workdayProject.getProperty("end");
+					data.addProjectTime(project, begin, end);
 				}
+				return data;
 			}
 		}
-		return Collections.emptyList();
-	}
-	
-	/**
-	 * Sets the calendar time based on the property value in the current entity.
-	 * @param aCal the calendar 
-	 * @param aWorkday the workday entity
-	 * @param aProperty the name of the property
-	 */
-	private void setCalendarTimeByProperty(Calendar aCal, Entity aWorkday, String aProperty) {
-		Object object = aWorkday.getProperty(aProperty);
-		if( object instanceof Long ) {
-			aCal.setTimeInMillis(((Long)object).longValue());
-		}
+		return new WorkdayData();
 	}
 	
 	/**
@@ -271,6 +262,8 @@ public class WorkTimeData {
 			return user.getKey();
 		} catch (EntityNotFoundException e) {
 			return createNewUser(aUser);
+		} catch (DatastoreFailureException e) {
+			return null;
 		}
 	}
 	

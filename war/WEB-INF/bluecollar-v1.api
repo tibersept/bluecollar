@@ -145,11 +145,11 @@
           "timezone" : {
             "type" : "string"
           },
-          "endDate" : {
+          "beginDate" : {
             "type" : "string",
             "format" : "date-time"
           },
-          "beginDate" : {
+          "endDate" : {
             "type" : "string",
             "format" : "date-time"
           }

@@ -7,11 +7,14 @@ import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 
 import com.isd.bluecollar.data.ReportData;
 import com.isd.bluecollar.data.WorkTimeData;
+import com.isd.bluecollar.data.WorkdayData;
 import com.isd.bluecollar.datatype.JsonRange;
 
 /**
@@ -194,11 +197,15 @@ public class ReportGenerator {
 		Calendar cal = getCal();
 		SimpleDateFormat format = computeDayFormat();
 		cal.setTime(getBegin());
+		Set<String> overflowProjects = new HashSet<String>();
+		Set<String> skippedDays = new HashSet<String>(); 
 		while( cal.before(getEnd()) ) {
-			processDay(rData, cal, format);
+			processDay(rData, cal, format, overflowProjects, skippedDays);
 			cal.add(Calendar.DAY_OF_MONTH, 1);
 		}
-		computeReportEndData(rData, cal, format);
+		computeReportEndData(rData, cal, format, overflowProjects, skippedDays);
+		overflowProjects.clear();
+		skippedDays.clear();
 		return rData;
 	}
 
@@ -208,8 +215,14 @@ public class ReportGenerator {
 	 * @param aRData the report data
 	 * @param aCal the calendar
 	 * @param aFormat the format
+	 * @param anOverflowProjects the set of projects that haven't been completed 
+	 * 							on previous days
+	 * @param aSkippedDays the set of days that have been skipped because no 
+	 * 						projects were discovered for these 
 	 */
-	private void computeReportEndData(ReportData aRData, Calendar aCal, SimpleDateFormat aFormat) {
+	private void computeReportEndData(ReportData aRData, Calendar aCal, 
+			SimpleDateFormat aFormat, Set<String> anOverflowProjects, 
+			Set<String> aSkippedDays) {
 		int lastDay = aCal.get(Calendar.DAY_OF_MONTH);
 		long lastTime = aCal.getTimeInMillis();
 		aCal.setTime(getEnd());
@@ -217,7 +230,7 @@ public class ReportGenerator {
 		long endTime = aCal.getTimeInMillis();
 		if( (lastDay!=endDay) && (lastTime<endTime) ) {
 			aCal.setTime(getEnd());
-			processDay(aRData, aCal, aFormat);
+			processDay(aRData, aCal, aFormat, anOverflowProjects, aSkippedDays);
 		}
 	}
 
@@ -226,25 +239,120 @@ public class ReportGenerator {
 	 * @param anRData the report data
 	 * @param aCal the calendar
 	 * @param aFormat the day format
+	 * @param anOverflowProjects a set of projects which have not been completed 
+	 * 							on previous days
 	 */
-	private void processDay(ReportData anRData, Calendar aCal, SimpleDateFormat aFormat) {
+	private void processDay(ReportData anRData, Calendar aCal, 
+			SimpleDateFormat aFormat, Set<String> anOverflowProjects, 
+			Set<String> aSkippedDays) {
 		Date day = aCal.getTime();
 		String dayString = aFormat.format(day);
 		// Day title
 		anRData.addDayTitle(dayString);
-		// Get user projects for this day
 		WorkTimeData wtd = new WorkTimeData();
-		
-		// What we are trying to achieve
-		List<String> projects = wtd.getWorkdayProjects(getUser(), day);
-		for( String project : projects ) {
-			anRData.setHours(dayString, project, 0.0f);
-		}
-		
+		WorkdayData workday = wtd.getWorkdayProjects(getUser(), day);
+		workday.setDay(dayString);
+		doProcessDay(anRData, aCal, dayString, workday, anOverflowProjects, aSkippedDays);
 		// Weekend data
 		if( isWeekend(aCal) ) {
 			anRData.addInvalidDay(dayString);
 		}
+	}
+
+	/**
+	 * Does the actual computation of workday hours
+	 * @param anRData the report data being generated
+	 * @param aCal the calendar instance
+	 * @param aDayString the day string
+	 * @param aWorkday the workday data retrieved from datastore
+	 * @param anOverflowProjects a set of projects that haven't been completed 
+	 * 							on previous days
+	 */
+	private void doProcessDay(ReportData anRData, Calendar aCal,
+			String aDayString, WorkdayData aWorkday, Set<String> anOverflowProjects,
+			Set<String> aSkippedDays) {
+		// Compute day range
+		long dayBegin = getCalTime(aCal, 0, 0, 0);
+		long dayEnd = getCalTime(aCal, 23, 59, 59);
+		List<String> projects = aWorkday.getProjects();
+		checkOverflowProjectDay(anOverflowProjects, projects);
+		if( projects.isEmpty() ) {
+			aSkippedDays.add(aWorkday.getDay());
+		} else {			
+			for( String project : projects ) {
+				long begin = aWorkday.getBeginTime(project);
+				if( begin == 0 ) {
+					// Completed overflow project
+					if( anOverflowProjects.remove(project) ) {
+						// ... which was not in range -> initial days skipped 
+						for( String day : aSkippedDays ) {
+							anRData.setHours(day, project, 24.0f);			
+						}
+						aSkippedDays.clear();
+					}
+					begin = dayBegin;
+				}
+				long end = aWorkday.getEndTime(project);
+				if( end == 0 ) {
+					// Overflow project
+					anOverflowProjects.add(project);
+					end = dayEnd;
+				}
+				float tim = getTimeDifference(begin, end);
+				anRData.setHours(aDayString, project, tim);
+			}
+		}
+	}
+
+	/**
+	 * Checks whether an overflow project does not cover the whole day, in which case
+	 * the overflow project is added as the only entry of the project list for the day.
+	 * @param anOverflowProjects the set of overflow projects
+	 * @param aProjects the list of projects
+	 */
+	private void checkOverflowProjectDay(Set<String> anOverflowProjects,
+			List<String> aProjects) {
+		if( aProjects.isEmpty() ) {
+			// Just add the first project from the overflow projects
+			for( String project : anOverflowProjects ) {
+				aProjects.add(project);
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Sets the calendar time to a particular hour and returns that time as
+	 * milliseconds distance from the epoch.
+	 * @param aCal the calendar instance.
+	 * @param aHrs the hours
+	 * @param aMin the minutes
+	 * @param aSec the seconds
+	 * @return the distance from the epoch in milliseconds
+	 */
+	private long getCalTime( Calendar aCal, int aHrs, int aMin, int aSec ) {
+		aCal.set(Calendar.HOUR_OF_DAY,aHrs);
+		aCal.set(Calendar.MINUTE, aMin);
+		aCal.set(Calendar.SECOND, aSec);
+		return aCal.getTimeInMillis();
+	}
+
+	/**
+	 * Computes and returns the time difference between begin and end dates.
+	 * @param begin the begin timestamp
+	 * @param end the end timestamp
+	 * @return the difference in hours represented in decimal scales
+	 */
+	private float getTimeDifference(long begin, long end) {
+		long dif = end - begin;
+		if( dif>0 ) {
+			int hrs = (int)Math.floor(dif / 3600000);
+			dif = dif - (hrs * 3600000);
+			int min = (int)Math.round(dif / 60000);
+			min = Math.round((min*100)/60);
+			return (hrs + (min/100));
+		}
+		return 0.0f;
 	}
 	
 	/**

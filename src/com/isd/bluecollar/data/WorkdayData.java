@@ -4,9 +4,12 @@
 package com.isd.bluecollar.data;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Workday data.
@@ -17,20 +20,17 @@ public class WorkdayData {
 	/** The workday */
 	private String day;
 	/** Project titles */
-	private List<String> projects;
+	private Set<String> projects;
 	/** Begin times */
-	private Map<String, Long> beginTimes;
-	/** End times */
-	private Map<String, Long> endTimes;
+	private Map<String, List<ProjectRange>> projectTimes;
 	
 	/**
 	 * Creates a new workday data instance.
 	 */
 	public WorkdayData() {
 		day = "";
-		projects = new ArrayList<String>();
-		beginTimes = new HashMap<String, Long>();
-		endTimes = new HashMap<String,Long>();
+		projects = new HashSet<String>();
+		projectTimes = new HashMap<String, List<ProjectRange>>();
 	}
 	
 	/**
@@ -58,8 +58,15 @@ public class WorkdayData {
 	public void addProjectTime( String aProject, Long aBegin, Long anEnd ) {
 		if( aProject!=null ) {
 			projects.add(aProject);
-			beginTimes.put(aProject, aBegin);
-			endTimes.put(aProject, anEnd);
+			List<ProjectRange> list = projectTimes.get(aProject);
+			if( list==null ) {
+				list = new ArrayList<ProjectRange>();
+				projectTimes.put(aProject, list);
+			}
+			ProjectRange range = new ProjectRange(aProject);
+			range.setBegin(aBegin);
+			range.setEnd(anEnd);
+			list.add(range);
 		}
 	}
 	
@@ -68,33 +75,33 @@ public class WorkdayData {
 	 * @return the projects
 	 */
 	public List<String> getProjects() {
-		return projects;
+		return new ArrayList<String>(projects);
 	}
- 	
+ 
 	/**
-	 * Returns the begin time of the project on this workday as milliseconds
-	 * from the epoch. Returns 0 when begin time is not available.
-	 * @return the begin time
+	 * Returns the list of ranges for that project on the given day.
+	 * @param aProject the project name
+	 * @return the list of ranges or an empty list if no ranges are present
 	 */
-	public long getBeginTime( String aProject ) {
-		Long begin = beginTimes.get(aProject);
-		if( begin!=null ) {
-			return begin.longValue();
+	public List<ProjectRange> getRanges( String aProject ) {
+		List<ProjectRange> ranges = projectTimes.get(aProject);
+		if( ranges==null ) {
+			return Collections.emptyList();
 		}
-		return 0;
+		return ranges;
 	}
 	
 	/**
-	 * Returns the end time of the project on this workday.
-	 * @param aProject
-	 * @return
+	 * Clears the intrnal strucutres of the workday data.
 	 */
-	public long getEndTime( String aProject ) {
-		Long end = endTimes.get(aProject);
-		if( end!=null ) {
-			return end.longValue();
+	public void clear() {
+		projects.clear();
+		for( Map.Entry<String, List<ProjectRange>> entry : projectTimes.entrySet() ) {
+			List<ProjectRange> ranges = entry.getValue();
+			if( ranges!=null ) {
+				ranges.clear();
+			}
 		}
-		return 0;
+		projectTimes.clear();
 	}
-	
 }

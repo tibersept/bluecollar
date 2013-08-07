@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import com.isd.bluecollar.data.ReportData;
+import com.isd.bluecollar.data.WorkTimeData;
 import com.isd.bluecollar.datatype.JsonRange;
 
 /**
@@ -50,6 +51,7 @@ public class ReportGenerator {
 		report.setUser(getUser());
 		report.setMonthRange(computeMonthRange());
 		report.setYearRange(computeYearRange());
+		report.setCompanyName(loadCompanyName());
 		report.setReportData(computeReportData());
 		return report.generateReport();
 	}
@@ -116,6 +118,15 @@ public class ReportGenerator {
 	 */
 	public void setTimezone(String aTimezone) {
 		timezone = TimeZone.getTimeZone(aTimezone);
+	}
+	
+	/**
+	 * Loads the company name string selected by the user.
+	 * @return the company name
+	 */
+	private String loadCompanyName() {
+		WorkTimeData wtd = new WorkTimeData();
+		return wtd.getUserSetting(getUser(), "companyName");
 	}
 
 	/**

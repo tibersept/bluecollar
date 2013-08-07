@@ -57,12 +57,39 @@ public class JsonStatus {
 		status = aStatus;
 	}
 	
+	/**
+	 * Returns the project begin timestamp if such has been defined.
+	 * Otherwise this method returns an empty string.
+	 * @return the project begin timestamp
+	 */
 	public String getProjectBegin() {
 		return projectBegin;
 	}
 	
+	/**
+	 * Sets the project begin.
+	 * @param aBegin the project begin
+	 */
+	public void setProjectBegin( String aBegin ) {
+		projectBegin = aBegin;
+	}
+	
+	/**
+	 * Returns the project name, if such is defined. Otherwise the
+	 * method returns an empty string.
+	 * @return the project name
+	 */
 	public String getProject() {
 		return project;
 	}
+	
+	/**
+	 * Sets the project name.
+	 * @param aProject the project name
+	 */
+	public void setProject( String aProject ) {
+		project = aProject;
+	}
+	
 	
 }

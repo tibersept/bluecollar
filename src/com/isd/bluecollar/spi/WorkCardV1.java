@@ -12,6 +12,7 @@ import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.appengine.api.users.User;
 import com.isd.bluecollar.data.WorkTimeData;
+import com.isd.bluecollar.datatype.CurrentUserProject;
 import com.isd.bluecollar.datatype.JsonByteArray;
 import com.isd.bluecollar.datatype.JsonEasyMap;
 import com.isd.bluecollar.datatype.JsonString;
@@ -55,8 +56,24 @@ public class WorkCardV1 {
 		return new JsonString(String.valueOf(rightNow.getTime()));
 	}
 	
-	
-	
+	/**
+	 * Checks for an active user project and returns that one in the status in
+	 * case such is encountered.
+	 * @param aUser the user
+	 * @return the status potentially with the current project.
+	 */
+	@ApiMethod(name = "wcard.checkactive", httpMethod = "POST")
+	public JsonStatus checkActive( User aUser ) {
+		String username = getUserName(aUser);
+		WorkTimeData wtd = new WorkTimeData();
+		CurrentUserProject project = wtd.getActiveProject(username);
+		JsonStatus status = new JsonStatus();
+		if( project.exists() ) {
+			status.setProject(project.getName());
+			status.setProjectBegin(String.valueOf(project.getTimestamp()));
+		}
+		return status;
+	}
 	
 	/**
 	 * Generates an EXCEL report and returns the generated report as a byte array. 

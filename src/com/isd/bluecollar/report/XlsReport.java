@@ -36,6 +36,8 @@ public class XlsReport {
 	private String monthRange;
 	/** The year range */
 	private String yearRange;
+	/** The company name on the report */
+	private String companyName;
 	/** The report data - day & project hours */
 	private ReportData reportData;
 	/** The cell styler */
@@ -103,6 +105,22 @@ public class XlsReport {
 	 */
 	public void setYearRange(String aYearRange) {
 		yearRange = aYearRange;
+	}
+	
+	/**
+	 * Returns the company name for the report.
+	 * @return the company name
+	 */
+	public String getCompanyName() {
+		return companyName;
+	}
+	
+	/**
+	 * Sets the company name for the report.
+	 * @param aCompanyName the company name
+	 */
+	public void setCompanyName(String aCompanyName) {
+		companyName = aCompanyName;
 	}
 	
 	/**
@@ -223,7 +241,11 @@ public class XlsReport {
 		
 		rowIndex = 22+projectCount;
 		row = sheet.createRow(rowIndex);
-		createTextInputField(sheet, createHelper, infoSmallStyle, row, rowIndex, 20, 33, "Ort, Datum, Unterschrift Mitarbeiter PiSA sales GmbH");
+		String signatureFieldTitle = "Ort, Datum, Unterschrift";
+		if( getCompanyName()!=null && getCompanyName().length()>0 ) {
+			signatureFieldTitle += "Mitarbeiter" + getCompanyName();
+		}
+		createTextInputField(sheet, createHelper, infoSmallStyle, row, rowIndex, 20, 33, signatureFieldTitle);
 	}
 
 	/**
@@ -290,7 +312,7 @@ public class XlsReport {
 	 * @return the worksheet
 	 */
 	private Sheet createSheet(Workbook wb) {
-		Sheet sheet = wb.createSheet("Juli 2013");
+		Sheet sheet = wb.createSheet(getMonthRange() + " " + getYearRange());
 		sheet.setDisplayGridlines(false);
 		sheet.setDefaultColumnWidth(4);
 		sheet.setDefaultRowHeight((short)340);

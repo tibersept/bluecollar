@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"s1omim4x8ymp9_6H8kBMkfEDqpo/W77p40CoLvgbdJ-gET5MmQmyLkg\"",
+ "etag": "\"nPbVolg1F8jpPe9kkErPtt8mpZE/ZDzyYYxsJ2qju0CRz9r4g9ieYhI\"",
  "discoveryVersion": "v1",
  "id": "bluecollar:v1",
  "name": "bluecollar",
@@ -71,12 +71,21 @@
     }
    }
   },
-  "JsonDate": {
-   "id": "JsonDate",
+  "JsonEasyMap": {
+   "id": "JsonEasyMap",
    "type": "object",
    "properties": {
-    "date": {
-     "type": "string"
+    "keyList": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "valueList": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
     }
    }
   },
@@ -99,6 +108,30 @@
      "format": "date-time"
     },
     "timezone": {
+     "type": "string"
+    }
+   }
+  },
+  "JsonStatus": {
+   "id": "JsonStatus",
+   "type": "object",
+   "properties": {
+    "project": {
+     "type": "string"
+    },
+    "projectBegin": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
+  "JsonString": {
+   "id": "JsonString",
+   "type": "object",
+   "properties": {
+    "string": {
      "type": "string"
     }
    }
@@ -137,6 +170,12 @@
     "$ref": "StringCollection"
    }
   },
+  "bluecollar.wcard.checkactive": {
+   "id": "bluecollar.wcard.checkactive",
+   "returns": {
+    "$ref": "JsonStatus"
+   }
+  },
   "bluecollar.wcard.checkin": {
    "id": "bluecollar.wcard.checkin",
    "parameters": {
@@ -149,7 +188,7 @@
     "project"
    ],
    "returns": {
-    "$ref": "JsonDate"
+    "$ref": "JsonString"
    }
   },
   "bluecollar.wcard.checkout": {
@@ -164,7 +203,7 @@
     "project"
    ],
    "returns": {
-    "$ref": "JsonDate"
+    "$ref": "JsonString"
    }
   },
   "bluecollar.wcard.generatereport": {
@@ -181,10 +220,51 @@
     "$ref": "JsonByteArray"
    }
   },
+  "bluecollar.wcard.getallsettings": {
+   "id": "bluecollar.wcard.getallsettings",
+   "returns": {
+    "$ref": "JsonEasyMap"
+   }
+  },
+  "bluecollar.wcard.getusersetting": {
+   "id": "bluecollar.wcard.getusersetting",
+   "parameters": {
+    "setting": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "setting"
+   ],
+   "returns": {
+    "$ref": "JsonString"
+   }
+  },
   "bluecollar.wcard.listprojects": {
    "id": "bluecollar.wcard.listprojects",
    "returns": {
     "$ref": "StringCollection"
+   }
+  },
+  "bluecollar.wcard.setusersetting": {
+   "id": "bluecollar.wcard.setusersetting",
+   "parameters": {
+    "setting": {
+     "type": "string",
+     "required": true
+    },
+    "value": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "setting",
+    "value"
+   ],
+   "returns": {
+    "$ref": "JsonStatus"
    }
   }
  }

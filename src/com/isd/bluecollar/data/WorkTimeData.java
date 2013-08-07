@@ -24,6 +24,7 @@ import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.isd.bluecollar.datatype.CurrentUserProject;
 
 /**
  * This is the time data manager. 
@@ -172,17 +173,20 @@ public class WorkTimeData {
 			Entity workproject = getWorkdayProject(key,aProject,cal,aStart);
 			if (workproject!=null) {
 				if( aStart ) {
-					workproject.setProperty("start", cal.getTimeInMillis());
+					long begin = cal.getTimeInMillis();
+					workproject.setProperty("start", begin);
 					workproject.setProperty("state", "open");
+					updateCurrentProject(key, aProject, begin);
 				} else {
 					workproject.setProperty("end", cal.getTimeInMillis());
 					workproject.setProperty("state", "finished");
+					updateCurrentProject(key, null, null);
 				}
 				service.put(workproject);
 			}
 		}
 	}
-	
+
 	/**
 	 * Retrieves all workday projects with begin and end times.
 	 * @param aUser the user
@@ -208,6 +212,43 @@ public class WorkTimeData {
 			}
 		}
 		return new WorkdayData();
+	}
+	
+	/**
+	 * Returns the current user project if such is active.
+	 * @param aUser the username
+	 * @return the user project with a begin timestamp
+	 */
+	public CurrentUserProject getActiveProject( String aUser ) {
+		Key key = KeyFactory.createKey("User", aUser);
+		try {
+			Entity user = service.get(key);
+			String project = (String) user.getProperty("currentProject");
+			Long begin = (Long) user.getProperty("currentProjectBegin");
+			if( begin!=null ) {
+				return new CurrentUserProject(project, begin);
+			}
+		} catch( EntityNotFoundException e ) {
+			// do nothing
+		}
+		return new CurrentUserProject();
+	}
+	
+	/**
+	 * Updates the current project of the user.
+	 * @param aKey the user key
+	 * @param aProject the project name
+	 * @param aBegin the project begin timestamp
+	 */
+	private void updateCurrentProject(Key aKey, String aProject, Long aBegin) {
+		try {
+			Entity user = service.get(aKey);
+			user.setProperty("currentProject", aProject);
+			user.setProperty("currentProjectBegin", aBegin);
+			service.put(user);
+		} catch (EntityNotFoundException e) {
+			// fail silently
+		}
 	}
 	
 	/**
@@ -448,8 +489,8 @@ public class WorkTimeData {
 	private Key createNewUser(String aUser) {
 		Entity user = new Entity("User", aUser);
 		user.setProperty("name",aUser);
-		user.setProperty("currentStart", null);
-		user.setProperty("currentMonth", null);
+		user.setProperty("currentProject", null);
+		user.setProperty("currentProjectBegin", null);
 		service.put(user);
 		return user.getKey();
 	}

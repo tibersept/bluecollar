@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"s1omim4x8ymp9_6H8kBMkfEDqpo/W77p40CoLvgbdJ-gET5MmQmyLkg\"",
+ "etag": "\"nPbVolg1F8jpPe9kkErPtt8mpZE/ZDzyYYxsJ2qju0CRz9r4g9ieYhI\"",
  "discoveryVersion": "v1",
  "id": "bluecollar:v1",
  "name": "bluecollar",
@@ -73,12 +73,21 @@
     }
    }
   },
-  "JsonDate": {
-   "id": "JsonDate",
+  "JsonEasyMap": {
+   "id": "JsonEasyMap",
    "type": "object",
    "properties": {
-    "date": {
-     "type": "string"
+    "keyList": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "valueList": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
     }
    }
   },
@@ -101,6 +110,30 @@
      "format": "date-time"
     },
     "timezone": {
+     "type": "string"
+    }
+   }
+  },
+  "JsonStatus": {
+   "id": "JsonStatus",
+   "type": "object",
+   "properties": {
+    "project": {
+     "type": "string"
+    },
+    "projectBegin": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
+  "JsonString": {
+   "id": "JsonString",
+   "type": "object",
+   "properties": {
+    "string": {
      "type": "string"
     }
    }
@@ -145,6 +178,14 @@
       "$ref": "StringCollection"
      }
     },
+    "checkactive": {
+     "id": "bluecollar.wcard.checkactive",
+     "path": "checkActive",
+     "httpMethod": "POST",
+     "response": {
+      "$ref": "JsonStatus"
+     }
+    },
     "checkin": {
      "id": "bluecollar.wcard.checkin",
      "path": "checkin/{project}",
@@ -160,7 +201,7 @@
       "project"
      ],
      "response": {
-      "$ref": "JsonDate"
+      "$ref": "JsonString"
      }
     },
     "checkout": {
@@ -178,7 +219,7 @@
       "project"
      ],
      "response": {
-      "$ref": "JsonDate"
+      "$ref": "JsonString"
      }
     },
     "generatereport": {
@@ -193,12 +234,62 @@
       "$ref": "JsonByteArray"
      }
     },
+    "getallsettings": {
+     "id": "bluecollar.wcard.getallsettings",
+     "path": "jsoneasymap",
+     "httpMethod": "POST",
+     "response": {
+      "$ref": "JsonEasyMap"
+     }
+    },
+    "getusersetting": {
+     "id": "bluecollar.wcard.getusersetting",
+     "path": "jsonstring/{setting}",
+     "httpMethod": "POST",
+     "parameters": {
+      "setting": {
+       "type": "string",
+       "required": true,
+       "location": "path"
+      }
+     },
+     "parameterOrder": [
+      "setting"
+     ],
+     "response": {
+      "$ref": "JsonString"
+     }
+    },
     "listprojects": {
      "id": "bluecollar.wcard.listprojects",
      "path": "string",
      "httpMethod": "POST",
      "response": {
       "$ref": "StringCollection"
+     }
+    },
+    "setusersetting": {
+     "id": "bluecollar.wcard.setusersetting",
+     "path": "setUserSetting/{setting}/{value}",
+     "httpMethod": "POST",
+     "parameters": {
+      "setting": {
+       "type": "string",
+       "required": true,
+       "location": "path"
+      },
+      "value": {
+       "type": "string",
+       "required": true,
+       "location": "path"
+      }
+     },
+     "parameterOrder": [
+      "setting",
+      "value"
+     ],
+     "response": {
+      "$ref": "JsonStatus"
      }
     }
    }

@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 import com.google.appengine.api.datastore.DatastoreFailureException;
@@ -101,6 +102,59 @@ public class WorkTimeData {
 			return list;
 		}
 		return Collections.emptyList();
+	}
+	
+	/**
+	 * Returns the user setting.
+	 * @param aUser the user
+	 * @param aSetting the setting name
+	 * @return the setting value
+	 */
+	public String getUserSetting( String aUser, String aSetting ) {
+		Key key = getUserKey(aUser);
+		if( key!=null ) {
+			Entity settings = getUserSettings(key);
+			if( settings!=null ) {
+				Object val = settings.getProperty(aSetting);
+				if( val!=null ) {
+					return val.toString();
+				}
+			}
+		}
+		return "";
+	}
+	
+	/**
+	 * Sets a user setting to the passed value.
+	 * @param aUser the user
+	 * @param aSetting the setting
+	 * @param aValue the value
+	 */
+	public void setUserSetting( String aUser, String aSetting, String aValue ) {
+		Key key = getUserKey(aUser);
+		if( key!=null ) {
+			Entity settings = getUserSettings(key);
+			if( settings!=null ) {
+				settings.setProperty(aSetting, aValue);
+				service.put(settings);
+			}
+		}
+	}
+	
+	/**
+	 * Retrieves all user settings.
+	 * @param aUser the username
+	 * @return the user settings
+	 */
+	public Map<String,Object> getUserSettings( String aUser ) {
+		Key key = getUserKey(aUser);
+		if( key!=null ) {
+			Entity settings = getUserSettings(key);
+			if( settings!=null ) {
+				return settings.getProperties();
+			}
+		}
+		return Collections.emptyMap();
 	}
 
 	/**
@@ -251,6 +305,20 @@ public class WorkTimeData {
 	}
 	
 	/**
+	 * Retrieves the user settings or creates a new user settings entity.
+	 * @param aUser the user key
+	 * @return the user settings entity
+	 */
+	private Entity getUserSettings( Key aUser ) {
+		Query q = new Query("UserSettings",aUser).setAncestor(aUser);
+		Entity settings = service.prepare(q).asSingleEntity();
+		if( settings==null ) {
+			settings = createNewUserSettings(aUser);
+		}
+		return settings;
+	}
+	
+	/**
 	 * Returns the user key. The user is created if he doesn't exist.
 	 * @param aUser the user nickname
 	 * @return the user root
@@ -384,6 +452,17 @@ public class WorkTimeData {
 		user.setProperty("currentMonth", null);
 		service.put(user);
 		return user.getKey();
+	}
+	
+	/**
+	 * Creates a new user settings entity.
+	 * @param aUser the user key
+	 * @return the entity
+	 */
+	private Entity createNewUserSettings( Key aUser ) {
+		Entity userSettings = new Entity("UserSettings", aUser);
+		service.put(userSettings);
+		return userSettings;
 	}
 	
 	/**

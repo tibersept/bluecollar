@@ -45,7 +45,7 @@ com.isd.bluecollar.checkin = function() {
 	var currentProject = combo.find(':selected').val();
 	gapi.client.bluecollar.wcard.checkin({'project': currentProject}).execute(function(resp){		  
 		if( resp ) {
-			var dateString = resp.date;			
+			var dateString = resp.string;			
 			com.isd.bluecollar.startTimer( dateString );
 			combo.prop('disabled',true);
 			$('.btn-start').hide();
@@ -63,7 +63,7 @@ com.isd.bluecollar.checkout = function() {
 	var currentProject = combo.find(':selected').val();
 	gapi.client.bluecollar.wcard.checkout({'project': currentProject}).execute(function(resp){
 		if(resp) {
-			var dateString = resp.date;
+			var dateString = resp.string;
 			com.isd.bluecollar.stopTimer( dateString ); 
 			combo.prop('disabled',false);
 			$('.btn-stop').hide();

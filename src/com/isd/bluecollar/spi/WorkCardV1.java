@@ -3,6 +3,7 @@ package com.isd.bluecollar.spi;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 import javax.inject.Named;
@@ -12,8 +13,10 @@ import com.google.api.server.spi.config.ApiMethod;
 import com.google.appengine.api.users.User;
 import com.isd.bluecollar.data.WorkTimeData;
 import com.isd.bluecollar.datatype.JsonByteArray;
-import com.isd.bluecollar.datatype.JsonDate;
+import com.isd.bluecollar.datatype.JsonEasyMap;
+import com.isd.bluecollar.datatype.JsonString;
 import com.isd.bluecollar.datatype.JsonRange;
+import com.isd.bluecollar.datatype.JsonStatus;
 import com.isd.bluecollar.report.ReportGenerator;
 
 @Api(
@@ -27,14 +30,14 @@ public class WorkCardV1 {
 	 * @return the time of checking specified as distance in milliseconds from the EPOCH
 	 */
 	@ApiMethod(name = "wcard.checkin", httpMethod = "POST")
-	public JsonDate checkin(@Named("project") String aProject, User aUser) {
+	public JsonString checkin( @Named("project") String aProject, User aUser ) {
 		Date rightNow = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
 		String username = getUserName(aUser);
 		
 		WorkTimeData wtd = new WorkTimeData();
 		wtd.setDayStart(username, aProject, rightNow);
 
-		return new JsonDate(String.valueOf(rightNow.getTime()));
+		return new JsonString(String.valueOf(rightNow.getTime()));
 	}
 	
 	/**
@@ -42,15 +45,18 @@ public class WorkCardV1 {
 	 * @return the time of checkout specified as distance in milliseconds from the EPOCH
 	 */
 	@ApiMethod(name = "wcard.checkout", httpMethod = "POST")
-	public JsonDate checkout(@Named("project") String aProject, User aUser) {
+	public JsonString checkout( @Named("project") String aProject, User aUser ) {
 		Date rightNow = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();		
 		String username = getUserName(aUser);
 		
 		WorkTimeData wtd = new WorkTimeData();
 		wtd.setDayEnd(username, aProject, rightNow);
 		
-		return new JsonDate(String.valueOf(rightNow.getTime()));
-	}		
+		return new JsonString(String.valueOf(rightNow.getTime()));
+	}
+	
+	
+	
 	
 	/**
 	 * Generates an EXCEL report and returns the generated report as a byte array. 
@@ -93,13 +99,59 @@ public class WorkCardV1 {
 	 * @param aUser the user
 	 * @return the list of projects
 	 */
-	@ApiMethod(name = "wcard.listprojects", httpMethod = "POST" )
+	@ApiMethod( name = "wcard.listprojects", httpMethod = "POST" )
 	public List<String> listProjects( User aUser ) {
 		String username = getUserName(aUser);
 		WorkTimeData wtd = new WorkTimeData();
 		List<String> projects = wtd.getProjectList(username,  true);
 		return projects;
 	}
+	
+	/**
+	 * Retrieves a user setting.
+	 * @param aSetting the setting name
+	 * @param aUser the user
+	 * @return the setting value
+	 */
+	@ApiMethod( name = "wcard.getusersetting", httpMethod = "POST" )
+	public JsonString getUserSetting( @Named("setting") String aSetting, User aUser ) {
+		String username = getUserName(aUser);
+		WorkTimeData wtd = new WorkTimeData();
+		String val = wtd.getUserSetting(username, aSetting);
+		return new JsonString(val);
+	}
+	
+	/**
+	 * Sets a user setting 
+	 * @param aSetting the setting name
+	 * @param aValue the setting value
+	 * @param aUser the user whose settings are modified
+	 */
+	@ApiMethod( name = "wcard.setusersetting", httpMethod = "POST" )
+	public JsonStatus setUserSetting( @Named("setting") String aSetting,@Named("value") String aValue, User aUser ) {
+		String username = getUserName(aUser);
+		WorkTimeData wtd = new WorkTimeData();
+		wtd.setUserSetting(username, aSetting, aValue);
+		return JsonStatus.OK_STATUS;
+	}
+	
+	/**
+	 * Returns all the settings of the user.
+	 * @param aUser the user
+	 * @return a simple JSON map of all user settings
+	 */
+	@ApiMethod( name = "wcard.getallsettings", httpMethod = "POST" )
+	public JsonEasyMap getAllSettings( User aUser ) {
+		String username = getUserName(aUser);
+		WorkTimeData wtd = new WorkTimeData();
+		Map<String, Object> settings = wtd.getUserSettings(username);
+		JsonEasyMap map = new JsonEasyMap();
+		for( Map.Entry<String,Object> setting : settings.entrySet() ) {
+			map.addEntry(setting.getKey(), setting.getValue().toString());
+		}
+		return map;
+	}
+	
 	
 	/**
 	 * Attempts to retrieve the username from the user object. If it fails to do 

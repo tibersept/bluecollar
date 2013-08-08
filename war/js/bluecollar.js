@@ -117,7 +117,31 @@ com.isd.bluecollar.listProjects = function() {
 			com.isd.bluecollar.updateProjectList(resp.items);
 		}
 	});
-}
+};
+
+/**
+ * REST call. Sets a user setting. 
+ */
+com.isd.bluecollar.setUserSetting = function( setting, value ) {
+	gapi.client.bluecollar.wcard.setusersetting({'setting':seting,'value':value}).execute(function(resp){
+		if( resp ) {
+			console.info("Setting user setting");
+			console.log(resp);
+		}
+	});
+};
+
+/**
+ * REST call. Loads a user setting
+ */
+com.isd.bluecollar.loadUserSetting = function( setting ) {
+	gapi.client.bluecollar.wcard.getusersetting({'setting':seting}).execute(function(resp){
+		if( resp ) {
+			console.info("Retrieving user setting");
+			console.log(resp);
+		}
+	});
+};
 
 /**
  * Authentication. Loads the application UI after the user has completed auth.
@@ -252,7 +276,7 @@ com.isd.bluecollar.onTabActivation = function( e ) {
 	if ( tabAnchor ) {
 		var href = tabAnchor.attr('href');
 		switch(href) {
-		case "#settings":
+		case "#settings-project":
 			com.isd.bluecollar.listProjects();
 			break;
 		default:
@@ -282,6 +306,21 @@ com.isd.bluecollar.provideReport = function() {
 //	} else {
 //		com.isd.bluecollar.displayMessage("Error", "Report generation is not supported without authorized access to Google Drive!");
 //	}
+	return false;
+};
+
+/**
+ * Updates the user settings.
+ */
+com.isd.bluecollar.updateSettings = function() {
+	var companyName = $('#company-name').val();
+	if( companyName!=null && companyName.length>0 ) {
+		com.isd.bluecollar.setUserSetting('companyName', companyName);
+	}
+	var language = $('#report-language option:selected').val();
+	if( language!=null && language.length>0 ) {
+		com.isd.bluecollar.setUserSetting('language', language);
+	}
 	return false;
 };
 
@@ -375,6 +414,7 @@ com.isd.bluecollar.init = function(apiRoot) {
 	$('.btn-tryit').click(com.isd.bluecollar.switchToMain);
 	$('.btn-add-project').click(com.isd.bluecollar.submitNewProject);
 	$('.btn-generate-report').click(com.isd.bluecollar.provideReport);
+	$('.btn-update-settings').click(com.isd.bluecollar.updateSettings)
 	
 	/* Tab activation handling */
 	$('a[data-toggle="tab"]').on('show', com.isd.bluecollar.onTabActivation);

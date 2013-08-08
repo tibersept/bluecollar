@@ -30,30 +30,37 @@ div.main-content {
 .form-signin .form-signin-heading,
 .form-manage-project-time .form-manage-project-time-heading,
 .form-generate-report .form-generate-report-heading,
-.form-add-projects .form-add-projects-heading{
+.form-add-projects .form-add-projects-heading
+.form-report-settings .form-report-settings-heading{
   margin-bottom: 10px;
 }
 
 .form-signin input[type="text"],
 .form-add-projects input[type="text"],
-.form-signin input[type="password"] {
+.form-signin input[type="password"],
+.form-report-settings input[type="text"],
+.form-report-settings select {
   font-size: 16px;
   height: auto;
   margin-bottom: 15px;
   padding: 7px 9px;
 }
 
+.form-report-settings select {
+  width: 226px;
+}
+
 .form-signin button,
 .form-manage-project-time button,
 .form-generate-report button,
-.form-add-projects button{
+.form-add-projects button,
+.form-report-settings button{
 	width: 300px;
 	padding: 9px 19px;
 }
 
 .blue-collar-tabs {
 	width: 100%;
-	overflow: hidden;
 	height: 42px;
 }
 
@@ -82,7 +89,8 @@ div.main-content {
 
 .form-manage-project-time,
 .form-generate-report,
-.form-add-projects{
+.form-add-projects,
+.form-report-settings{
 	max-width: 300px;
 	margin-left: auto;
 	margin-right: auto;
@@ -137,4 +145,19 @@ div.main-content {
 .form-add-projects textarea {
 	resize: none;
 	height: 200px;
+}
+
+@media screen {
+	.form-horizontal .control-label {
+		width: 70px;
+		padding-top: 8px;
+	}
+	
+	.form-horizontal .controls {
+		margin-left: 75px;
+	}
+	
+	.form-horizontal .control-group {
+		margin-bottom: 0px;
+	}
 }

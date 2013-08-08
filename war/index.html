@@ -35,7 +35,13 @@
 										<ul class="nav nav-tabs blue-collar-tabs">									
 												<li class="active blue-collar-tab"><a href="#home" data-toggle="tab">Home</a></li>
 												<li class="blue-collar-tab"><a href="#reports" data-toggle="tab">Reports</a></li>
-												<li class="blue-collar-tab"><a href="#settings" data-toggle="tab">Settings</a></li>
+												<li class="blue-collar-tab dropdown">
+									                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Settings<b class="caret"></b></a>
+										                <ul class="dropdown-menu">
+											                  <li><a href="#settings-project" data-toggle="tab">Projects</a></li>
+											                  <li><a href="#settings-report" data-toggle="tab">Reports</a></li>
+										                </ul>
+								              	</li>
 										</ul>
 								</div>
 						</div>
@@ -91,7 +97,7 @@
 												</form>
 										</div>
 								</div>
-								<div class="tab-pane" id="settings">
+								<div class="tab-pane" id="settings-project">
 										<div class="container">
 												<form class="form-add-projects">
 														<h2 class="form-add-projects-heading">Add a project</h2>
@@ -108,6 +114,30 @@
 														</table>
 												</div>
 										</div>
+								</div>
+								<div class="tab-pane" id="settings-report">
+									<form class="form-report-settings form-horizontal">
+										<h2 class="form-report-settings-heading">Report settings</h2>
+										<div class="control-group">
+											<label class="control-label" id="label-company-name" for="company-name">Company:</label>
+											<div class="controls">
+												<input type="text" value="" name="company-name" id="company-name" placeholder="Company name">
+											</div>
+										</div>
+										<div class="control-group">
+											<label class="control-label" id="label-report-language" for="report-language">Language:</label>
+											<div class="controls">
+												<select name="report-language" id="report-language">
+														<option value="en">English</option>
+														<option value="fr">French</option>
+														<option value="de">German</option>
+												</select>
+											</div>
+										</div>
+										<button class="btn btn-large btn-primary btn-update-settings" type="submit"> 
+											Update settings
+										</button>
+									</form>	
 								</div>
 						</div>
 				</div>

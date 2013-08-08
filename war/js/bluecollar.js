@@ -174,6 +174,17 @@ com.isd.bluecollar.signin = function(mode, callback) {
 };
 
 /**
+ * Authentication. Signs the currently logged user out.
+ */
+com.isd.bluecollar.signout = function() {
+	if (com.isd.bluecollar.signedIn) {
+		com.isd.bluecollar.auth();
+	}
+	com.isd.bluecollar.switchToLogin();
+	return false;
+};
+
+/**
  * Authentication. Presents the user with the authorization popup.
  */
 com.isd.bluecollar.auth = function() {
@@ -181,6 +192,7 @@ com.isd.bluecollar.auth = function() {
 	  com.isd.bluecollar.signin(false,com.isd.bluecollar.userAuthed);
   } else {
 	  com.isd.bluecollar.signedIn = false;
+
   }
   return false;
 };
@@ -200,7 +212,7 @@ com.isd.bluecollar.switchToMain = function() {
  * Switches to login perspective.
  * @return returns <code>false</code> in case method is invoked directly from a button
  */
-com.isd.bluecollar.swtichToLogin = function() {
+com.isd.bluecollar.switchToLogin = function() {
 	$('.main-content').hide();
 	$('.login-content').show();
 	return false;
@@ -223,9 +235,10 @@ com.isd.bluecollar.submitNewProject = function() {
 com.isd.bluecollar.updateProjectList = function( projects ) {
 	if( projects.length==0) {
 		com.isd.bluecollar.displayMessage("Info", "No projects were found! You can add projects in settings.");
+		com.isd.bluecollar.updateProjectTable([]);
 	} else {
 		com.isd.bluecollar.updateProjectSelection( projects );
-		com.isd.bluecollar.updateProjectTable( projects );	
+		com.isd.bluecollar.updateProjectTable( projects );
 	}
 };
 
@@ -251,9 +264,13 @@ com.isd.bluecollar.updateProjectSelection = function( projects ) {
 com.isd.bluecollar.updateProjectTable = function( projects ) {
 	if( projects ) {
 		var content = '';
-		for( var i=0; i<projects.length; i++ ) {
-			var project = projects[i];
-			content += '<tr><td>'+project+'</td></tr>';
+		if( projects.length == 0 ) {
+			content += '<tr><td>No projects found</td></tr>';
+		} else {
+			for( var i=0; i<projects.length; i++ ) {
+				var project = projects[i];
+				content += '<tr><td>'+project+'</td></tr>';
+			}
 		}
 		$('.table-projects').html(content);
 	}
@@ -411,6 +428,7 @@ com.isd.bluecollar.init = function(apiRoot) {
 	$('.btn-start').click(com.isd.bluecollar.checkin);
 	$('.btn-stop').click(com.isd.bluecollar.checkout);
 	$('.btn-signin').click(com.isd.bluecollar.auth);
+	$('.btn-sign-out').click(com.isd.bluecollar.signout);
 	$('.btn-tryit').click(com.isd.bluecollar.switchToMain);
 	$('.btn-add-project').click(com.isd.bluecollar.submitNewProject);
 	$('.btn-generate-report').click(com.isd.bluecollar.provideReport);

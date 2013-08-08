@@ -87,24 +87,14 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
-    "bluecollar.wcard.setusersetting" : {
-      "path" : "setUserSetting/{setting}/{value}",
+    "bluecollar.wcard.getallsettings" : {
+      "path" : "jsoneasymap",
       "httpMethod" : "POST",
       "scopes" : [ ],
       "audiences" : [ ],
       "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.setUserSetting",
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.getAllSettings",
       "request" : {
-        "parameters" : {
-          "setting" : {
-            "type" : "string",
-            "required" : true
-          },
-          "value" : {
-            "type" : "string",
-            "required" : true
-          }
-        },
         "body" : "empty"
       },
       "response" : {
@@ -135,14 +125,24 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
-    "bluecollar.wcard.getallsettings" : {
-      "path" : "jsoneasymap",
+    "bluecollar.wcard.setusersetting" : {
+      "path" : "setUserSetting/{setting}/{value}",
       "httpMethod" : "POST",
       "scopes" : [ ],
       "audiences" : [ ],
       "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.getAllSettings",
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.setUserSetting",
       "request" : {
+        "parameters" : {
+          "setting" : {
+            "type" : "string",
+            "required" : true
+          },
+          "value" : {
+            "type" : "string",
+            "required" : true
+          }
+        },
         "body" : "empty"
       },
       "response" : {
@@ -232,11 +232,11 @@
           "timezone" : {
             "type" : "string"
           },
-          "beginDate" : {
+          "endDate" : {
             "type" : "string",
             "format" : "date-time"
           },
-          "endDate" : {
+          "beginDate" : {
             "type" : "string",
             "format" : "date-time"
           }
@@ -303,9 +303,9 @@
           "$ref" : "JsonString"
         }
       },
-      "com.isd.bluecollar.spi.WorkCardV1.setUserSetting" : {
+      "com.isd.bluecollar.spi.WorkCardV1.getAllSettings" : {
         "response" : {
-          "$ref" : "JsonStatus"
+          "$ref" : "JsonEasyMap"
         }
       },
       "com.isd.bluecollar.spi.WorkCardV1.addProject" : {
@@ -313,9 +313,9 @@
           "$ref" : "StringCollection"
         }
       },
-      "com.isd.bluecollar.spi.WorkCardV1.getAllSettings" : {
+      "com.isd.bluecollar.spi.WorkCardV1.setUserSetting" : {
         "response" : {
-          "$ref" : "JsonEasyMap"
+          "$ref" : "JsonStatus"
         }
       },
       "com.isd.bluecollar.spi.WorkCardV1.checkin" : {

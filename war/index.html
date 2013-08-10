@@ -118,28 +118,36 @@
 										</div>
 								</div>
 								<div class="tab-pane" id="settings-report">
-									<form class="form-report-settings form-horizontal">
-										<h2 class="form-report-settings-heading">Report settings</h2>
-										<div class="control-group">
-											<label class="control-label" id="label-company-name" for="company-name">Company:</label>
-											<div class="controls">
-												<input type="text" value="" name="company-name" id="company-name" placeholder="Company name">
+									<div class="container">
+										<form class="form-report-settings form-horizontal">
+											<h2 class="form-report-settings-heading">Report settings</h2>
+											<div class="control-group">
+												<label class="control-label" id="label-report-user" for="company-name">Name:</label>
+												<div class="controls">
+													<input type="text" value="" name="report-user-name" id="report-user-name" placeholder="Your name in the report">
+												</div>
 											</div>
-										</div>
-										<div class="control-group">
-											<label class="control-label" id="label-report-language" for="report-language">Language:</label>
-											<div class="controls">
-												<select name="report-language" id="report-language">
-														<option value="en">English</option>
-														<option value="fr">French</option>
-														<option value="de">German</option>
-												</select>
+											<div class="control-group">
+												<label class="control-label" id="label-company-name" for="company-name">Company:</label>
+												<div class="controls">
+													<input type="text" value="" name="company-name" id="company-name" placeholder="Company name">
+												</div>
 											</div>
-										</div>
-										<button class="btn btn-large btn-primary btn-update-settings" type="submit"> 
-											Update settings
-										</button>
-									</form>	
+											<div class="control-group">
+												<label class="control-label" id="label-report-language" for="report-language">Language:</label>
+												<div class="controls">
+													<select name="report-language" id="report-language">
+															<option value="en">English</option>
+															<option value="fr">French</option>
+															<option value="de">German</option>
+													</select>
+												</div>
+											</div>
+											<button class="btn btn-large btn-primary btn-update-settings" type="submit"> 
+												Update settings
+											</button>
+										</form>
+									</div>
 								</div>
 						</div>
 				</div>

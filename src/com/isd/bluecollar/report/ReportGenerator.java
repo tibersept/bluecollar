@@ -48,7 +48,7 @@ public class ReportGenerator {
 	 */
 	public String generateReport() {
 		XlsReport report = new XlsReport();
-		report.setUser(getUser());
+		report.setUser(loadUserName());
 		report.setMonthRange(computeMonthRange());
 		report.setYearRange(computeYearRange());
 		report.setCompanyName(loadCompanyName());
@@ -127,6 +127,15 @@ public class ReportGenerator {
 	private String loadCompanyName() {
 		WorkTimeData wtd = new WorkTimeData();
 		return wtd.getUserSetting(getUser(), "companyName");
+	}
+	
+	/**
+	 * Loads the report user name string selected by the user.
+	 * @return the report user name
+	 */
+	private String loadUserName() {
+		WorkTimeData wtd = new WorkTimeData();
+		return wtd.getUserSetting(getUser(), "reportUser");
 	}
 
 	/**

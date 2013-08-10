@@ -1,6 +1,3 @@
-/*
- * Doan Isakov, 2013, All rights reservered. 
- */
 /** com namespace */
 var com = com || {};
 
@@ -74,6 +71,26 @@ com.isd.bluecollar.checkout = function() {
 };
 
 /**
+ * REST call. Checks the active project of a workday.
+ */
+com.isd.bluecollar.checkactive = function() {
+	var combo = $('.combo-project-selection');
+	gapi.client.bluecollar.wcard.checkactive().execute(function(resp){
+		if(resp && resp.status === 'ok') {
+			if( resp.project && resp.projectBegin ) {
+				var dateString = resp.projectBegin;
+				com.isd.bluecollar.startTimer( dateString );
+				combo.val(resp.project);
+				combo.prop('disabled',false);
+				$('.btn-stop').show();
+				$('.btn-start').hide();
+			}
+		}
+	});
+	return false;
+};
+
+/**
  * REST call. Lists the current workday.
  * @param start the report range start
  * @param end the report range end
@@ -120,28 +137,44 @@ com.isd.bluecollar.listProjects = function() {
 };
 
 /**
- * REST call. Sets a user setting. 
+ * REST call. Sets a user setting.
+ * @param setting the user setting
+ * @param value the user setting value 
  */
 com.isd.bluecollar.setUserSetting = function( setting, value ) {
-	gapi.client.bluecollar.wcard.setusersetting({'setting':seting,'value':value}).execute(function(resp){
+	gapi.client.bluecollar.wcard.setusersetting({'setting':setting,'value':value}).execute(function(resp){
 		if( resp ) {
-			console.info("Setting user setting");
-			console.log(resp);
+			if( resp.status !== 'ok' ) {
+				com.isd.bluecollar.displayMessage("Error", "No projects were found! You can add projects in settings.");
+			}
 		}
 	});
 };
 
 /**
- * REST call. Loads a user setting
+ * REST call. Loads a user setting.
+ * @param setting the setting name
  */
 com.isd.bluecollar.loadUserSetting = function( setting ) {
-	gapi.client.bluecollar.wcard.getusersetting({'setting':seting}).execute(function(resp){
+	gapi.client.bluecollar.wcard.getusersetting({'setting':setting}).execute(function(resp) {
 		if( resp ) {
-			console.info("Retrieving user setting");
-			console.log(resp);
+			if( resp.string ) {
+				com.isd.bluecollar.updateSingleSetting(setting, resp.string);
+			}
 		}
 	});
 };
+
+/**
+ * REST call. Loads all user settings.
+ */
+com.isd.bluecollar.loadAllSettings = function() {
+	gapi.client.bluecollar.wcard.getallsettings().execute(function(resp){
+		if( resp ) {
+			com.isd.bluecollar.updateReportSettings(resp);
+		}
+	});
+}
 
 /**
  * Authentication. Loads the application UI after the user has completed auth.
@@ -181,6 +214,7 @@ com.isd.bluecollar.signout = function() {
 		com.isd.bluecollar.auth();
 	}
 	com.isd.bluecollar.switchToLogin();
+	com.isd.bluecollar.stopTimer(null);
 	return false;
 };
 
@@ -192,7 +226,7 @@ com.isd.bluecollar.auth = function() {
 	  com.isd.bluecollar.signin(false,com.isd.bluecollar.userAuthed);
   } else {
 	  com.isd.bluecollar.signedIn = false;
-
+	  gapi.auth.setToken(null);
   }
   return false;
 };
@@ -202,10 +236,12 @@ com.isd.bluecollar.auth = function() {
  * @return returns <code>false</code> in case method is invoked directly from a button
  */
 com.isd.bluecollar.switchToMain = function() {
-	  $('.login-content').hide();
-      $('.main-content').show();
-      com.isd.bluecollar.listProjects();
-      return false;
+		com.isd.bluecollar.checkactive();
+		com.isd.bluecollar.listProjects();
+		com.isd.bluecollar.loadAllSettings();
+		$('.login-content').hide();
+		$('.main-content').show();
+		return false;
 };
 
 /**
@@ -216,6 +252,44 @@ com.isd.bluecollar.switchToLogin = function() {
 	$('.main-content').hide();
 	$('.login-content').show();
 	return false;
+};
+
+/**
+ * Updates the report settings.
+ * @param settings the settings
+ */
+com.isd.bluecollar.updateReportSettings = function( settings ) {
+	if( settings.keyList && settings.valueList ) {
+		var keys = settings.keyList;
+		var vals = settings.valueList;
+		if( keys.length === vals.length ) {
+			for( var i=0; i<keys.length; i++ ) {
+				com.isd.bluecollar.updateSingleSetting( keys[i], vals[i] );
+			}
+		}
+	}
+};
+
+/**
+ * Updates a single report setting.
+ * @param setting the user setting
+ * @param value the value to which the setting is set
+ */
+com.isd.bluecollar.updateSingleSetting = function( setting, value ) {
+	switch( setting ) {
+	case 'reportUser':
+		$('#report-user-name').val(value);
+		break;
+	case 'companyName':
+		$('#company-name').val(value);
+		break;
+	case 'language':
+		//TODO: update the selected setting option
+		$('#report-language').val(value);
+		break;
+	default:
+		// do nothing
+	}
 };
 
 /**
@@ -330,9 +404,13 @@ com.isd.bluecollar.provideReport = function() {
  * Updates the user settings.
  */
 com.isd.bluecollar.updateSettings = function() {
-	var companyName = $('#company-name').val();
-	if( companyName!=null && companyName.length>0 ) {
-		com.isd.bluecollar.setUserSetting('companyName', companyName);
+	var user = $('#report-user-name').val();
+	if( user!=null && user.length>0 ) {
+		com.isd.bluecollar.setUserSetting('reportUser', user);
+	}
+	var company = $('#company-name').val();
+	if( company!=null && company.length>0 ) {
+		com.isd.bluecollar.setUserSetting('companyName', company);
 	}
 	var language = $('#report-language option:selected').val();
 	if( language!=null && language.length>0 ) {
@@ -345,8 +423,9 @@ com.isd.bluecollar.updateSettings = function() {
  * Starts the project timer.
  * @param utcTimestamp the UTC timestamp for start time
  */
-com.isd.bluecollar.startTimer = function( utcTimestamp ) {		
-	com.isd.bluecollar.timer = window.setInterval(function(){com.isd.bluecollar.updateTimer(utcTimestamp);}, 5000);
+com.isd.bluecollar.startTimer = function( utcTimestamp ) {
+	com.isd.bluecollar.updateTimer(utcTimestamp);
+	com.isd.bluecollar.timer = window.setInterval(function(){com.isd.bluecollar.updateTimer(utcTimestamp);}, 4000);
 };
 
 /**
@@ -356,7 +435,7 @@ com.isd.bluecollar.startTimer = function( utcTimestamp ) {
 com.isd.bluecollar.updateTimer = function( utcStartTimestamp ) {
 	var elm = $('#time-display');
 	if( utcStartTimestamp && elm ) {
-		var value = com.isd.bluecollar.date.getFormattedClockDiff(utcStartTimestamp);		
+		var value = com.isd.bluecollar.date.getFormattedClockDiff(utcStartTimestamp);
 		elm.html(value);
 	}
 };

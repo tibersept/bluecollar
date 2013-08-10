@@ -21,7 +21,7 @@ if( com.isd.bluecollar ) {
 	 * @param dateString the date string
 	 */
 	com.isd.bluecollar.date.setDate = function( date, dateString ) {
-		var els = dateString.split("/");
+		var els = dateString.split('/');
 		date.setMonth(els[0]-1);
 		date.setDate(els[1]);
 		date.setYear(els[2]);
@@ -33,18 +33,18 @@ if( com.isd.bluecollar ) {
 	 * @param timeString the time string
 	 */
 	com.isd.bluecollar.date.setTime = function( date, timeString ) {
-		var pm = timeString.indexOf("PM")>=0;
+		var pm = timeString.indexOf('PM')>=0;
 		timeString = timeString.substring(0,5);
-		els = timeString.split(":");
+		els = timeString.split(':');
 		if( pm ) {
 			var hrs = els[0];
-			if( hrs != "12" ) {
+			if( hrs != '12' ) {
 				hrs = hrs+12;
 			}
 			date.setHours(hrs);
 		} else {
 			var hrs = els[0];
-			if( hrs == "12" ) {
+			if( hrs == '12' ) {
 				hrs = 0;
 			}
 			date.setHours(hrs);
@@ -81,11 +81,11 @@ if( com.isd.bluecollar ) {
 	 * @return the clock difference as a string
 	 */
 	com.isd.bluecollar.date.getFormattedClockDiff = function( utcTimestamp ) {
-		var diff = com.isd.bluecollar.date.getClockDiff(utcStartTimestamp);
+		var diff = com.isd.bluecollar.date.getClockDiff(utcTimestamp);
 		var hrs = com.isd.bluecollar.date.formatClockValue(diff[0],null);
 		var min = com.isd.bluecollar.date.formatClockValue(diff[1],59);
 		var sec = com.isd.bluecollar.date.formatClockValue(diff[2],59);
-		return hrs + ":" + min + ":" + sec;
+		return hrs + ':' + min + ':' + sec;
 	};
 	
 	/**
@@ -113,9 +113,10 @@ if( com.isd.bluecollar ) {
 	 */
 	com.isd.bluecollar.date.formatClockValue = function( value, max ) {
 		if( value<10 ) {
-			return "0"+value;
+			return '0'+value;
 		} else if( max!=null && value > max ) {
 			return max;
 		}
+		return ''+value;
 	};
 }

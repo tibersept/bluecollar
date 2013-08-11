@@ -1,5 +1,5 @@
 /**
- * 
+ * 11.08.2013
  */
 package com.isd.bluecollar.report;
 
@@ -31,6 +31,8 @@ public class ReportGenerator {
 	private TimeZone timezone;	
 	/** Calendar set in the user timezone */
 	private Calendar cal;
+	/** Report language */
+	private ReportLanguage lang;
 	
 	/**
 	 * Creates a new report generator.
@@ -38,7 +40,8 @@ public class ReportGenerator {
 	 * @param aFormat the date format parser
 	 */
 	public ReportGenerator( JsonRange aRange ) {
-		initializeMonthNames();		
+		initializeMonthNames();
+		initializeLanguage();
 		parseRange(aRange);
 	}
 	
@@ -47,7 +50,7 @@ public class ReportGenerator {
 	 * @return the generated report
 	 */
 	public String generateReport() {
-		XlsReport report = new XlsReport();
+		XlsReport report = new XlsReport(getLang());
 		report.setUser(loadUserName());
 		report.setMonthRange(computeMonthRange());
 		report.setYearRange(computeYearRange());
@@ -118,6 +121,14 @@ public class ReportGenerator {
 	 */
 	public void setTimezone(String aTimezone) {
 		timezone = TimeZone.getTimeZone(aTimezone);
+	}
+	
+	/**
+	 * Returns the report language set according to user preferences.
+	 * @return the report language
+	 */
+	private ReportLanguage getLang() {
+		return lang;
 	}
 	
 	/**
@@ -268,6 +279,15 @@ public class ReportGenerator {
 	private void initializeMonthNames() {
 		DateFormatSymbols dfs = new DateFormatSymbols();
 		monthNames = dfs.getMonths();
+	}
+	
+	/**
+	 * Initializes the language properties of the report.
+	 */
+	private void initializeLanguage() {
+		WorkTimeData wtd = new WorkTimeData();
+		String lng = wtd.getUserSetting(getUser(), "language");
+		lang = new ReportLanguage(lng);
 	}
 	
 	/**

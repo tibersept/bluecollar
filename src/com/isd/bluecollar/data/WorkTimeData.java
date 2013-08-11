@@ -492,6 +492,8 @@ public class WorkTimeData {
 		user.setProperty("currentProject", null);
 		user.setProperty("currentProjectBegin", null);
 		service.put(user);
+		createNewProject("Sickness", "Period of time where work was suspended due to sickness", user.getKey());
+		createNewProject("Vacation", "Period of time where work was suspended due to vacation", user.getKey());
 		return user.getKey();
 	}
 	

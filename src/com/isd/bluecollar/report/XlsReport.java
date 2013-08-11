@@ -23,13 +23,6 @@ import com.isd.bluecollar.data.ReportData;
  */
 public class XlsReport {
 	
-	/** Missing user constant */
-	private static final String NO_USER = "missing user";
-	/** Missing month constant */
-	private static final String NO_MONTH = "missing month";
-	/** Missing year constant */
-	private static final String NO_YEAR = "missing year";
-	
 	/** The owner of the report */
 	private String user;
 	/** The month range */
@@ -42,12 +35,14 @@ public class XlsReport {
 	private ReportData reportData;
 	/** The cell styler */
 	private XlsCellStyler styler;
+	/** The report language */
+	private ReportLanguage lang;
 	
 	/**
 	 * Create a new test class.
 	 */
-	public XlsReport() {
-		// do nothing
+	public XlsReport( ReportLanguage aLang ) {
+		lang = aLang;
 	}
 	
 	/**
@@ -58,7 +53,7 @@ public class XlsReport {
 		if( user!=null ) {
 			return user;
 		}
-		return NO_USER;
+		return lang.nouser;
 	}
 	
 	/**
@@ -77,7 +72,7 @@ public class XlsReport {
 		if( monthRange!=null ) {
 			return monthRange;
 		}
-		return NO_MONTH;
+		return lang.nomonth;
 	}
 	
 	/**
@@ -96,7 +91,7 @@ public class XlsReport {
 		if( yearRange!=null ) {
 			return yearRange;
 		}
-		return NO_YEAR;
+		return lang.noyear;
 	}
 	
 	/**
@@ -199,17 +194,17 @@ public class XlsReport {
 		CellStyle inputLeftStyle = getStyler().getStyle(XlsCellStyler.INPUT_LEFT);
 		CellStyle inputCenterStyle = getStyler().getStyle(XlsCellStyler.INPUT_CENTER);
 		cell.setCellStyle(infoStyle);
-		cell.setCellValue(aCreateHelper.createRichTextString("Name:"));
+		cell.setCellValue(aCreateHelper.createRichTextString(lang.labelname));
 		createTextInputField(aSheet, aCreateHelper, inputLeftStyle, row, 2, 4, 11, getUser());
 				
 		cell = row.createCell(13);
 		cell.setCellStyle(infoStyle);
-		cell.setCellValue(aCreateHelper.createRichTextString("Monat:"));
+		cell.setCellValue(aCreateHelper.createRichTextString(lang.labelmonth));
 		createTextInputField(aSheet, aCreateHelper, inputCenterStyle, row, 2, 17, 24, getMonthRange());
 				
 		cell = row.createCell(26);
 		cell.setCellStyle(infoStyle);
-		cell.setCellValue(aCreateHelper.createRichTextString("Jahr:"));
+		cell.setCellValue(aCreateHelper.createRichTextString(lang.labelyear));
 		createIntegerInputField(aSheet, aCreateHelper, inputCenterStyle, row, 2, 29, 33, getYearRange());
 	}
 	
@@ -229,21 +224,21 @@ public class XlsReport {
 		Row row = sheet.createRow(12+projectCount);
 		Cell cell = row.createCell(0);
 		cell.setCellStyle(infoStyle);
-		cell.setCellValue(createHelper.createRichTextString("Überstundenausgleich:"));		
+		cell.setCellValue(createHelper.createRichTextString(lang.labelovertimecompensation));		
 		createTableFooterRow(createHelper, sheet, columnStyle, filledColumnStyle, 13+projectCount);
 		
-		createFooterItem(createHelper, sheet, infoStyle, inputCenterStyle, 17+projectCount, 8, 14, "Gesamtstunden:");
-		createFooterItem(createHelper, sheet, infoStyle, inputCenterStyle, 19+projectCount, 8, 14, "Sollstunden:");
+		createFooterItem(createHelper, sheet, infoStyle, inputCenterStyle, 17+projectCount, 8, 14, lang.labeltotalhours);
+		createFooterItem(createHelper, sheet, infoStyle, inputCenterStyle, 19+projectCount, 8, 14, lang.labelrequiredhours);
 		
 		int rowIndex = 21+projectCount;
-		row = createFooterItem(createHelper, sheet, infoStyle, inputCenterStyle, rowIndex, 8, 14, "Überstunden:");		
+		row = createFooterItem(createHelper, sheet, infoStyle, inputCenterStyle, rowIndex, 8, 14, lang.labelovertime);		
 		createTextInputField(sheet, createHelper, inputCenterStyle, row, rowIndex, 20, 33, "");
 		
 		rowIndex = 22+projectCount;
 		row = sheet.createRow(rowIndex);
-		String signatureFieldTitle = "Ort, Datum, Unterschrift";
+		String signatureFieldTitle = lang.labelpds;
 		if( getCompanyName()!=null && getCompanyName().length()>0 ) {
-			signatureFieldTitle += "Mitarbeiter" + getCompanyName();
+			signatureFieldTitle += lang.labelemployee + getCompanyName();
 		}
 		createTextInputField(sheet, createHelper, infoSmallStyle, row, rowIndex, 20, 33, signatureFieldTitle);
 	}
@@ -286,23 +281,16 @@ public class XlsReport {
 		List<String> projectList = getReportData().getProjectTitles();
 		int rowIndex = 6;
 		for( String project : projectList ) {
+			String translatedProject = translateProjectName(project);
 			if( rowIndex%2 == 0 ) {
-				createTableRow(createHelper, sheet, columnStyle, filledColumnStyle, rowIndex, project);
+				createTableRow(createHelper, sheet, columnStyle, filledColumnStyle, rowIndex, translatedProject);
 			} else {
-				createTableRow(createHelper, sheet, grayedColumnStyle, grayedFilledColumnStyle, rowIndex, project);
+				createTableRow(createHelper, sheet, grayedColumnStyle, grayedFilledColumnStyle, rowIndex, translatedProject);
 			}
 		}
 		
 		int projectCount = getReportData().getProjectCount();
-		if( projectCount%2==0 ) {
-			createTableRow(createHelper, sheet, columnStyle, filledColumnStyle, projectCount+6, "Krankheit");
-			createTableRow(createHelper, sheet, grayedColumnStyle, grayedFilledColumnStyle, projectCount+7, "Urlaub");
-		} else {
-			createTableRow(createHelper, sheet, grayedColumnStyle, grayedFilledColumnStyle, projectCount+6, "Krankheit");
-			createTableRow(createHelper, sheet, columnStyle, filledColumnStyle, projectCount+7, "Urlaub");
-		}
-				
-		createTableFooterRow(createHelper, sheet, columnStyle, filledColumnStyle, projectCount+9);
+		createTableFooterRow(createHelper, sheet, columnStyle, filledColumnStyle, projectCount+6);
 	}
 
 
@@ -419,15 +407,15 @@ public class XlsReport {
 		
 		Cell cell = row.createCell(dayCount+2);
 		cell.setCellStyle(columnStyle);
-		cell.setCellValue(createHelper.createRichTextString("Std."));
+		cell.setCellValue(createHelper.createRichTextString(lang.columnhours));
 		
 		cell = row.createCell(dayCount+3);
 		cell.setCellStyle(columnStyle);
-		cell.setCellValue(createHelper.createRichTextString("Nr."));
+		cell.setCellValue(createHelper.createRichTextString(lang.columnnumbers));
 		
 		cell = row.createCell(dayCount+4);
 		cell.setCellStyle(columnStyle);
-		cell.setCellValue(createHelper.createRichTextString("Name"));
+		cell.setCellValue(createHelper.createRichTextString(lang.columnname));
 	}
 	
 	/**
@@ -504,5 +492,23 @@ public class XlsReport {
 			// do nothing
 		}
 		return output;
+	}
+	
+	/**
+	 * Translates a project string.
+	 * @param aProject the project name
+	 * @return the translated project name
+	 */
+	private String translateProjectName( String aProject ) {
+		if( aProject!=null ) {
+			String project = aProject.toLowerCase();
+			if( project.equals("sickness") ) {
+				return lang.sickness;
+			} else if( project.equals("vacation") ) {
+				return lang.vacation;
+			}
+			return aProject;
+		}
+		return "";
 	}
 }

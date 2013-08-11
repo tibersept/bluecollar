@@ -87,6 +87,30 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
+    "bluecollar.wcard.setusersetting" : {
+      "path" : "setUserSetting/{setting}/{value}",
+      "httpMethod" : "POST",
+      "scopes" : [ ],
+      "audiences" : [ ],
+      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.setUserSetting",
+      "request" : {
+        "parameters" : {
+          "setting" : {
+            "type" : "string",
+            "required" : true
+          },
+          "value" : {
+            "type" : "string",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
     "bluecollar.wcard.addproject" : {
       "path" : "addProject/{name}/{description}",
       "httpMethod" : "POST",
@@ -119,30 +143,6 @@
       "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
       "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.getAllSettings",
       "request" : {
-        "body" : "empty"
-      },
-      "response" : {
-        "body" : "autoTemplate(backendResponse)"
-      }
-    },
-    "bluecollar.wcard.setusersetting" : {
-      "path" : "setUserSetting/{setting}/{value}",
-      "httpMethod" : "POST",
-      "scopes" : [ ],
-      "audiences" : [ ],
-      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.setUserSetting",
-      "request" : {
-        "parameters" : {
-          "setting" : {
-            "type" : "string",
-            "required" : true
-          },
-          "value" : {
-            "type" : "string",
-            "required" : true
-          }
-        },
         "body" : "empty"
       },
       "response" : {
@@ -303,6 +303,11 @@
           "$ref" : "JsonString"
         }
       },
+      "com.isd.bluecollar.spi.WorkCardV1.setUserSetting" : {
+        "response" : {
+          "$ref" : "JsonStatus"
+        }
+      },
       "com.isd.bluecollar.spi.WorkCardV1.addProject" : {
         "response" : {
           "$ref" : "StringCollection"
@@ -311,11 +316,6 @@
       "com.isd.bluecollar.spi.WorkCardV1.getAllSettings" : {
         "response" : {
           "$ref" : "JsonEasyMap"
-        }
-      },
-      "com.isd.bluecollar.spi.WorkCardV1.setUserSetting" : {
-        "response" : {
-          "$ref" : "JsonStatus"
         }
       },
       "com.isd.bluecollar.spi.WorkCardV1.checkin" : {

@@ -92,7 +92,7 @@ public class WorkdayData {
 	}
 	
 	/**
-	 * Clears the intrnal strucutres of the workday data.
+	 * Clears the internal structures of the workday data.
 	 */
 	public void clear() {
 		projects.clear();

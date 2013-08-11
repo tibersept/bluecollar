@@ -307,12 +307,14 @@ com.isd.bluecollar.submitNewProject = function() {
  * @param projects the project list
  */
 com.isd.bluecollar.updateProjectList = function( projects ) {
-	if( projects.length==0) {
-		com.isd.bluecollar.displayMessage("Info", "No projects were found! You can add projects in settings.");
-		com.isd.bluecollar.updateProjectTable([]);
-	} else {
-		com.isd.bluecollar.updateProjectSelection( projects );
-		com.isd.bluecollar.updateProjectTable( projects );
+	if( projects ) {
+		if( projects.length==0) {
+			com.isd.bluecollar.displayMessage("Info", "No projects were found! You can add projects in settings.");
+			com.isd.bluecollar.updateProjectTable([]);
+		} else {
+			com.isd.bluecollar.updateProjectSelection( projects );
+			com.isd.bluecollar.updateProjectTable( projects );
+		}
 	}
 };
 

@@ -24,13 +24,27 @@
     "maxAge" : 0
   },
   "methods" : {
+    "bluecollar.wcard.listprojects" : {
+      "path" : "string",
+      "httpMethod" : "POST",
+      "scopes" : [ ],
+      "audiences" : [ ],
+      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.listProjects",
+      "request" : {
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
     "bluecollar.wcard.checkactive" : {
       "path" : "checkActive",
       "httpMethod" : "POST",
       "scopes" : [ ],
       "audiences" : [ ],
       "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV2.checkActive",
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.checkActive",
       "request" : {
         "body" : "empty"
       },
@@ -44,30 +58,10 @@
       "scopes" : [ ],
       "audiences" : [ ],
       "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV2.generateReport",
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.generateReport",
       "request" : {
         "body" : "autoTemplate(backendRequest)",
         "bodyName" : "resource"
-      },
-      "response" : {
-        "body" : "autoTemplate(backendResponse)"
-      }
-    },
-    "bluecollar.wcard.checkin" : {
-      "path" : "checkin/{project}",
-      "httpMethod" : "POST",
-      "scopes" : [ ],
-      "audiences" : [ ],
-      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV2.checkin",
-      "request" : {
-        "parameters" : {
-          "project" : {
-            "type" : "string",
-            "required" : true
-          }
-        },
-        "body" : "empty"
       },
       "response" : {
         "body" : "autoTemplate(backendResponse)"
@@ -79,7 +73,7 @@
       "scopes" : [ ],
       "audiences" : [ ],
       "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV2.checkout",
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.checkout",
       "request" : {
         "parameters" : {
           "project" : {
@@ -87,34 +81,6 @@
             "required" : true
           }
         },
-        "body" : "empty"
-      },
-      "response" : {
-        "body" : "autoTemplate(backendResponse)"
-      }
-    },
-    "bluecollar.wcard.listprojects" : {
-      "path" : "string",
-      "httpMethod" : "POST",
-      "scopes" : [ ],
-      "audiences" : [ ],
-      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV2.listProjects",
-      "request" : {
-        "body" : "empty"
-      },
-      "response" : {
-        "body" : "autoTemplate(backendResponse)"
-      }
-    },
-    "bluecollar.wcard.getallsettings" : {
-      "path" : "jsoneasymap",
-      "httpMethod" : "POST",
-      "scopes" : [ ],
-      "audiences" : [ ],
-      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV2.getAllSettings",
-      "request" : {
         "body" : "empty"
       },
       "response" : {
@@ -127,7 +93,7 @@
       "scopes" : [ ],
       "audiences" : [ ],
       "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV2.setUserSetting",
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.setUserSetting",
       "request" : {
         "parameters" : {
           "setting" : {
@@ -145,33 +111,13 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
-    "bluecollar.wcard.getusersetting" : {
-      "path" : "jsonstring/{setting}",
-      "httpMethod" : "POST",
-      "scopes" : [ ],
-      "audiences" : [ ],
-      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV2.getUserSetting",
-      "request" : {
-        "parameters" : {
-          "setting" : {
-            "type" : "string",
-            "required" : true
-          }
-        },
-        "body" : "empty"
-      },
-      "response" : {
-        "body" : "autoTemplate(backendResponse)"
-      }
-    },
     "bluecollar.wcard.addproject" : {
       "path" : "addProject/{name}/{description}",
       "httpMethod" : "POST",
       "scopes" : [ ],
       "audiences" : [ ],
       "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV2.addProject",
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.addProject",
       "request" : {
         "parameters" : {
           "name" : {
@@ -188,10 +134,76 @@
       "response" : {
         "body" : "autoTemplate(backendResponse)"
       }
+    },
+    "bluecollar.wcard.getallsettings" : {
+      "path" : "jsoneasymap",
+      "httpMethod" : "POST",
+      "scopes" : [ ],
+      "audiences" : [ ],
+      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.getAllSettings",
+      "request" : {
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "bluecollar.wcard.checkin" : {
+      "path" : "checkin/{project}",
+      "httpMethod" : "POST",
+      "scopes" : [ ],
+      "audiences" : [ ],
+      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.checkin",
+      "request" : {
+        "parameters" : {
+          "project" : {
+            "type" : "string",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "bluecollar.wcard.getusersetting" : {
+      "path" : "jsonstring/{setting}",
+      "httpMethod" : "POST",
+      "scopes" : [ ],
+      "audiences" : [ ],
+      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.getUserSetting",
+      "request" : {
+        "parameters" : {
+          "setting" : {
+            "type" : "string",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
     }
   },
   "descriptor" : {
     "schemas" : {
+      "StringCollection" : {
+        "id" : "StringCollection",
+        "type" : "object",
+        "properties" : {
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
       "JsonStatus" : {
         "id" : "JsonStatus",
         "type" : "object",
@@ -248,18 +260,6 @@
           }
         }
       },
-      "StringCollection" : {
-        "id" : "StringCollection",
-        "type" : "object",
-        "properties" : {
-          "items" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        }
-      },
       "JsonEasyMap" : {
         "id" : "JsonEasyMap",
         "type" : "object",
@@ -280,12 +280,17 @@
       }
     },
     "methods" : {
-      "com.isd.bluecollar.spi.WorkCardV2.checkActive" : {
+      "com.isd.bluecollar.spi.WorkCardV1.listProjects" : {
+        "response" : {
+          "$ref" : "StringCollection"
+        }
+      },
+      "com.isd.bluecollar.spi.WorkCardV1.checkActive" : {
         "response" : {
           "$ref" : "JsonStatus"
         }
       },
-      "com.isd.bluecollar.spi.WorkCardV2.generateReport" : {
+      "com.isd.bluecollar.spi.WorkCardV1.generateReport" : {
         "request" : {
           "$ref" : "JsonRange"
         },
@@ -293,39 +298,34 @@
           "$ref" : "JsonByteArray"
         }
       },
-      "com.isd.bluecollar.spi.WorkCardV2.checkin" : {
+      "com.isd.bluecollar.spi.WorkCardV1.checkout" : {
         "response" : {
           "$ref" : "JsonString"
         }
       },
-      "com.isd.bluecollar.spi.WorkCardV2.checkout" : {
-        "response" : {
-          "$ref" : "JsonString"
-        }
-      },
-      "com.isd.bluecollar.spi.WorkCardV2.listProjects" : {
-        "response" : {
-          "$ref" : "StringCollection"
-        }
-      },
-      "com.isd.bluecollar.spi.WorkCardV2.getAllSettings" : {
-        "response" : {
-          "$ref" : "JsonEasyMap"
-        }
-      },
-      "com.isd.bluecollar.spi.WorkCardV2.setUserSetting" : {
+      "com.isd.bluecollar.spi.WorkCardV1.setUserSetting" : {
         "response" : {
           "$ref" : "JsonStatus"
         }
       },
-      "com.isd.bluecollar.spi.WorkCardV2.getUserSetting" : {
+      "com.isd.bluecollar.spi.WorkCardV1.addProject" : {
+        "response" : {
+          "$ref" : "StringCollection"
+        }
+      },
+      "com.isd.bluecollar.spi.WorkCardV1.getAllSettings" : {
+        "response" : {
+          "$ref" : "JsonEasyMap"
+        }
+      },
+      "com.isd.bluecollar.spi.WorkCardV1.checkin" : {
         "response" : {
           "$ref" : "JsonString"
         }
       },
-      "com.isd.bluecollar.spi.WorkCardV2.addProject" : {
+      "com.isd.bluecollar.spi.WorkCardV1.getUserSetting" : {
         "response" : {
-          "$ref" : "StringCollection"
+          "$ref" : "JsonString"
         }
       }
     }

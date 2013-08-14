@@ -84,10 +84,9 @@ public class WorkCardV1 {
 	 */
 	@ApiMethod(name = "wcard.generatereport", httpMethod = "POST" )
 	public JsonByteArray generateReport( JsonRange aRange, User aUser ) {
-		ReportGenerator reporter = new ReportGenerator(aRange);
-		reporter.setUser(getUserName(aUser));
+		ReportGenerator reporter = new ReportGenerator(getUserName(aUser),aRange);
 		if( aRange.validateRange() ) {
-			return new JsonByteArray(reporter.generateReport());
+			return new JsonByteArray(reporter.getReportName(), reporter.generateReport());
 		} else {
 			return new JsonByteArray();
 		}

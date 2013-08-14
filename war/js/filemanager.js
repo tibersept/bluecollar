@@ -3,16 +3,17 @@ if( com.isd.bluecollar ) {
 	
 	/**
 	 * Stores a file's BASE64 content on the user's Google Drive.
+	 * @param reportName the name of the report
 	 * @param report the BASE64 encoded content of the report
 	 */
-	com.isd.bluecollar.filemanager.storeFile = function( report ) {
+	com.isd.bluecollar.filemanager.storeFile = function( reportName, report ) {
 		const boundary = '-------314159265358979323846';
 		const delimiter = "\r\n--" + boundary + "\r\n";
 		const close_delim = "\r\n--" + boundary + "--";
 
 		var contentType = 'application/octet-stream';
 		var metadata = {
-				'title': 'helloworld.xls',
+				'title': reportName,
 				'mimeType': contentType
 		};
 

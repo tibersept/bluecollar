@@ -75,6 +75,18 @@ if( com.isd.bluecollar ) {
 	};
 	
 	/**
+	 * Converts the date to a date string of the form MM/dd/yyyy.
+	 * @param date the date object
+	 * @return the date string of the form MM/dd/yyyy
+	 */
+	com.isd.bluecollar.date.toDateString = function( date ) {
+		var month = com.isd.bluecollar.date.formatValue(date.getMonth()+1, 12);
+		var day = com.isd.bluecollar.date.formatValue(date.getDate(), 31);
+		var year = com.isd.bluecollar.date.formatValue(date.getFullYear(), null);
+		return month+'/'+day+'/'+year;
+	};
+	
+	/**
 	 * Calculates the difference between the UTC timestamp and now. Returns the difference
 	 * as a chronometer value.
 	 * @param utcTimestamp the UTC timestamp
@@ -82,9 +94,9 @@ if( com.isd.bluecollar ) {
 	 */
 	com.isd.bluecollar.date.getFormattedClockDiff = function( utcTimestamp ) {
 		var diff = com.isd.bluecollar.date.getClockDiff(utcTimestamp);
-		var hrs = com.isd.bluecollar.date.formatClockValue(diff[0],null);
-		var min = com.isd.bluecollar.date.formatClockValue(diff[1],59);
-		var sec = com.isd.bluecollar.date.formatClockValue(diff[2],59);
+		var hrs = com.isd.bluecollar.date.formatValue(diff[0],null);
+		var min = com.isd.bluecollar.date.formatValue(diff[1],59);
+		var sec = com.isd.bluecollar.date.formatValue(diff[2],59);
 		return hrs + ':' + min + ':' + sec;
 	};
 	
@@ -111,7 +123,7 @@ if( com.isd.bluecollar ) {
 	 * @param max the maximum allowed value
 	 * @return the formatted clock value
 	 */
-	com.isd.bluecollar.date.formatClockValue = function( value, max ) {
+	com.isd.bluecollar.date.formatValue = function( value, max ) {
 		if( value<10 ) {
 			return '0'+value;
 		} else if( max!=null && value > max ) {

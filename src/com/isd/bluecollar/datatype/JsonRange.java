@@ -109,9 +109,11 @@ public class JsonRange {
 	 * @return <code>true</code> if range begin lies before range end
 	 */
 	public boolean validateRange() {
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		cal.setTime(getBeginDate());
-		return cal.before(getEndDate());
+		TimeZone tz = TimeZone.getTimeZone("UTC");
+		Calendar beginCal = Calendar.getInstance(tz);
+		beginCal.setTime(getBeginDate());
+		Calendar endCal = Calendar.getInstance(tz);
+		return beginCal.before(endCal);
 	}
 	
 	/**

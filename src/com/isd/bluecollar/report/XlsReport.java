@@ -238,7 +238,7 @@ public class XlsReport {
 		row = sheet.createRow(rowIndex);
 		String signatureFieldTitle = lang.labelpds;
 		if( getCompanyName()!=null && getCompanyName().length()>0 ) {
-			signatureFieldTitle += lang.labelemployee + getCompanyName();
+			signatureFieldTitle += " " + lang.labelemployee + " " + getCompanyName();
 		}
 		createTextInputField(sheet, createHelper, infoSmallStyle, row, rowIndex, 20, 33, signatureFieldTitle);
 	}

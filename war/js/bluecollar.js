@@ -29,6 +29,12 @@ com.isd.bluecollar.signedIn = false;
 com.isd.bluecollar.driveOk = false;
 
 /**
+ * Indicates whether the debug mode is on.
+ * @type {boolean}
+ */
+com.isd.bluecollar.debugMode = false;
+
+/**
  * Original access token provided on authorization.
  * @type {String}
  */
@@ -98,17 +104,19 @@ com.isd.bluecollar.checkactive = function() {
  */
 com.isd.bluecollar.generateReport = function( start, end, timezone ) {	
 	gapi.client.bluecollar.wcard.generatereport({'begin':start,'end':end,'timezone':timezone}).execute(function(resp){
-//		if( resp.byteArray ) {
-//			var token = gapi.auth.getToken();
-//			token.access_token = com.isd.bluecollar.originalAccessToken;			
-//			gapi.auth.setToken(token);
-//			
-//			com.isd.bluecollar.filemanager.storeFile( resp.byteArray );
-//			
-//			var token = gapi.auth.getToken();
-//			token.access_token = token.id_token;
-//			gapi.auth.setToken(token);
-//		}
+		if( resp.byteArray ) {
+			if( !com.isd.bluecollar.debugMode ) {
+				var token = gapi.auth.getToken();
+				token.access_token = com.isd.bluecollar.originalAccessToken;			
+				gapi.auth.setToken(token);
+				
+				com.isd.bluecollar.filemanager.storeFile( resp.name, resp.byteArray );
+				
+				var token = gapi.auth.getToken();
+				token.access_token = token.id_token;
+				gapi.auth.setToken(token);				
+			}
+		}
 		com.isd.bluecollar.displayMessage("Info", "Report has been genrated");
 	});
 };
@@ -382,7 +390,7 @@ com.isd.bluecollar.onTabActivation = function( e ) {
  * Generates a report on activation of the generate report button.
  */
 com.isd.bluecollar.provideReport = function() {
-//	if( com.isd.bluecollar.driveOk ) {
+	if( com.isd.bluecollar.driveOk || com.isd.bluecollar.debugMode ) {
 		var dateStart = $('#dp-start').val();
 		var timeStart = $('#tp-start').val();
 		var start = com.isd.bluecollar.date.parseDate(dateStart, timeStart);
@@ -396,9 +404,9 @@ com.isd.bluecollar.provideReport = function() {
 		} else {
 			com.isd.bluecollar.displayMessage("Error", "The selected range for report generation is invalid!");
 		}		
-//	} else {
-//		com.isd.bluecollar.displayMessage("Error", "Report generation is not supported without authorized access to Google Drive!");
-//	}
+	} else {
+		com.isd.bluecollar.displayMessage("Error", "Report generation is not supported without authorized access to Google Drive!");
+	}
 	return false;
 };
 
@@ -478,6 +486,23 @@ com.isd.bluecollar.enableLogin = function() {
 };
 
 /**
+ * Initializes the report range.
+ */
+com.isd.bluecollar.initDatepickers = function() {
+	var now = new Date();
+	var first = new Date(now.getFullYear(), now.getMonth(), 1);
+	$('#dp-start').val(com.isd.bluecollar.date.toDateString(first));
+	var last = new Date(now.getFullYear(), now.getMonth()+1, 0);
+	$('#dp-end').val(com.isd.bluecollar.date.toDateString(last));
+	
+	// initialize the datepickers
+	$('#dp-start').datepicker();
+	$('#dp-end').datepicker();
+	$('#tp-start').timepicker();
+	$('#tp-end').timepicker();
+};
+
+/**
  * Loads additional APIs.
  */
 com.isd.bluecollar.loadAdditionalApis = function() {
@@ -503,7 +528,7 @@ com.isd.bluecollar.init = function(apiRoot) {
 	}
 	
 	apisToLoad = 2;
-	gapi.client.load('bluecollar', 'v1', callback, apiRoot);
+	gapi.client.load('bluecollar', 'v2', callback, apiRoot);
 	gapi.client.load('oauth2', 'v2', callback);
 
 	$('.btn-start').click(com.isd.bluecollar.checkin);

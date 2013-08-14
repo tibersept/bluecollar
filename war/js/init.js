@@ -2,10 +2,7 @@
  * Initializes datepickers.
  */
 $(document).ready(function(){
-	$('#dp-start').datepicker();
-	$('#dp-end').datepicker();
-	$('#tp-start').timepicker();
-	$('#tp-end').timepicker();
+	com.isd.bluecollar.initDatepickers();
 });
 
 /**
@@ -13,6 +10,7 @@ $(document).ready(function(){
  */
 function init() {	
 	var protocol = window.location.protocol;
+	com.isd.bluecollar.debugMode = isLocalhost(window.location.href);
 	com.isd.bluecollar.init(protocol + '//' + window.location.host + '/_ah/api');
 }
 

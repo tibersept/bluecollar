@@ -21,6 +21,8 @@ public class ReportGenerator {
 
 	/** The user */
 	private String user;
+	/** Generate report name */
+	private String reportName;
 	/** Begin date of the report */
 	private Date begin;
 	/** End date of the report */
@@ -36,10 +38,12 @@ public class ReportGenerator {
 	
 	/**
 	 * Creates a new report generator.
+	 * @param aUser the user/owner of the report
 	 * @param aRange the date range for the report 
 	 * @param aFormat the date format parser
 	 */
-	public ReportGenerator( JsonRange aRange ) {
+	public ReportGenerator( String aUser, JsonRange aRange ) {
+		setUser(aUser);
 		initializeMonthNames();
 		initializeLanguage();
 		parseRange(aRange);
@@ -52,8 +56,8 @@ public class ReportGenerator {
 	public String generateReport() {
 		XlsReport report = new XlsReport(getLang());
 		report.setUser(loadUserName());
-		report.setMonthRange(computeMonthRange());
-		report.setYearRange(computeYearRange());
+		report.setMonthRange(computeMonthRange(false));
+		report.setYearRange(computeYearRange(false));
 		report.setCompanyName(loadCompanyName());
 		report.setReportData(computeReportData());
 		return report.generateReport();
@@ -124,6 +128,36 @@ public class ReportGenerator {
 	}
 	
 	/**
+	 * Returns the generated report name.
+	 * @return the report name
+	 */
+	public String getReportName() {
+		if( reportName==null ) {
+			reportName = computeReportName();
+		}
+		return reportName;
+	}
+	
+	/**
+	 * Sets the report name.
+	 * @param the newly generated report name
+	 */
+	public void setReportName( String aReportName ) {
+		reportName = aReportName;
+	}
+	
+	/**
+	 * Computes and returns the report name from the current data.
+	 * @return the report name
+	 */
+	private String computeReportName() {
+		String title = getLang().reportname;
+		String months = computeMonthRange(true);
+		String years = computeYearRange(true);
+		return title+"-"+months+"-"+years+".xls";
+	}
+	
+	/**
 	 * Returns the report language set according to user preferences.
 	 * @return the report language
 	 */
@@ -182,35 +216,40 @@ public class ReportGenerator {
 	 * Computes the year range.
 	 * @return the year range as a string
 	 */
-	private String computeYearRange() {
+	private String computeYearRange( boolean aFilenameSafe ) {
 		if( isSameField(Calendar.YEAR) ) {
 			return getYear(getBegin());
 		} else {
 			String bYear = getYear(getBegin());
 			String eYear = getYear(getEnd());
-			return bYear + " - " + eYear;
+			String sep = aFilenameSafe ? "-" : " - ";
+			return bYear+sep+eYear;
 		}
 	}
 	
 	/**
 	 * Computes the month range.
+	 * @param aFilenameSafe <code>true</code> - the generated names are safe for filenames, i.e. numbers instead of month names
 	 * @return the month range as a string
 	 */
-	private String computeMonthRange() {
+	private String computeMonthRange( boolean aFilenameSafe ) {
 		if( isSameField(Calendar.YEAR) ) {
 			if( isSameField(Calendar.MONTH) ) {
-				return getMonthName(getBegin());
+				return getMonthName(getBegin(), aFilenameSafe);
 			} else {
-				String beg = getMonthName(getBegin());
-				String end = getMonthName(getEnd());
-				return beg + " - " + end;
+				String beg = getMonthName(getBegin(), aFilenameSafe);
+				String end = getMonthName(getEnd(), aFilenameSafe);
+				String sep = aFilenameSafe ? "-": " - "; 
+				return beg + sep + end;
 			}
 		} else {
-			String bMonth = getMonthName(getBegin());
+			String bMonth = getMonthName(getBegin(), aFilenameSafe);
 			String bYear = getYear(getBegin());
-			String eMonth = getMonthName(getEnd());
+			String eMonth = getMonthName(getEnd(), aFilenameSafe);
 			String eYear = getYear(getEnd());
-			return bMonth+". " + bYear + " - " + eMonth+". "+eYear;
+			String sepMonth = aFilenameSafe ? "." : ". ";
+			String sepYear = aFilenameSafe ? "-" : " - ";
+			return bMonth+sepMonth+bYear+sepYear+eMonth+sepMonth+eYear;
 		}
 	}
 	
@@ -261,12 +300,16 @@ public class ReportGenerator {
 	/**
 	 * Returns the name of the month.
 	 * @param aDate the date
+	 * @param aNumeric <code>true</code> - returns numeric month name
 	 * @return the month name
 	 */
-	private String getMonthName( Date aDate ) {
+	private String getMonthName( Date aDate, boolean aNumeric ) {
 		Calendar cal = getCal();
 		cal.setTime(aDate);
 		int month = cal.get(Calendar.MONTH);
+		if( aNumeric ) {
+			return String.valueOf(month+1);
+		}
 		if( month>=0 && month<12 ){
 			return monthNames[month];
 		}

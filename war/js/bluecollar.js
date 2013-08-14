@@ -102,7 +102,8 @@ com.isd.bluecollar.checkactive = function() {
  * @param end the report range end
  * @param timezone the user time zone as string
  */
-com.isd.bluecollar.generateReport = function( start, end, timezone ) {	
+com.isd.bluecollar.generateReport = function( start, end, timezone ) {
+	com.isd.bluecollar.busy.show();
 	gapi.client.bluecollar.wcard.generatereport({'begin':start,'end':end,'timezone':timezone}).execute(function(resp){
 		if( resp.byteArray ) {
 			if( !com.isd.bluecollar.debugMode ) {
@@ -116,8 +117,10 @@ com.isd.bluecollar.generateReport = function( start, end, timezone ) {
 				token.access_token = token.id_token;
 				gapi.auth.setToken(token);				
 			}
+		} else {
+			com.isd.bluecollar.displayMessage('Error', 'Report generation has faltered!');
 		}
-		com.isd.bluecollar.displayMessage("Info", "Report has been genrated");
+		com.isd.bluecollar.busy.hide();
 	});
 };
 

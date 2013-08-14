@@ -127,7 +127,7 @@ com.isd.bluecollar.generateReport = function( start, end, timezone ) {
 com.isd.bluecollar.addProject = function( name, description ) {
 	gapi.client.bluecollar.wcard.addproject({'name':name,'description':description}).execute(function(resp){
 		if( resp ) {
-			com.isd.bluecollar.updateProjectList(resp.items);
+			com.isd.bluecollar.updateProjectList(resp.itemList);
 			com.isd.bluecollar.clearProjectForm();
 		}
 	});
@@ -139,7 +139,7 @@ com.isd.bluecollar.addProject = function( name, description ) {
 com.isd.bluecollar.listProjects = function() {
 	gapi.client.bluecollar.wcard.listprojects().execute(function(resp){
 		if( resp ) {			
-			com.isd.bluecollar.updateProjectList(resp.items);
+			com.isd.bluecollar.updateProjectList(resp.itemList);
 		}
 	});
 };

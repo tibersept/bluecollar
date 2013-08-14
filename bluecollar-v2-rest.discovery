@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"nPbVolg1F8jpPe9kkErPtt8mpZE/DVpTyR60yfteAqJt2pmbLiL94Lo\"",
+ "etag": "\"nPbVolg1F8jpPe9kkErPtt8mpZE/0ocfRQXKnncLbCr-LDnIz6iI-C0\"",
  "discoveryVersion": "v1",
  "id": "bluecollar:v2",
  "name": "bluecollar",
@@ -94,6 +94,18 @@
     }
    }
   },
+  "JsonList": {
+   "id": "JsonList",
+   "type": "object",
+   "properties": {
+    "itemList": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
   "JsonRange": {
    "id": "JsonRange",
    "type": "object",
@@ -140,18 +152,6 @@
      "type": "string"
     }
    }
-  },
-  "StringCollection": {
-   "id": "StringCollection",
-   "type": "object",
-   "properties": {
-    "items": {
-     "type": "array",
-     "items": {
-      "type": "string"
-     }
-    }
-   }
   }
  },
  "resources": {
@@ -178,7 +178,7 @@
       "description"
      ],
      "response": {
-      "$ref": "StringCollection"
+      "$ref": "JsonList"
      }
     },
     "checkactive": {
@@ -265,10 +265,10 @@
     },
     "listprojects": {
      "id": "bluecollar.wcard.listprojects",
-     "path": "string",
+     "path": "listProjects",
      "httpMethod": "POST",
      "response": {
-      "$ref": "StringCollection"
+      "$ref": "JsonList"
      }
     },
     "setusersetting": {

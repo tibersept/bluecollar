@@ -15,6 +15,7 @@ import com.isd.bluecollar.data.WorkTimeData;
 import com.isd.bluecollar.datatype.CurrentUserProject;
 import com.isd.bluecollar.datatype.JsonByteArray;
 import com.isd.bluecollar.datatype.JsonEasyMap;
+import com.isd.bluecollar.datatype.JsonList;
 import com.isd.bluecollar.datatype.JsonString;
 import com.isd.bluecollar.datatype.JsonRange;
 import com.isd.bluecollar.datatype.JsonStatus;
@@ -100,14 +101,14 @@ public class WorkCardV1 {
 	 * @return <code>true</code> on success
 	 */
 	@ApiMethod(name = "wcard.addproject", httpMethod = "POST" )
-	public List<String> addProject( @Named("name") String aName, @Named("description") String aDescription, User aUser ) {
+	public JsonList addProject( @Named("name") String aName, @Named("description") String aDescription, User aUser ) {
 		String username = getUserName(aUser);
 		
 		WorkTimeData wtd = new WorkTimeData();
 		wtd.addProject(username, aName, aDescription);
 		
 		List<String> projects = wtd.getProjectList(username, true);		
-		return projects;
+		return new JsonList(projects);
 	}
 	
 	/**
@@ -116,11 +117,11 @@ public class WorkCardV1 {
 	 * @return the list of projects
 	 */
 	@ApiMethod( name = "wcard.listprojects", httpMethod = "POST" )
-	public List<String> listProjects( User aUser ) {
+	public JsonList listProjects( User aUser ) {
 		String username = getUserName(aUser);
 		WorkTimeData wtd = new WorkTimeData();
 		List<String> projects = wtd.getProjectList(username,  true);
-		return projects;
+		return new JsonList(projects);
 	}
 	
 	/**

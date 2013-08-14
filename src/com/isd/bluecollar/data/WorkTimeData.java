@@ -92,7 +92,6 @@ public class WorkTimeData {
 		Key key = getUserKey(aUser);
 		if( key!=null ) {
 			List<String> list = new ArrayList<String>();
-			
 			List<Entity> projects = getAllProjects(key);
 			for( Entity project : projects ) {
 				String projectName = (String) project.getProperty("projectName");
@@ -101,8 +100,6 @@ public class WorkTimeData {
 			if( anAlphaSorted ) {
 				Collections.sort(list);
 			}
-			
-			list.add("We can deliver them at some level");
 			return list;
 		}
 		return Collections.emptyList();

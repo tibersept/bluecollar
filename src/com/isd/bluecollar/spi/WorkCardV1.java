@@ -1,25 +1,23 @@
 package com.isd.bluecollar.spi;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 import javax.inject.Named;
 
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.appengine.api.users.User;
-import com.isd.bluecollar.data.WorkTimeData;
-import com.isd.bluecollar.datatype.CurrentUserProject;
+import com.isd.bluecollar.controller.ProjectController;
+import com.isd.bluecollar.controller.SettingsController;
+import com.isd.bluecollar.controller.TimeController;
+import com.isd.bluecollar.controller.report.ReportGenerator;
+import com.isd.bluecollar.datatype.ActiveProject;
 import com.isd.bluecollar.datatype.JsonByteArray;
 import com.isd.bluecollar.datatype.JsonEasyMap;
 import com.isd.bluecollar.datatype.JsonList;
-import com.isd.bluecollar.datatype.JsonString;
 import com.isd.bluecollar.datatype.JsonRange;
 import com.isd.bluecollar.datatype.JsonStatus;
-import com.isd.bluecollar.report.ReportGenerator;
+import com.isd.bluecollar.datatype.JsonString;
 
 @Api(
 	name = "bluecollar",version = "v2",
@@ -33,13 +31,9 @@ public class WorkCardV1 {
 	 */
 	@ApiMethod(name = "wcard.checkin", httpMethod = "POST")
 	public JsonString checkin( @Named("project") String aProject, User aUser ) {
-		Date rightNow = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
 		String username = getUserName(aUser);
-		
-		WorkTimeData wtd = new WorkTimeData();
-		wtd.setDayStart(username, aProject, rightNow);
-
-		return new JsonString(String.valueOf(rightNow.getTime()));
+		TimeController card = new TimeController();
+		return new JsonString(card.checkin(username, aProject));
 	}
 	
 	/**
@@ -48,13 +42,9 @@ public class WorkCardV1 {
 	 */
 	@ApiMethod(name = "wcard.checkout", httpMethod = "POST")
 	public JsonString checkout( @Named("project") String aProject, User aUser ) {
-		Date rightNow = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();		
 		String username = getUserName(aUser);
-		
-		WorkTimeData wtd = new WorkTimeData();
-		wtd.setDayEnd(username, aProject, rightNow);
-		
-		return new JsonString(String.valueOf(rightNow.getTime()));
+		TimeController card = new TimeController();
+		return new JsonString(card.checkout(username, aProject));
 	}
 	
 	/**
@@ -66,8 +56,9 @@ public class WorkCardV1 {
 	@ApiMethod(name = "wcard.checkactive", httpMethod = "POST")
 	public JsonStatus checkActive( User aUser ) {
 		String username = getUserName(aUser);
-		WorkTimeData wtd = new WorkTimeData();
-		CurrentUserProject project = wtd.getActiveProject(username);
+		TimeController card = new TimeController();
+		ActiveProject project = card.checkActive(username);
+		
 		JsonStatus status = new JsonStatus();
 		if( project.exists() ) {
 			status.setProject(project.getName());
@@ -103,12 +94,8 @@ public class WorkCardV1 {
 	@ApiMethod(name = "wcard.addproject", httpMethod = "POST" )
 	public JsonList addProject( @Named("name") String aName, @Named("description") String aDescription, User aUser ) {
 		String username = getUserName(aUser);
-		
-		WorkTimeData wtd = new WorkTimeData();
-		wtd.addProject(username, aName, aDescription);
-		
-		List<String> projects = wtd.getProjectList(username, true);		
-		return new JsonList(projects);
+		ProjectController pc = new ProjectController();		
+		return new JsonList(pc.addProject(username, aName, aDescription));
 	}
 	
 	/**
@@ -119,9 +106,8 @@ public class WorkCardV1 {
 	@ApiMethod( name = "wcard.listprojects", httpMethod = "POST" )
 	public JsonList listProjects( User aUser ) {
 		String username = getUserName(aUser);
-		WorkTimeData wtd = new WorkTimeData();
-		List<String> projects = wtd.getProjectList(username,  true);
-		return new JsonList(projects);
+		ProjectController pc = new ProjectController();
+		return new JsonList(pc.getProjects(username));
 	}
 	
 	/**
@@ -133,9 +119,8 @@ public class WorkCardV1 {
 	@ApiMethod( name = "wcard.getusersetting", httpMethod = "POST" )
 	public JsonString getUserSetting( @Named("setting") String aSetting, User aUser ) {
 		String username = getUserName(aUser);
-		WorkTimeData wtd = new WorkTimeData();
-		String val = wtd.getUserSetting(username, aSetting);
-		return new JsonString(val);
+		SettingsController sc = new SettingsController();
+		return new JsonString(sc.getSetting(username, aSetting));
 	}
 	
 	/**
@@ -147,8 +132,8 @@ public class WorkCardV1 {
 	@ApiMethod( name = "wcard.setusersetting", httpMethod = "POST" )
 	public JsonStatus setUserSetting( @Named("setting") String aSetting,@Named("value") String aValue, User aUser ) {
 		String username = getUserName(aUser);
-		WorkTimeData wtd = new WorkTimeData();
-		wtd.setUserSetting(username, aSetting, aValue);
+		SettingsController sc = new SettingsController();		
+		sc.setSetting(username, aSetting, aValue);
 		return JsonStatus.OK_STATUS;
 	}
 	
@@ -160,15 +145,14 @@ public class WorkCardV1 {
 	@ApiMethod( name = "wcard.getallsettings", httpMethod = "POST" )
 	public JsonEasyMap getAllSettings( User aUser ) {
 		String username = getUserName(aUser);
-		WorkTimeData wtd = new WorkTimeData();
-		Map<String, Object> settings = wtd.getUserSettings(username);
+		SettingsController sc = new SettingsController();
+		Map<String,Object> settings = sc.getAllSettings(username);
 		JsonEasyMap map = new JsonEasyMap();
 		for( Map.Entry<String,Object> setting : settings.entrySet() ) {
-			map.addEntry(setting.getKey(), setting.getValue().toString());
+			map.addEntry(setting.getKey(), String.valueOf(setting.getValue()));
 		}
 		return map;
 	}
-	
 	
 	/**
 	 * Attempts to retrieve the username from the user object. If it fails to do 

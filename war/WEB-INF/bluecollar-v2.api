@@ -7,7 +7,7 @@
   "defaultVersion" : false,
   "adapter" : {
     "bns" : "https://mavicollar.appspot.com/_ah/spi",
-    "deadline" : 10.0,
+    "deadline" : 65.0,
     "type" : "lily"
   },
   "auth" : {
@@ -27,7 +27,8 @@
     "bluecollar.wcard.listprojects" : {
       "path" : "listProjects",
       "httpMethod" : "POST",
-      "scopes" : [ ],
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
       "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
       "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.listProjects",
@@ -41,7 +42,8 @@
     "bluecollar.wcard.checkactive" : {
       "path" : "checkActive",
       "httpMethod" : "POST",
-      "scopes" : [ ],
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
       "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
       "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.checkActive",
@@ -55,7 +57,8 @@
     "bluecollar.wcard.generatereport" : {
       "path" : "generateReport",
       "httpMethod" : "POST",
-      "scopes" : [ ],
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
       "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
       "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.generateReport",
@@ -70,7 +73,8 @@
     "bluecollar.wcard.checkout" : {
       "path" : "checkout/{project}",
       "httpMethod" : "POST",
-      "scopes" : [ ],
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
       "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
       "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.checkout",
@@ -90,7 +94,8 @@
     "bluecollar.wcard.setusersetting" : {
       "path" : "setUserSetting/{setting}/{value}",
       "httpMethod" : "POST",
-      "scopes" : [ ],
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
       "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
       "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.setUserSetting",
@@ -111,10 +116,26 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
+    "bluecollar.wcard.getallsettings" : {
+      "path" : "jsoneasymap",
+      "httpMethod" : "POST",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.getAllSettings",
+      "request" : {
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
     "bluecollar.wcard.addproject" : {
       "path" : "addProject/{name}/{description}",
       "httpMethod" : "POST",
-      "scopes" : [ ],
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
       "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
       "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.addProject",
@@ -135,24 +156,11 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
-    "bluecollar.wcard.getallsettings" : {
-      "path" : "jsoneasymap",
-      "httpMethod" : "POST",
-      "scopes" : [ ],
-      "audiences" : [ ],
-      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.getAllSettings",
-      "request" : {
-        "body" : "empty"
-      },
-      "response" : {
-        "body" : "autoTemplate(backendResponse)"
-      }
-    },
     "bluecollar.wcard.checkin" : {
       "path" : "checkin/{project}",
       "httpMethod" : "POST",
-      "scopes" : [ ],
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
       "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
       "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.checkin",
@@ -172,7 +180,8 @@
     "bluecollar.wcard.getusersetting" : {
       "path" : "jsonstring/{setting}",
       "httpMethod" : "POST",
-      "scopes" : [ ],
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
       "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
       "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.getUserSetting",
@@ -232,11 +241,11 @@
           "timezone" : {
             "type" : "string"
           },
-          "beginDate" : {
+          "endDate" : {
             "type" : "string",
             "format" : "date-time"
           },
-          "endDate" : {
+          "beginDate" : {
             "type" : "string",
             "format" : "date-time"
           }
@@ -311,14 +320,14 @@
           "$ref" : "JsonStatus"
         }
       },
-      "com.isd.bluecollar.spi.WorkCardV1.addProject" : {
-        "response" : {
-          "$ref" : "JsonList"
-        }
-      },
       "com.isd.bluecollar.spi.WorkCardV1.getAllSettings" : {
         "response" : {
           "$ref" : "JsonEasyMap"
+        }
+      },
+      "com.isd.bluecollar.spi.WorkCardV1.addProject" : {
+        "response" : {
+          "$ref" : "JsonList"
         }
       },
       "com.isd.bluecollar.spi.WorkCardV1.checkin" : {

@@ -2,10 +2,10 @@ package com.isd.bluecollar.data.report;
 
 /**
  * Project work time range. This class is just used to encapsulate the begin and
- * end timestamps of the work done on a project.  
+ * end timestamps of the work done for a single task of the project at a given time.  
  * @author doan
  */
-public class ProjectRange {
+public class ProjectTaskTimeRange {
 
 	/** The project name */
 	private String project;
@@ -18,7 +18,7 @@ public class ProjectRange {
 	 * Creates a new project range.
 	 * @param aProject the project name
 	 */
-	public ProjectRange( String aProject ) {
+	public ProjectTaskTimeRange( String aProject ) {
 		begin = null;
 		end = null;
 	}

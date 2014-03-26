@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.isd.bluecollar.data.report.ProjectRange;
+import com.isd.bluecollar.data.report.ProjectTaskTimeRange;
 import com.isd.bluecollar.data.report.ReportData;
 import com.isd.bluecollar.data.report.WorkdayData;
 
@@ -118,7 +118,7 @@ public class WorkhoursExtractor {
 			addSkipped(aWorkday.getDay());
 		} else {			
 			for( String project : projects ) {
-				List<ProjectRange> ranges = aWorkday.getRanges(project);
+				List<ProjectTaskTimeRange> ranges = aWorkday.getRanges(project);
 				processProjectRanges(aDayString, dayBegin, dayEnd, project, ranges);
 			}
 		}
@@ -133,9 +133,9 @@ public class WorkhoursExtractor {
 	 * @param aRanges the list of ranges
 	 */
 	private void processProjectRanges(String aDayString, long aDayBegin,
-			long aDayEnd, String aProject, List<ProjectRange> aRanges) {
+			long aDayEnd, String aProject, List<ProjectTaskTimeRange> aRanges) {
 		float totalTime = 0.0f;
-		for( ProjectRange range : aRanges ) {
+		for( ProjectTaskTimeRange range : aRanges ) {
 			long begin = getProjectBegin(range, aDayBegin, aProject);
 			long end = getProjectEnd(range, aDayEnd, aProject);
 			float tim = getTimeDifference(begin, end);
@@ -151,7 +151,7 @@ public class WorkhoursExtractor {
 	 * @param aProject the project name
 	 * @return the end timestamp of the project
 	 */
-	private long getProjectEnd( ProjectRange aRange, long aDayEnd, String aProject ) {
+	private long getProjectEnd( ProjectTaskTimeRange aRange, long aDayEnd, String aProject ) {
 		long end = aRange.getEnd();
 		if( end == 0 ) {
 			// Overflow project
@@ -168,7 +168,7 @@ public class WorkhoursExtractor {
 	 * @param aProject the project
 	 * @return the begin timestamp of the project range
 	 */
-	private long getProjectBegin( ProjectRange aRange, long aDayBegin, String aProject ) {
+	private long getProjectBegin( ProjectTaskTimeRange aRange, long aDayBegin, String aProject ) {
 		long begin = aRange.getBegin();
 		if( begin == 0 ) {
 			// Completed overflow project

@@ -27,7 +27,7 @@ public class WorkdayData {
 	/** Project titles */
 	private Set<String> projects;
 	/** Begin times */
-	private Map<String, List<ProjectRange>> projectTimes;
+	private Map<String, List<ProjectTaskTimeRange>> projectTimes;
 	
 	/**
 	 * Creates a new workday data instance.
@@ -35,7 +35,7 @@ public class WorkdayData {
 	public WorkdayData() {
 		day = "";
 		projects = new HashSet<String>();
-		projectTimes = new HashMap<String, List<ProjectRange>>();
+		projectTimes = new HashMap<String, List<ProjectTaskTimeRange>>();
 	}
 	
 	/**
@@ -81,12 +81,12 @@ public class WorkdayData {
 	public void addProjectTime( String aProject, Long aBegin, Long anEnd ) {
 		if( aProject!=null ) {
 			projects.add(aProject);
-			List<ProjectRange> list = projectTimes.get(aProject);
+			List<ProjectTaskTimeRange> list = projectTimes.get(aProject);
 			if( list==null ) {
-				list = new ArrayList<ProjectRange>();
+				list = new ArrayList<ProjectTaskTimeRange>();
 				projectTimes.put(aProject, list);
 			}
-			ProjectRange range = new ProjectRange(aProject);
+			ProjectTaskTimeRange range = new ProjectTaskTimeRange(aProject);
 			range.setBegin(aBegin);
 			range.setEnd(anEnd);
 			list.add(range);
@@ -106,8 +106,8 @@ public class WorkdayData {
 	 * @param aProject the project name
 	 * @return the list of ranges or an empty list if no ranges are present
 	 */
-	public List<ProjectRange> getRanges( String aProject ) {
-		List<ProjectRange> ranges = projectTimes.get(aProject);
+	public List<ProjectTaskTimeRange> getRanges( String aProject ) {
+		List<ProjectTaskTimeRange> ranges = projectTimes.get(aProject);
 		if( ranges==null ) {
 			return Collections.emptyList();
 		}
@@ -119,8 +119,8 @@ public class WorkdayData {
 	 */
 	public void clear() {
 		projects.clear();
-		for( Map.Entry<String, List<ProjectRange>> entry : projectTimes.entrySet() ) {
-			List<ProjectRange> ranges = entry.getValue();
+		for( Map.Entry<String, List<ProjectTaskTimeRange>> entry : projectTimes.entrySet() ) {
+			List<ProjectTaskTimeRange> ranges = entry.getValue();
 			if( ranges!=null ) {
 				ranges.clear();
 			}

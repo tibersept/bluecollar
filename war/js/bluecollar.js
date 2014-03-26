@@ -523,6 +523,7 @@ com.isd.bluecollar.init = function(apiRoot) {
 	var apisToLoad;
 	var callback = function() {
 		if (--apisToLoad == 0) {
+			com.isd.bluecollar.busy.hide();
 			com.isd.bluecollar.signin(true,com.isd.bluecollar.userAuthed);
 			if( !com.isd.bluecollar.signedIn ) {
 				com.isd.bluecollar.enableLogin();

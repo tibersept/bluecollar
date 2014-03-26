@@ -5,13 +5,14 @@ if( com.isd.bluecollar ) {
 	 * Field indicates whether busy indicator is currently running
 	 * @type {boolean}
 	 */
-	com.isd.bluecollar.busy.running = false;
+	com.isd.bluecollar.busy._running = false;
+	com.isd.bluecollar.busy._spinner = null;
 	
 	/**
 	 * Displays the busy screen.
 	 */
 	com.isd.bluecollar.busy.show = function() {
-		if( !com.isd.bluecollar.busy.running ) {
+		if( !com.isd.bluecollar.busy._running ) {
 			var indicator = $('#busy-indicator');
 			var opts = {
 				  lines: 13, // The number of lines to draw
@@ -31,9 +32,12 @@ if( com.isd.bluecollar ) {
 				  top: 'auto', // Top position relative to parent in px
 				  left: 'auto' // Left position relative to parent in px
 			};
-			var spinner = new Spinner(opts).spin(indicator);
-			indicator.show();
-			com.isd.bluecollar.busy.running = true;	
+			if( indicator.size() > 0 ) {
+				var spinner = new Spinner(opts).spin(indicator.get(0));
+				indicator.show();
+				com.isd.bluecollar.busy._spinner = spinner;
+				com.isd.bluecollar.busy._running = true;
+			}
 		}
 	};
 	
@@ -41,9 +45,12 @@ if( com.isd.bluecollar ) {
 	 * Hides the busy screen.
 	 */
 	com.isd.bluecollar.busy.hide = function() {
-		if( com.isd.bluecollar.busy.running ) {
+		if( com.isd.bluecollar.busy._running ) {
+			if( com.isd.bluecollar.busy._spinner ) {
+				com.isd.bluecollar.busy._spinner.stop();
+			}
 			$('#busy-indicator').hide();
-			com.isd.bluecollar.busy.running = false;			
+			com.isd.bluecollar.busy._running = false;			
 		}
 	};
 }

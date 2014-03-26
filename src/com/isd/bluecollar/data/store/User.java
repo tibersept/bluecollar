@@ -73,7 +73,7 @@ public class User {
 	public String getCurrentProject( String aUser ) {
 		Entity user = getUser(aUser);
 		if( user!=null ) {
-			user.getProperty(PROPERTY_CURRENT_PROJECT);
+			return String.valueOf(user.getProperty(PROPERTY_CURRENT_PROJECT));
 		}
 		return "";
 	}

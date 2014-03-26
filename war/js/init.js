@@ -39,3 +39,4 @@ function ensureHttpsScheme() {
 }
 
 ensureHttpsScheme();
+com.isd.bluecollar.busy.show();

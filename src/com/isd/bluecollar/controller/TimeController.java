@@ -24,10 +24,15 @@ public class TimeController {
 	 * @return the timestamp of the task begin
 	 */
 	public String checkin( String aUser, String aProject ) {
-		Date rightNow = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		Date rightNow = cal.getTime();
 		
 		TimeRange tr = new TimeRange();
 		tr.openTimeRange(aUser, aProject, rightNow);
+		
+		User usr = new User();
+		usr.setCurrentProject(aUser, aProject);
+		usr.setTaskBegin(aUser, rightNow.getTime());
 		
 		return String.valueOf(rightNow.getTime());
 	}
@@ -44,6 +49,10 @@ public class TimeController {
 		TimeRange tr = new TimeRange();
 		tr.closeTimeRange(aUser, aProject, rightNow);
 		
+		User usr = new User();
+		usr.setCurrentProject(aUser, null);
+		usr.setTaskBegin(aUser, 0);
+
 		return String.valueOf(rightNow.getTime());
 	}
 	

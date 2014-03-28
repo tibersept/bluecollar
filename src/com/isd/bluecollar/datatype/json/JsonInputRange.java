@@ -1,17 +1,18 @@
 /**
  * 
  */
-package com.isd.bluecollar.datatype;
+package com.isd.bluecollar.datatype.json;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
 /**
- * JSON date range wrapper. Internally the dates are represented as strings.
+ * JSON input date range wrapper. Internally the dates are represented as strings. The timezone for
+ * the values is specified with the range.
  * @author doan
  */
-public class JsonRange {
+public class JsonInputRange {
 
 	/** The range begin */
 	private String begin;
@@ -23,7 +24,7 @@ public class JsonRange {
 	/**
 	 * Creates a new JSON range with empty begin and end strings.
 	 */
-	public JsonRange() {
+	public JsonInputRange() {
 		begin = "";
 		end = "";
 		timezone = "UTC";
@@ -34,7 +35,7 @@ public class JsonRange {
 	 * @param aBegin the range begin
 	 * @param anEnd the range end
 	 */
-	public JsonRange( String aBegin, String anEnd ) {
+	public JsonInputRange( String aBegin, String anEnd ) {
 		begin = aBegin;
 		end = anEnd;
 		timezone = "UTC";

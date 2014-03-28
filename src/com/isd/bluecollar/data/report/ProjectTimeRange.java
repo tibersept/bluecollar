@@ -5,7 +5,7 @@ package com.isd.bluecollar.data.report;
  * end timestamps of the work done for a single task of the project at a given time.  
  * @author doan
  */
-public class ProjectTaskTimeRange {
+public class ProjectTimeRange {
 
 	/** The project name */
 	private String project;
@@ -18,7 +18,7 @@ public class ProjectTaskTimeRange {
 	 * Creates a new project range.
 	 * @param aProject the project name
 	 */
-	public ProjectTaskTimeRange( String aProject ) {
+	public ProjectTimeRange( String aProject ) {
 		begin = null;
 		end = null;
 	}

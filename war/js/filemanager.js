@@ -39,7 +39,6 @@ if( com.isd.bluecollar ) {
 			'body': multipartRequestBody});		
 		var callback = function(file) {
 			com.isd.bluecollar.displayMessage('Info', 'Report has been generated! <a href="'+file.webContentLink+'">Download it here!</a>');
-			console.log(file);
 		};
 		request.execute(callback);
 	};

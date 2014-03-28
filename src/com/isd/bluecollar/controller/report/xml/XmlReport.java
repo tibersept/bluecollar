@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import com.isd.bluecollar.data.report.ProjectTaskTimeRange;
-import com.isd.bluecollar.datatype.Range;
+import com.isd.bluecollar.data.report.ProjectTimeRange;
+import com.isd.bluecollar.datatype.internal.Range;
 
 /**
  * Generates an XML report.
@@ -25,5 +25,5 @@ public class XmlReport {
 	/** The report range */
 	private Range<Long> reportRange;
 	/** A collection of all report tasks */
-	private List<ProjectTaskTimeRange> reportTasks;
+	private List<ProjectTimeRange> reportTasks;
 }

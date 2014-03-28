@@ -12,7 +12,7 @@ import java.util.TimeZone;
 import com.isd.bluecollar.controller.report.excel.XlsReport;
 import com.isd.bluecollar.data.report.ReportData;
 import com.isd.bluecollar.data.store.UserSettings;
-import com.isd.bluecollar.datatype.JsonRange;
+import com.isd.bluecollar.datatype.json.JsonInputRange;
 
 /**
  * Report generator provides reporting functionality for mavicollar.
@@ -43,7 +43,7 @@ public class ReportGenerator {
 	 * @param aRange the date range for the report 
 	 * @param aFormat the date format parser
 	 */
-	public ReportGenerator( String aUser, JsonRange aRange ) {
+	public ReportGenerator( String aUser, JsonInputRange aRange ) {
 		setUser(aUser);
 		initializeMonthNames();
 		initializeLanguage();
@@ -188,7 +188,7 @@ public class ReportGenerator {
 	 * Parses the report date range.
 	 * @param aRange the range
 	 */
-	private void parseRange(JsonRange aRange) {
+	private void parseRange(JsonInputRange aRange) {
 		setBegin(aRange.getBeginDate());
 		setEnd(aRange.getEndDate());
 		setTimezone(aRange.getTimezone());

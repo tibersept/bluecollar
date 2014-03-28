@@ -14,7 +14,7 @@ import java.util.Set;
 
 import com.isd.bluecollar.data.store.Project;
 import com.isd.bluecollar.data.store.TimeRange;
-import com.isd.bluecollar.datatype.Range;
+import com.isd.bluecollar.datatype.internal.Range;
 
 /**
  * Workday data.
@@ -27,7 +27,7 @@ public class WorkdayData {
 	/** Project titles */
 	private Set<String> projects;
 	/** Begin times */
-	private Map<String, List<ProjectTaskTimeRange>> projectTimes;
+	private Map<String, List<ProjectTimeRange>> projectTimes;
 	
 	/**
 	 * Creates a new workday data instance.
@@ -35,7 +35,7 @@ public class WorkdayData {
 	public WorkdayData() {
 		day = "";
 		projects = new HashSet<String>();
-		projectTimes = new HashMap<String, List<ProjectTaskTimeRange>>();
+		projectTimes = new HashMap<String, List<ProjectTimeRange>>();
 	}
 	
 	/**
@@ -81,12 +81,12 @@ public class WorkdayData {
 	public void addProjectTime( String aProject, Long aBegin, Long anEnd ) {
 		if( aProject!=null ) {
 			projects.add(aProject);
-			List<ProjectTaskTimeRange> list = projectTimes.get(aProject);
+			List<ProjectTimeRange> list = projectTimes.get(aProject);
 			if( list==null ) {
-				list = new ArrayList<ProjectTaskTimeRange>();
+				list = new ArrayList<ProjectTimeRange>();
 				projectTimes.put(aProject, list);
 			}
-			ProjectTaskTimeRange range = new ProjectTaskTimeRange(aProject);
+			ProjectTimeRange range = new ProjectTimeRange(aProject);
 			range.setBegin(aBegin);
 			range.setEnd(anEnd);
 			list.add(range);
@@ -106,8 +106,8 @@ public class WorkdayData {
 	 * @param aProject the project name
 	 * @return the list of ranges or an empty list if no ranges are present
 	 */
-	public List<ProjectTaskTimeRange> getRanges( String aProject ) {
-		List<ProjectTaskTimeRange> ranges = projectTimes.get(aProject);
+	public List<ProjectTimeRange> getRanges( String aProject ) {
+		List<ProjectTimeRange> ranges = projectTimes.get(aProject);
 		if( ranges==null ) {
 			return Collections.emptyList();
 		}
@@ -119,8 +119,8 @@ public class WorkdayData {
 	 */
 	public void clear() {
 		projects.clear();
-		for( Map.Entry<String, List<ProjectTaskTimeRange>> entry : projectTimes.entrySet() ) {
-			List<ProjectTaskTimeRange> ranges = entry.getValue();
+		for( Map.Entry<String, List<ProjectTimeRange>> entry : projectTimes.entrySet() ) {
+			List<ProjectTimeRange> ranges = entry.getValue();
 			if( ranges!=null ) {
 				ranges.clear();
 			}

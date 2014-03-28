@@ -20,7 +20,7 @@ import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-import com.isd.bluecollar.datatype.Range;
+import com.isd.bluecollar.datatype.internal.Range;
 
 /**
  * Time range entity wrapper.

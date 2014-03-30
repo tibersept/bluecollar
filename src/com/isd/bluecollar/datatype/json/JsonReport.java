@@ -12,16 +12,19 @@ import java.util.List;
  */
 public class JsonReport {
 
+	/** the flag indicates whether this report has been finished */
+	private boolean finished;
+	
 	/** the user */
 	private String user;
 	/** the timezone */
 	private String timezone;
 	/** the locale */
-	private String locale;
+	private String language;
 	
-	/** the begin time */
+	/** the begin time (in UTC) */
 	private String begin;
-	/** the end time */
+	/** the end time  (in UTC) */
 	private String end;
 	
 	/** the list of projects */
@@ -31,6 +34,7 @@ public class JsonReport {
 	 * Creates a new instance of the JSON Report
 	 */
 	public JsonReport() {
+		finished = false;
 		projectList = new ArrayList<JsonProject>();
 	}
 	
@@ -67,19 +71,19 @@ public class JsonReport {
 	}
 	
 	/**
-	 * Returns the report locale.
-	 * @return the locale
+	 * Returns the report language.
+	 * @return the language
 	 */
-	public String getLocale() {
-		return locale;
+	public String getLanguage() {
+		return language;
 	}
 	
 	/**
-	 * Sets the report locale.
-	 * @param aLocale the locale
+	 * Sets the report language.
+	 * @param aLanguage the language
 	 */
-	public void setLocale(String aLocale) {
-		this.locale = aLocale;
+	public void setLanguage(String aLanguage) {
+		this.language = aLanguage;
 	}
 	
 	/**
@@ -112,6 +116,22 @@ public class JsonReport {
 	 */
 	public void setEnd(String anEnd) {
 		this.end = anEnd;
+	}
+	
+	/**
+	 * Checks if the report is finished, i.e. it is fully generated.
+	 * @return the finished state of the report
+	 */
+	public boolean isFinished() {
+		return finished;
+	}
+	
+	/**
+	 * Sets the finished state of the report.
+	 * @param finished the finished state of the report
+	 */
+	public void setFinished(boolean finished) {
+		this.finished = finished;
 	}
 	
 	/**

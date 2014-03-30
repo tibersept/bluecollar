@@ -29,7 +29,7 @@ public class JsonStatus {
 	private String status;
 	/** The active project */ 
 	private String project;
-	/** Date timestamp for begin of project */
+	/** Date timestamp for begin of project (in UTC) */
 	private String projectBegin;
 	
 	/**

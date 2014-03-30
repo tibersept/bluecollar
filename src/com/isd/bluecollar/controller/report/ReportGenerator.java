@@ -3,33 +3,27 @@
  */
 package com.isd.bluecollar.controller.report;
 
-import java.text.DateFormatSymbols;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import com.isd.bluecollar.controller.report.excel.XlsReport;
-import com.isd.bluecollar.data.report.ReportData;
 import com.isd.bluecollar.data.store.UserSettings;
+import com.isd.bluecollar.datatype.internal.Range;
 import com.isd.bluecollar.datatype.json.JsonInputRange;
 
 /**
  * Report generator provides reporting functionality for mavicollar.
  * @author doan
  */
-public class ReportGenerator {
+public abstract class ReportGenerator {
 
 	/** The user */
 	private String user;
-	/** Generate report name */
+	/** Generated report name */
 	private String reportName;
-	/** Begin date of the report */
-	private Date begin;
-	/** End date of the report */
-	private Date end;
-	/** Array of string names */
-	private String[] monthNames;
+	/** Range of the report */
+	private Range<Date> range;	
+
 	/** The report timezone */
 	private TimeZone timezone;	
 	/** Calendar set in the user timezone */
@@ -54,15 +48,7 @@ public class ReportGenerator {
 	 * Generates the EXCEL report in BASE64 encoding.
 	 * @return the generated report
 	 */
-	public String generateReport() {
-		XlsReport report = new XlsReport(getLang());
-		report.setUser(loadUserName());
-		report.setMonthRange(computeMonthRange(false));
-		report.setYearRange(computeYearRange(false));
-		report.setCompanyName(loadCompanyName());
-		report.setReportData(computeReportData());
-		return report.generateReport();
-	}
+	public abstract Object generateReport();
 	
 	/**
 	 * Returns the report user.
@@ -81,35 +67,35 @@ public class ReportGenerator {
 	}
 
 	/**
-	 * Returns the report begin date.
-	 * @return the report begin date
+	 * Returns the report range.
+	 * @return the report range
+	 */
+	public Range<Date> getRange() {
+		return range;
+	}
+
+	/**
+	 * Sets the report range.
+	 * @param aRange the range
+	 */
+	public void setRange(Range<Date> aRange) {
+		this.range = aRange;
+	}
+	
+	/**
+	 * Returns the begin time point for the report.
+	 * @return the begin time point
 	 */
 	public Date getBegin() {
-		return begin;
+		return getRange().getBegin();
 	}
-
+	
 	/**
-	 * Sets the report begin date.
-	 * @param aBegin the begin date
-	 */
-	public void setBegin(Date aBegin) {
-		this.begin = aBegin;
-	}
-
-	/**
-	 * Returns the report end date.
-	 * @return the report end date
+	 * Returns the end time point for the report.
+	 * @return the end time point
 	 */
 	public Date getEnd() {
-		return end;
-	}
-
-	/**
-	 * Sets the report end date.
-	 * @param anEnd the report end date
-	 */
-	public void setEnd(Date anEnd) {
-		this.end = anEnd;
+		return getRange().getEnd();
 	}
 	
 	/**
@@ -151,26 +137,19 @@ public class ReportGenerator {
 	 * Computes and returns the report name from the current data.
 	 * @return the report name
 	 */
-	private String computeReportName() {
-		String title = getLang().reportname;
-		String months = computeMonthRange(true);
-		String years = computeYearRange(true);
-		return title+"-"+months+"-"+years+".xls";
-	}
+	protected abstract String computeReportName();
 	
 	/**
-	 * Returns the report language set according to user preferences.
-	 * @return the report language
+	 * Initializes the month names array.
 	 */
-	private ReportLanguage getLang() {
-		return lang;
-	}
+	protected abstract void initializeMonthNames();
+
 	
 	/**
 	 * Loads the company name string selected by the user.
 	 * @return the company name
 	 */
-	private String loadCompanyName() {
+	protected String loadCompanyName() {
 		UserSettings wtd = new UserSettings();
 		return wtd.getUserSetting(getUser(), "companyName");
 	}
@@ -179,106 +158,17 @@ public class ReportGenerator {
 	 * Loads the report user name string selected by the user.
 	 * @return the report user name
 	 */
-	private String loadUserName() {
+	protected String loadUserName() {
 		UserSettings wtd = new UserSettings();
 		return wtd.getUserSetting(getUser(), "reportUser");
 	}
 
 	/**
-	 * Parses the report date range.
-	 * @param aRange the range
-	 */
-	private void parseRange(JsonInputRange aRange) {
-		setBegin(aRange.getBeginDate());
-		setEnd(aRange.getEndDate());
-		setTimezone(aRange.getTimezone());
-	}
-	
-	/**
-	 * Returns the day format for reports.
-	 * @return the day format for reports
-	 */
-	private SimpleDateFormat computeDayFormat() {
-		SimpleDateFormat format = null;
-		if( isSameField(Calendar.YEAR) ) {
-			if( isSameField(Calendar.MONTH) ) {
-				format = new SimpleDateFormat("dd");
-			} else {
-				format = new SimpleDateFormat("dd.MM");
-			}
-		} else {
-			format = new SimpleDateFormat("MM/dd/yyyy");
-		}
-		format.setTimeZone(getTimezone());
-		return format;
-	}
-	
-	/**
-	 * Computes the year range.
-	 * @return the year range as a string
-	 */
-	private String computeYearRange( boolean aFilenameSafe ) {
-		if( isSameField(Calendar.YEAR) ) {
-			return getYear(getBegin());
-		} else {
-			String bYear = getYear(getBegin());
-			String eYear = getYear(getEnd());
-			String sep = aFilenameSafe ? "-" : " - ";
-			return bYear+sep+eYear;
-		}
-	}
-	
-	/**
-	 * Computes the month range.
-	 * @param aFilenameSafe <code>true</code> - the generated names are safe for filenames, i.e. numbers instead of month names
-	 * @return the month range as a string
-	 */
-	private String computeMonthRange( boolean aFilenameSafe ) {
-		if( isSameField(Calendar.YEAR) ) {
-			if( isSameField(Calendar.MONTH) ) {
-				return getMonthName(getBegin(), aFilenameSafe);
-			} else {
-				String beg = getMonthName(getBegin(), aFilenameSafe);
-				String end = getMonthName(getEnd(), aFilenameSafe);
-				String sep = aFilenameSafe ? "-": " - "; 
-				return beg + sep + end;
-			}
-		} else {
-			String bMonth = getMonthName(getBegin(), aFilenameSafe);
-			String bYear = getYear(getBegin());
-			String eMonth = getMonthName(getEnd(), aFilenameSafe);
-			String eYear = getYear(getEnd());
-			String sepMonth = aFilenameSafe ? "." : ". ";
-			String sepYear = aFilenameSafe ? "-" : " - ";
-			return bMonth+sepMonth+bYear+sepYear+eMonth+sepMonth+eYear;
-		}
-	}
-	
-	/**
-	 * Computes the report data and return is as a result.
-	 * @return the report data
-	 */
-	private ReportData computeReportData() {
-		ReportData rData = new ReportData();
-		Calendar cal = getCal();
-		SimpleDateFormat format = computeDayFormat();
-		WorkhoursExtractor we = new WorkhoursExtractor(rData, cal, format);
-		cal.setTime(getBegin());
-		while( cal.before(getEnd()) ) {
-			we.processDay(getUser());
-			cal.add(Calendar.DAY_OF_MONTH, 1);
-		}
-		we.computeReportEndData(getUser(), getEnd());
-		we.clear();
-		return rData;
-	}
-
-	/**
-	 * Checks whether begin and end months are the same.
+	 * Checks if the begin and end dates have the same value in a given field.
 	 * @param aField the calendar field
 	 * @return <code>true</code> if begin and end months are the same
 	 */
-	private boolean isSameField( int aField ) {
+	protected boolean isSameField( int aField ) {
 		Calendar cal = getCal();
 		cal.setTime(getBegin());
 		int begin = cal.get(aField);
@@ -288,42 +178,34 @@ public class ReportGenerator {
 	}
 	
 	/**
-	 * Returns the year as a string.
-	 * @param aDate the date
-	 * @return the year
+	 * Returns the report language set according to user preferences.
+	 * @return the report language
 	 */
-	private String getYear( Date aDate ) {
-		Calendar cal = getCal();
-		cal.setTime(aDate);
-		return String.valueOf(cal.get(Calendar.YEAR));
+	protected ReportLanguage getLang() {
+		return lang;
 	}
 	
 	/**
-	 * Returns the name of the month.
-	 * @param aDate the date
-	 * @param aNumeric <code>true</code> - returns numeric month name
-	 * @return the month name
+	 * Returns the calendar instance set in the user timezone.
+	 * @return the calendar instance
 	 */
-	private String getMonthName( Date aDate, boolean aNumeric ) {
-		Calendar cal = getCal();
-		cal.setTime(aDate);
-		int month = cal.get(Calendar.MONTH);
-		if( aNumeric ) {
-			return String.valueOf(month+1);
+	protected Calendar getCal() {
+		if( cal==null ) {
+			cal = Calendar.getInstance(getTimezone());
 		}
-		if( month>=0 && month<12 ){
-			return monthNames[month];
-		}
-		return monthNames[0];
+		return cal;
 	}
 	
 	/**
-	 * Initializes the month names array.
+	 * Parses the report date range.
+	 * @param aRange the range
 	 */
-	private void initializeMonthNames() {
-		DateFormatSymbols dfs = new DateFormatSymbols();
-		monthNames = dfs.getMonths();
+	private void parseRange(JsonInputRange aRange) {
+		setRange(new Range<Date>(aRange.getBeginDate(),aRange.getEndDate()));
+		setTimezone(aRange.getTimezone());
 	}
+
+	
 	
 	/**
 	 * Initializes the language properties of the report.
@@ -333,15 +215,5 @@ public class ReportGenerator {
 		String lng = wtd.getUserSetting(getUser(), "language");
 		lang = new ReportLanguage(lng);
 	}
-	
-	/**
-	 * Returns the calendar instance set in the user timezone.
-	 * @return the calendar instance
-	 */
-	private Calendar getCal() {
-		if( cal==null ) {
-			cal = Calendar.getInstance(getTimezone());
-		}
-		return cal;
-	}
+		
 }

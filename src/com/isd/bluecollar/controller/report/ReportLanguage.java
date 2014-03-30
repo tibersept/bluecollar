@@ -14,6 +14,9 @@ import java.util.Properties;
  */
 public class ReportLanguage {
 
+	/** The actual string containing the language identifier */
+	private String languageIdentifier;
+	
 	/** No user declared */
 	public final String nouser;
 	/** No month declared */
@@ -82,6 +85,14 @@ public class ReportLanguage {
 	}
 	
 	/**
+	 * Returns the language identifier for the report language object.
+	 * @return the language identifier
+	 */
+	public String getLanguage() {
+		return languageIdentifier;
+	}
+	
+	/**
 	 * Loads the language properties file.
 	 * @param aLng the language code
 	 */
@@ -94,8 +105,10 @@ public class ReportLanguage {
 		InputStream is = this.getClass().getResourceAsStream(languageFilename);
 		try {
 			language.load(is);
+			languageIdentifier = lng;
 		} catch (IOException e) {
 			loadFixedLanguage();
+			languageIdentifier = "en";
 		}
 	}
 	

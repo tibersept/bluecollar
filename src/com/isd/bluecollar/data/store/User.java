@@ -19,6 +19,8 @@ public class User {
 
 	/** User entity */
 	private static final String USER = "User";
+	/** Property name */
+	private static final String PROPERTY_NAME = "name";
 	/** Property current project */
 	private static final String PROPERTY_CURRENT_PROJECT = "currentProject";
 	/** Property task begin */
@@ -128,9 +130,9 @@ public class User {
 	 */
 	private Entity createNewUser(String aUser) {
 		Entity user = new Entity(USER, aUser);
-		user.setProperty("name",aUser);
+		user.setProperty(PROPERTY_NAME, aUser);
 		user.setProperty(PROPERTY_CURRENT_PROJECT, null);
-		user.setProperty("currentProjectBegin", null);
+		user.setProperty(PROPERTY_TASK_BEGIN, null);
 		service.put(user);
 		// createNewProject("Sickness", "Period of time where work was suspended due to sickness", user.getKey());
 		// createNewProject("Vacation", "Period of time where work was suspended due to vacation", user.getKey());

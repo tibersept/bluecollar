@@ -150,4 +150,12 @@ public class JsonReport {
 		this.projectList = aProjectList;
 	}
 	
+	/**
+	 * Adds a project to the report.
+	 * @param aProject a project
+	 */
+	public void addProject(JsonProject aProject) {
+		this.projectList.add(aProject);
+	}
+	
 }

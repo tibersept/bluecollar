@@ -23,6 +23,14 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
  */
 public class Project {
 
+	/** Project entity */
+	private static final String PROJECT = "Project";
+	/** Property project name */
+	private static final String PROPERTY_NAME = "name";
+	/** Property project description */
+	private static final String PROPERTY_DESCRIPTION = "description";
+	
+	
 	/** The user entity wrapper */
 	private User user;
 	/** The datastore service */
@@ -136,9 +144,9 @@ public class Project {
 	 * @return the newly created project entity
 	 */
 	private Entity createNewProject(String aName, String aDescription, Key aUserKey) {
-		Entity project = new Entity("Project", aName, aUserKey);
-		project.setProperty("projectName", aName);
-		project.setProperty("projectDescription", aDescription);
+		Entity project = new Entity(PROJECT, aName, aUserKey);
+		project.setProperty(PROPERTY_NAME, aName);
+		project.setProperty(PROPERTY_DESCRIPTION, aDescription);
 		service.put(project);
 		return project;
 	}

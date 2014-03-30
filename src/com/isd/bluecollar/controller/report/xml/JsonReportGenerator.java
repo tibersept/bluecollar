@@ -4,15 +4,15 @@
 package com.isd.bluecollar.controller.report.xml;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import com.isd.bluecollar.controller.report.ReportGenerator;
-import com.isd.bluecollar.data.report.ProjectTimeRange;
+import com.isd.bluecollar.data.store.Project;
+import com.isd.bluecollar.data.store.TimeRange;
 import com.isd.bluecollar.datatype.internal.Range;
 import com.isd.bluecollar.datatype.json.JsonInputRange;
+import com.isd.bluecollar.datatype.json.JsonProject;
+import com.isd.bluecollar.datatype.json.JsonRange;
 import com.isd.bluecollar.datatype.json.JsonReport;
 
 /**
@@ -29,6 +29,7 @@ public class JsonReportGenerator extends ReportGenerator{
 	public JsonReportGenerator( String aUser, JsonInputRange aRange ) {
 		super(aUser, aRange);
 	}
+	
 	/**
 	 * @inheritDoc
 	 * @see com.isd.bluecollar.controller.report.ReportGenerator#generateReport()
@@ -78,7 +79,22 @@ public class JsonReportGenerator extends ReportGenerator{
 	 * @param aReport the report
 	 */
 	private void setReportContent( JsonReport aReport ) {
+		Project projectEntity = new Project();
+		List<String> projects = projectEntity.getProjects(getUser(), true);
 		
+		TimeRange range = new TimeRange();
+		for( String p : projects ) {
+			List<Range<Long>> timeRanges = range.getTimeRanges(getUser(), p, getBegin(), getEnd());
+			if( timeRanges.size() > 0 ) {
+				JsonProject jsonProject = new JsonProject(p);
+				for( Range<Long> timeRange : timeRanges ) {
+					JsonRange jsonRange = new JsonRange();
+					jsonRange.setBegin(String.valueOf(timeRange.getBegin()));
+					jsonRange.setEnd(String.valueOf(timeRange.getEnd()));
+				}
+				aReport.addProject(jsonProject);
+			}
+		}
 	}
 	
 }

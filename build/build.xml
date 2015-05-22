@@ -1,0 +1,15 @@
+<project name="bluecollar" default="generate-client-libs">
+	<property name="version" value="1.9.21"/>
+	<property name="eclipse.home" location="V:\dev\tools\eclipse\lunagae"/>
+	<property name="appengine.bin" location="${eclipse.home}\plugins\com.google.appengine.eclipse.sdkbundle_${version}\appengine-java-sdk-${version}\bin"/>
+	<property name="endpoints.executable" location="${appengine.bin}\endpoints.cmd" />
+	
+	<property name="endpoints.operation" value="get-client-lib"/>
+	<property name="endpoints.app" value="com.isd.bluecollar.spi.WorkCardV1"/>
+	
+	<target name="generate-client-libs">
+		<exec dir="../." executable="cmd">
+			<arg line="/c ${endpoints.executable} ${endpoints.operation} ${endpoints.app}"/>
+		</exec>
+	</target>
+</project>

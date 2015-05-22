@@ -1,0 +1,1 @@
+Bluecollar is a project time management app developed for google app engine.

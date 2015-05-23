@@ -10,7 +10,7 @@ import java.util.Date;
 
 import com.isd.bluecollar.controller.report.ReportGenerator;
 import com.isd.bluecollar.data.report.ReportData;
-import com.isd.bluecollar.datatype.json.JsonInputRange;
+import com.isd.bluecollar.datatype.json.JsonRange;
 
 /**
  * Excel report generator.
@@ -26,7 +26,7 @@ public class XlsReportGenerator extends ReportGenerator {
 	 * @param aUser the user
 	 * @param aRange the report range
 	 */
-	public XlsReportGenerator(String aUser, JsonInputRange aRange) {
+	public XlsReportGenerator(String aUser, JsonRange aRange) {
 		super(aUser, aRange);
 	}
 	

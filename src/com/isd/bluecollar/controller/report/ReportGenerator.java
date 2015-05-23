@@ -9,7 +9,7 @@ import java.util.TimeZone;
 
 import com.isd.bluecollar.data.store.UserSettings;
 import com.isd.bluecollar.datatype.internal.Range;
-import com.isd.bluecollar.datatype.json.JsonInputRange;
+import com.isd.bluecollar.datatype.json.JsonRange;
 
 /**
  * Report generator provides reporting functionality for mavicollar.
@@ -37,7 +37,7 @@ public abstract class ReportGenerator {
 	 * @param aRange the date range for the report 
 	 * @param aFormat the date format parser
 	 */
-	public ReportGenerator( String aUser, JsonInputRange aRange ) {
+	public ReportGenerator( String aUser, JsonRange aRange ) {
 		setUser(aUser);
 		initializeMonthNames();
 		initializeLanguage();
@@ -200,7 +200,7 @@ public abstract class ReportGenerator {
 	 * Parses the report date range.
 	 * @param aRange the range
 	 */
-	private void parseRange(JsonInputRange aRange) {
+	private void parseRange(JsonRange aRange) {
 		setRange(new Range<Date>(aRange.getBeginDate(),aRange.getEndDate()));
 		setTimezone(aRange.getTimezone());
 	}

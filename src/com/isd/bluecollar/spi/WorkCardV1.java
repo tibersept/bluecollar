@@ -19,7 +19,7 @@ import com.isd.bluecollar.controller.report.xml.JsonReportGenerator;
 import com.isd.bluecollar.datatype.internal.ActiveProject;
 import com.isd.bluecollar.datatype.json.JsonByteArray;
 import com.isd.bluecollar.datatype.json.JsonEasyMap;
-import com.isd.bluecollar.datatype.json.JsonInputRange;
+import com.isd.bluecollar.datatype.json.JsonRange;
 import com.isd.bluecollar.datatype.json.JsonList;
 import com.isd.bluecollar.datatype.json.JsonReport;
 import com.isd.bluecollar.datatype.json.JsonStatus;
@@ -81,7 +81,7 @@ public class WorkCardV1 {
 	 * @return
 	 */
 	@ApiMethod(name = "wcard.generatereport", httpMethod = "POST")
-	public JsonByteArray generateExcelReport( JsonInputRange aRange, User aUser ) {
+	public JsonByteArray generateExcelReport( JsonRange aRange, User aUser ) {
 		ReportGenerator reporter = new XlsReportGenerator(getUserName(aUser),aRange);
 		if( aRange.validateRange() ) {
 			return new JsonByteArray(reporter.getReportName(), (String)reporter.generateReport());
@@ -91,7 +91,7 @@ public class WorkCardV1 {
 	}
 	
 	@ApiMethod(name = "wcard.generatejsonreport", httpMethod = "POST")
-	public JsonReport generateJsonReport( JsonInputRange aRange, User aUser ) {
+	public JsonReport generateJsonReport( JsonRange aRange, User aUser ) {
 		ReportGenerator reporter = new JsonReportGenerator(getUserName(aUser),aRange);
 		if( aRange.validateRange() ) {
 			return (JsonReport)reporter.generateReport();

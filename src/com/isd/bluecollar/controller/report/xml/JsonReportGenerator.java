@@ -10,7 +10,7 @@ import com.isd.bluecollar.controller.report.ReportGenerator;
 import com.isd.bluecollar.data.store.Project;
 import com.isd.bluecollar.data.store.TimeRange;
 import com.isd.bluecollar.datatype.internal.Range;
-import com.isd.bluecollar.datatype.json.JsonInputRange;
+import com.isd.bluecollar.datatype.json.JsonRange;
 import com.isd.bluecollar.datatype.json.JsonProject;
 import com.isd.bluecollar.datatype.json.JsonReport;
 
@@ -25,7 +25,7 @@ public class JsonReportGenerator extends ReportGenerator{
 	 * @param aUser the user
 	 * @param aRange the range
 	 */
-	public JsonReportGenerator( String aUser, JsonInputRange aRange ) {
+	public JsonReportGenerator( String aUser, JsonRange aRange ) {
 		super(aUser, aRange);
 	}
 	
@@ -87,7 +87,7 @@ public class JsonReportGenerator extends ReportGenerator{
 			if( timeRanges.size() > 0 ) {
 				JsonProject jsonProject = new JsonProject(p);
 				for( Range<Long> timeRange : timeRanges ) {
-					JsonInputRange jsonRange = new JsonInputRange();
+					JsonRange jsonRange = new JsonRange();
 					jsonRange.setBegin(String.valueOf(timeRange.getBegin()));
 					jsonRange.setEnd(String.valueOf(timeRange.getEnd()));
 					jsonProject.addRange(jsonRange);

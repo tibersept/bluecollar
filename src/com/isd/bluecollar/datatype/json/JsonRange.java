@@ -14,7 +14,7 @@ import com.isd.bluecollar.datatype.internal.Range;
  * the values is specified with the range.
  * @author doan
  */
-public class JsonInputRange {
+public class JsonRange {
 
 	/** The time range */
 	private Range<String> range;
@@ -24,7 +24,7 @@ public class JsonInputRange {
 	/**
 	 * Creates a new JSON range with empty begin and end strings.
 	 */
-	public JsonInputRange() {
+	public JsonRange() {
 		range = new Range<String>("","");
 		timezone = "UTC";
 	}
@@ -34,7 +34,7 @@ public class JsonInputRange {
 	 * @param aBegin the range begin
 	 * @param anEnd the range end
 	 */
-	public JsonInputRange( String aBegin, String anEnd ) {
+	public JsonRange( String aBegin, String anEnd ) {
 		range = new Range<String>(aBegin, anEnd);
 		timezone = "UTC";
 	}

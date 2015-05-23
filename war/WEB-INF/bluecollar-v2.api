@@ -241,8 +241,8 @@
           }
         }
       },
-      "JsonInputRange" : {
-        "id" : "JsonInputRange",
+      "JsonRange" : {
+        "id" : "JsonRange",
         "type" : "object",
         "properties" : {
           "timezone" : {
@@ -316,7 +316,7 @@
           "ranges" : {
             "type" : "array",
             "items" : {
-              "$ref" : "JsonInputRange"
+              "$ref" : "JsonRange"
             }
           }
         }
@@ -365,7 +365,7 @@
       },
       "com.isd.bluecollar.spi.WorkCardV1.generateExcelReport" : {
         "request" : {
-          "$ref" : "JsonInputRange"
+          "$ref" : "JsonRange"
         },
         "response" : {
           "$ref" : "JsonByteArray"
@@ -373,7 +373,7 @@
       },
       "com.isd.bluecollar.spi.WorkCardV1.generateJsonReport" : {
         "request" : {
-          "$ref" : "JsonInputRange"
+          "$ref" : "JsonRange"
         },
         "response" : {
           "$ref" : "JsonReport"

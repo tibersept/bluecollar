@@ -285,7 +285,6 @@ com.isd.bluecollar.updateSingleSetting = function( setting, value ) {
 		$('#company-name').val(value);
 		break;
 	case 'language':
-		//TODO: update the selected setting option
 		$('#report-language').val(value);
 		break;
 	default:

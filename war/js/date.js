@@ -39,7 +39,7 @@ if( com.isd.bluecollar ) {
 		if( pm ) {
 			var hrs = els[0];
 			if( hrs != '12' ) {
-				hrs = hrs+12;
+				hrs = parseInt(hrs)+12;
 			}
 			date.setHours(hrs);
 		} else {

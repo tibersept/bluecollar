@@ -133,10 +133,12 @@ public class XlsReportGenerator extends ReportGenerator {
 	private ReportData computeReportData() {
 		ReportData rData = new ReportData();
 		Calendar cal = getCal();
+		Calendar end = getCal(true);
 		SimpleDateFormat format = computeDayFormat();
 		WorkhoursExtractor we = new WorkhoursExtractor(rData, cal, format);
 		cal.setTime(getBegin());
-		while( cal.before(getEnd()) ) {
+		end.setTime(getEnd());
+		while( cal.before(end) ) {
 			we.processDay(getUser());
 			cal.add(Calendar.DAY_OF_MONTH, 1);
 		}

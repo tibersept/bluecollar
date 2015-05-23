@@ -1,5 +1,5 @@
 /**
- * 
+ * 23.05.2015
  */
 package com.isd.bluecollar.data.store;
 
@@ -83,7 +83,7 @@ public class Project {
 		if( key!=null ) {
 			Entity project = doGetProject(key,aName);
 			if( project!=null ) {
-				project.setProperty("projectDescription", aDescription);
+				project.setProperty(PROPERTY_DESCRIPTION, aDescription);
 				service.put(project);
 			} else {
 				createNewProject(aName, aDescription, key);
@@ -103,7 +103,7 @@ public class Project {
 			List<String> list = new ArrayList<String>();
 			List<Entity> projects = getAllProjects(key);
 			for( Entity project : projects ) {
-				String projectName = (String) project.getProperty("projectName");
+				String projectName = (String) project.getProperty(PROPERTY_NAME);
 				list.add(projectName);
 			}
 			if( anAlphaSorted ) {
@@ -121,8 +121,8 @@ public class Project {
 	 * @return the project matching the project name
 	 */
 	private Entity doGetProject( Key aUserKey, String aName ) {
-		Filter filter = new FilterPredicate("projectName", FilterOperator.EQUAL, aName);
-		Query q = new Query("Project",aUserKey).setAncestor(aUserKey).setFilter(filter);
+		Filter filter = new FilterPredicate(PROPERTY_NAME, FilterOperator.EQUAL, aName);
+		Query q = new Query(PROJECT,aUserKey).setAncestor(aUserKey).setFilter(filter);
 		return service.prepare(q).asSingleEntity();
 	}
 	
@@ -132,7 +132,7 @@ public class Project {
 	 * @return all projects of the user
 	 */
 	private List<Entity> getAllProjects( Key aUserKey ) {
-		Query q = new Query("Project",aUserKey).setAncestor(aUserKey);
+		Query q = new Query(PROJECT,aUserKey).setAncestor(aUserKey);
 		return service.prepare(q).asList(FetchOptions.Builder.withDefaults());
 	}
 	

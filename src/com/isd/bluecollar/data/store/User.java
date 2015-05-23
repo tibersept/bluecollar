@@ -1,5 +1,5 @@
 /**
- * 
+ * 23.05.2015
  */
 package com.isd.bluecollar.data.store;
 
@@ -134,8 +134,6 @@ public class User {
 		user.setProperty(PROPERTY_CURRENT_PROJECT, null);
 		user.setProperty(PROPERTY_TASK_BEGIN, null);
 		service.put(user);
-		// createNewProject("Sickness", "Period of time where work was suspended due to sickness", user.getKey());
-		// createNewProject("Vacation", "Period of time where work was suspended due to vacation", user.getKey());
 		return user;
 	}
 }

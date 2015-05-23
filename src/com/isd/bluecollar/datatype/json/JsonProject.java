@@ -15,7 +15,7 @@ public class JsonProject {
 	/** The project name */
 	private String name;
 	/** The list of time ranges for this project within the report duration */
-	private List<JsonRange> ranges;
+	private List<JsonInputRange> ranges;
 	
 	/**
 	 * Creates a new project wrapper instance.
@@ -23,7 +23,7 @@ public class JsonProject {
 	 */
 	public JsonProject( String aName ) {
 		name = aName;
-		ranges = new ArrayList<JsonRange>();
+		ranges = new ArrayList<JsonInputRange>();
 	}
 	
 	/**
@@ -46,7 +46,7 @@ public class JsonProject {
 	 * Returns the list of ranges for this project within the report time limits.
 	 * @return the list of ranges for this projects
 	 */
-	public List<JsonRange> getRanges() {
+	public List<JsonInputRange> getRanges() {
 		return ranges;
 	}
 	
@@ -54,7 +54,7 @@ public class JsonProject {
 	 * Sets the list of ranges for this project within the report time limits.
 	 * @param aRanges the list of ranges
 	 */
-	public void setRanges(List<JsonRange> aRanges) {
+	public void setRanges(List<JsonInputRange> aRanges) {
 		this.ranges = aRanges;
 	}
 	
@@ -62,7 +62,7 @@ public class JsonProject {
 	 * Adds a range to the list.
 	 * @param aRange the range
 	 */
-	public void addRange( JsonRange aRange ) {
+	public void addRange( JsonInputRange aRange ) {
 		ranges.add(aRange);
 	}
 }

@@ -7,6 +7,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import com.isd.bluecollar.datatype.internal.Range;
+
 /**
  * JSON input date range wrapper. Internally the dates are represented as strings. The timezone for
  * the values is specified with the range.
@@ -14,10 +16,8 @@ import java.util.TimeZone;
  */
 public class JsonInputRange {
 
-	/** The range begin */
-	private String begin;
-	/** The range end */
-	private String end;
+	/** The time range */
+	private Range<String> range;
 	/** The timezone string */
 	private String timezone;
 	
@@ -25,8 +25,7 @@ public class JsonInputRange {
 	 * Creates a new JSON range with empty begin and end strings.
 	 */
 	public JsonInputRange() {
-		begin = "";
-		end = "";
+		range = new Range<String>("","");
 		timezone = "UTC";
 	}
 	
@@ -36,8 +35,7 @@ public class JsonInputRange {
 	 * @param anEnd the range end
 	 */
 	public JsonInputRange( String aBegin, String anEnd ) {
-		begin = aBegin;
-		end = anEnd;
+		range = new Range<String>(aBegin, anEnd);
 		timezone = "UTC";
 	}
 
@@ -46,7 +44,31 @@ public class JsonInputRange {
 	 * @return the range begin
 	 */
 	public String getBegin() {
-		return begin;
+		return range.getBegin();
+	}
+	
+	/**
+	 * Sets the range begin
+	 * @param aBegin the range begin
+	 */
+	public void setBegin(String aBegin) {
+		range.setBegin(aBegin);
+	}
+
+	/**
+	 * Returns the range end.
+	 * @return the range end
+	 */
+	public String getEnd() {
+		return range.getEnd();
+	}
+
+	/**
+	 * Sets the range end.
+	 * @param anEnd the range end
+	 */
+	public void setEnd(String anEnd) {
+		range.setEnd(anEnd);
 	}
 	
 	/**
@@ -58,37 +80,13 @@ public class JsonInputRange {
 	}
 
 	/**
-	 * Sets the range begin
-	 * @param aBegin the range begin
-	 */
-	public void setBegin(String aBegin) {
-		this.begin = aBegin;
-	}
-
-	/**
-	 * Returns the range end.
-	 * @return the range end
-	 */
-	public String getEnd() {
-		return end;
-	}
-
-	/**
 	 * Returns the end date as a date object.
 	 * @return the date object
 	 */
 	public Date getEndDate() {
 		return getDateFromTimestamp(getEnd());
 	}
-	
-	/**
-	 * Sets the range end.
-	 * @param anEnd the range end
-	 */
-	public void setEnd(String anEnd) {
-		this.end = anEnd;
-	}
-	
+
 	/**
 	 * Returns the user timezone
 	 * @return the user timezone
@@ -106,7 +104,7 @@ public class JsonInputRange {
 	}
 	
 	/**
-	 * Validates the json range.
+	 * Validates the JSON range.
 	 * @return <code>true</code> if range begin lies before range end
 	 */
 	public boolean validateRange() {
@@ -118,7 +116,7 @@ public class JsonInputRange {
 	}
 	
 	/**
-	 * Parses the timestamp string and converts into a Java data object.
+	 * Parses the timestamp string and converts it into a Java data object.
 	 * @param the timestamp
 	 * @return the date object
 	 */

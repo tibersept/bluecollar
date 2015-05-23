@@ -9,7 +9,9 @@ package com.isd.bluecollar.datatype.internal;
  */
 public class Range<T> {
 	
+	/** Range begin */
 	private T begin;
+	/** Range end */
 	private T end;
 	
 	/**

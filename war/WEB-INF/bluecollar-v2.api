@@ -245,18 +245,18 @@
         "id" : "JsonInputRange",
         "type" : "object",
         "properties" : {
-          "begin" : {
+          "timezone" : {
             "type" : "string"
           },
           "end" : {
             "type" : "string"
           },
-          "timezone" : {
-            "type" : "string"
-          },
           "endDate" : {
             "type" : "string",
             "format" : "date-time"
+          },
+          "begin" : {
+            "type" : "string"
           },
           "beginDate" : {
             "type" : "string",
@@ -316,20 +316,8 @@
           "ranges" : {
             "type" : "array",
             "items" : {
-              "$ref" : "JsonRange"
+              "$ref" : "JsonInputRange"
             }
-          }
-        }
-      },
-      "JsonRange" : {
-        "id" : "JsonRange",
-        "type" : "object",
-        "properties" : {
-          "begin" : {
-            "type" : "string"
-          },
-          "end" : {
-            "type" : "string"
           }
         }
       },

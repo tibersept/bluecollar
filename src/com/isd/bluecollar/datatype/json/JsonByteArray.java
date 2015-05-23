@@ -5,7 +5,7 @@ package com.isd.bluecollar.datatype.json;
 
 /**
  * JSON byte array wrapper which contains a BASE64 encoded version of a byte array.
- * @author isakov
+ * @author doan
  */
 public class JsonByteArray {
 

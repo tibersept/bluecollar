@@ -286,16 +286,7 @@
           "user" : {
             "type" : "string"
           },
-          "timezone" : {
-            "type" : "string"
-          },
           "language" : {
-            "type" : "string"
-          },
-          "begin" : {
-            "type" : "string"
-          },
-          "end" : {
             "type" : "string"
           },
           "projectList" : {
@@ -303,6 +294,15 @@
             "items" : {
               "$ref" : "JsonProject"
             }
+          },
+          "timezone" : {
+            "type" : "string"
+          },
+          "end" : {
+            "type" : "string"
+          },
+          "begin" : {
+            "type" : "string"
           }
         }
       },

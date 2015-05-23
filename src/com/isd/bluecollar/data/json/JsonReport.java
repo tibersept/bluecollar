@@ -17,17 +17,11 @@ public class JsonReport {
 	
 	/** the user */
 	private String user;
-	/** the timezone */
-	private String timezone;
 	/** the locale */
 	private String language;
-	
-	/** the begin time (in UTC) */
-	private String begin;
-	/** the end time  (in UTC) */
-	private String end;
-	
-	/** the list of projects */
+	/** The range with timezone */
+	private JsonRange range;
+	/** The list of projects */
 	private List<JsonProject> projectList;
 	
 	/**
@@ -59,7 +53,7 @@ public class JsonReport {
 	 * @return the timezone
 	 */
 	public String getTimezone() {
-		return timezone;
+		return range.getTimezone();
 	}
 	
 	/**
@@ -67,7 +61,7 @@ public class JsonReport {
 	 * @param aTimezone the timezone
 	 */
 	public void setTimezone(String aTimezone) {
-		this.timezone = aTimezone;
+		range.setTimezone(aTimezone);
 	}
 	
 	/**
@@ -91,7 +85,7 @@ public class JsonReport {
 	 * @return the report begin
 	 */
 	public String getBegin() {
-		return begin;
+		return range.getBegin();
 	}
 	
 	/**
@@ -99,7 +93,7 @@ public class JsonReport {
 	 * @param aBegin the begin time point
 	 */
 	public void setBegin(String aBegin) {
-		this.begin = aBegin;
+		range.setBegin(aBegin);
 	}
 	
 	/**
@@ -107,7 +101,7 @@ public class JsonReport {
 	 * @return the end time point
 	 */
 	public String getEnd() {
-		return end;
+		return range.getEnd();
 	}
 	
 	/**
@@ -115,7 +109,7 @@ public class JsonReport {
 	 * @param anEnd the end time point
 	 */
 	public void setEnd(String anEnd) {
-		this.end = anEnd;
+		range.setEnd(anEnd);
 	}
 	
 	/**

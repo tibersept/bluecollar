@@ -1,4 +1,10 @@
-<!-- Indices written at Sat, 23 May 2015 10:30:49 UTC -->
+<!-- Indices written at Sat, 23 May 2015 11:17:00 UTC -->
 
-<datastore-indexes/>
+<datastore-indexes>
 
+    <!-- Used 2 times in query history -->
+    <datastore-index kind="TimeRange" ancestor="true" source="auto">
+        <property name="start" direction="asc"/>
+    </datastore-index>
+
+</datastore-indexes>

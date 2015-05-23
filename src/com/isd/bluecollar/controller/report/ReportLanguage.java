@@ -102,7 +102,7 @@ public class ReportLanguage {
 			lng = "en";
 		}
 		String languageFilename = "language-"+lng.toLowerCase()+".properties";
-		InputStream is = this.getClass().getResourceAsStream(languageFilename);
+		InputStream is = ReportLanguage.class.getResourceAsStream(languageFilename);
 		try {
 			language.load(is);
 			languageIdentifier = lng;

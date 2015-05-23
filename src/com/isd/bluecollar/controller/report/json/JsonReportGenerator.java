@@ -1,7 +1,7 @@
 /**
  * 23.05.2015
  */
-package com.isd.bluecollar.controller.report.xml;
+package com.isd.bluecollar.controller.report.json;
 
 import java.util.Calendar;
 import java.util.List;

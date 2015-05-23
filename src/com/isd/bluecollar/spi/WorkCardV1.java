@@ -15,7 +15,7 @@ import com.isd.bluecollar.controller.SettingsController;
 import com.isd.bluecollar.controller.TimeController;
 import com.isd.bluecollar.controller.report.ReportGenerator;
 import com.isd.bluecollar.controller.report.excel.XlsReportGenerator;
-import com.isd.bluecollar.controller.report.xml.JsonReportGenerator;
+import com.isd.bluecollar.controller.report.json.JsonReportGenerator;
 import com.isd.bluecollar.data.internal.ActiveProject;
 import com.isd.bluecollar.data.json.JsonByteArray;
 import com.isd.bluecollar.data.json.JsonEasyMap;

@@ -1,3 +1,6 @@
+/**
+ * 23.05.2015
+ */
 package com.isd.bluecollar.data.report;
 
 /**

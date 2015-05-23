@@ -106,17 +106,7 @@ com.isd.bluecollar.generateReport = function( start, end, timezone ) {
 	com.isd.bluecollar.busy.show();
 	gapi.client.bluecollar.wcard.generatereport({'begin':start,'end':end,'timezone':timezone}).execute(function(resp){
 		if( resp.byteArray ) {
-			if( !com.isd.bluecollar.debugMode ) {
-				var token = gapi.auth.getToken();
-				token.access_token = com.isd.bluecollar.originalAccessToken;			
-				gapi.auth.setToken(token);
-				
-				com.isd.bluecollar.filemanager.storeFile( resp.name, resp.byteArray );
-				
-				var token = gapi.auth.getToken();
-				token.access_token = token.id_token;
-				gapi.auth.setToken(token);				
-			}
+			com.isd.bluecollar.filemanager.storeFile(resp.name, resp.byteArray, !com.isd.bluecollar.debugMode);
 		} else {
 			com.isd.bluecollar.displayMessage('Error', 'Report generation has faltered!');
 		}

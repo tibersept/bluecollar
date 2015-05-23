@@ -1,3 +1,6 @@
+/**
+ * 23.05.2015
+ */
 package com.isd.bluecollar.spi;
 
 import java.util.Map;

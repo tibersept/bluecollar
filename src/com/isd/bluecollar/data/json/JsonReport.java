@@ -1,7 +1,7 @@
 /**
  * 23.05.2015
  */
-package com.isd.bluecollar.datatype.json;
+package com.isd.bluecollar.data.json;
 
 import java.util.ArrayList;
 import java.util.List;

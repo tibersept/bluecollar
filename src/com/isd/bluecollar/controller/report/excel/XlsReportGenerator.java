@@ -9,8 +9,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.isd.bluecollar.controller.report.ReportGenerator;
+import com.isd.bluecollar.data.json.JsonRange;
 import com.isd.bluecollar.data.report.ReportData;
-import com.isd.bluecollar.datatype.json.JsonRange;
 
 /**
  * Excel report generator.

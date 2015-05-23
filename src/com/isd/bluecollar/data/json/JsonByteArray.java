@@ -1,7 +1,7 @@
 /**
  * 23.05.2015
  */
-package com.isd.bluecollar.datatype.json;
+package com.isd.bluecollar.data.json;
 
 /**
  * JSON byte array wrapper which contains a BASE64 encoded version of a byte array.

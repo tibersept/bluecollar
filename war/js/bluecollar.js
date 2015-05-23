@@ -104,7 +104,7 @@ com.isd.bluecollar.checkactive = function() {
  */
 com.isd.bluecollar.generateReport = function( start, end, timezone ) {
 	com.isd.bluecollar.busy.show();
-	gapi.client.bluecollar.wcard.generatereport({'begin':start,'end':end,'timezone':timezone}).execute(function(resp){
+	gapi.client.bluecollar.wcard.generatereport({range:{'begin':start,'end':end},'timezone':timezone}).execute(function(resp){
 		if( resp.byteArray ) {
 			com.isd.bluecollar.filemanager.storeFile(resp.name, resp.byteArray, !com.isd.bluecollar.debugMode);
 		} else {

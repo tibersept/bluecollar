@@ -1,7 +1,7 @@
 /**
  * 23.05.2015
  */
-package com.isd.bluecollar.datatype.internal;
+package com.isd.bluecollar.data.internal;
 
 /**
  * Wrapper for the active project.

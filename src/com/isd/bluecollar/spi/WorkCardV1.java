@@ -16,14 +16,14 @@ import com.isd.bluecollar.controller.TimeController;
 import com.isd.bluecollar.controller.report.ReportGenerator;
 import com.isd.bluecollar.controller.report.excel.XlsReportGenerator;
 import com.isd.bluecollar.controller.report.xml.JsonReportGenerator;
-import com.isd.bluecollar.datatype.internal.ActiveProject;
-import com.isd.bluecollar.datatype.json.JsonByteArray;
-import com.isd.bluecollar.datatype.json.JsonEasyMap;
-import com.isd.bluecollar.datatype.json.JsonRange;
-import com.isd.bluecollar.datatype.json.JsonList;
-import com.isd.bluecollar.datatype.json.JsonReport;
-import com.isd.bluecollar.datatype.json.JsonStatus;
-import com.isd.bluecollar.datatype.json.JsonString;
+import com.isd.bluecollar.data.internal.ActiveProject;
+import com.isd.bluecollar.data.json.JsonByteArray;
+import com.isd.bluecollar.data.json.JsonEasyMap;
+import com.isd.bluecollar.data.json.JsonList;
+import com.isd.bluecollar.data.json.JsonRange;
+import com.isd.bluecollar.data.json.JsonReport;
+import com.isd.bluecollar.data.json.JsonStatus;
+import com.isd.bluecollar.data.json.JsonString;
 
 @Api(
 	name = "bluecollar",version = "v2",

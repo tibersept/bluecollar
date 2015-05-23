@@ -7,12 +7,12 @@ import java.util.Calendar;
 import java.util.List;
 
 import com.isd.bluecollar.controller.report.ReportGenerator;
+import com.isd.bluecollar.data.internal.Range;
+import com.isd.bluecollar.data.json.JsonProject;
+import com.isd.bluecollar.data.json.JsonRange;
+import com.isd.bluecollar.data.json.JsonReport;
 import com.isd.bluecollar.data.store.Project;
 import com.isd.bluecollar.data.store.TimeRange;
-import com.isd.bluecollar.datatype.internal.Range;
-import com.isd.bluecollar.datatype.json.JsonRange;
-import com.isd.bluecollar.datatype.json.JsonProject;
-import com.isd.bluecollar.datatype.json.JsonReport;
 
 /**
  * Generates an XML report.

@@ -1,13 +1,13 @@
 /**
  * 23.05.2015
  */
-package com.isd.bluecollar.datatype.json;
+package com.isd.bluecollar.data.json;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import com.isd.bluecollar.datatype.internal.Range;
+import com.isd.bluecollar.data.internal.Range;
 
 /**
  * JSON input date range wrapper. Internally the dates are represented as strings. The timezone for

@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.isd.bluecollar.data.internal.Range;
 import com.isd.bluecollar.data.store.Project;
 import com.isd.bluecollar.data.store.TimeRange;
-import com.isd.bluecollar.datatype.internal.Range;
 
 /**
  * Workday data.
@@ -51,7 +51,7 @@ public class WorkdayData {
 		for( String project : projects ) {
 			List<Range<Long>> ranges = rangeEntity.getTimeRanges(aUser, project, aDay);
 			for (Range<Long> range : ranges ) {
-				addProjectTime(project, range.getBegin(), range.getEnd());
+				addProjectTime(project, range);
 			}
 		}
 	}
@@ -75,10 +75,9 @@ public class WorkdayData {
 	/**
 	 * Adds project time to the workday data.
 	 * @param aProject the project
-	 * @param aBegin the begin date
-	 * @param anEnd the end date
+	 * @param aRange the project time range
 	 */
-	public void addProjectTime( String aProject, Long aBegin, Long anEnd ) {
+	public void addProjectTime( String aProject, Range<Long> aRange ) {
 		if( aProject!=null ) {
 			projects.add(aProject);
 			List<ProjectTimeRange> list = projectTimes.get(aProject);
@@ -87,8 +86,7 @@ public class WorkdayData {
 				projectTimes.put(aProject, list);
 			}
 			ProjectTimeRange range = new ProjectTimeRange(aProject);
-			range.setBegin(aBegin);
-			range.setEnd(anEnd);
+			range.setRange(aRange);
 			list.add(range);
 		}
 	}

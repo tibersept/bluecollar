@@ -3,6 +3,8 @@
  */
 package com.isd.bluecollar.data.report;
 
+import com.isd.bluecollar.data.internal.Range;
+
 /**
  * Project work time range. This class is just used to encapsulate the begin and
  * end timestamps of the work done for a single task of the project at a given time.  
@@ -12,18 +14,16 @@ public class ProjectTimeRange {
 
 	/** The project name */
 	private String project;
-	/** Project begin timestamp */
-	private Long begin;
-	/** Project end timestamp */
-	private Long end;
+	/** Project time range */
+	private Range<Long> range;
 	
 	/**
 	 * Creates a new project range.
 	 * @param aProject the project name
 	 */
 	public ProjectTimeRange( String aProject ) {
-		begin = null;
-		end = null;
+		project = aProject;
+		range = new Range<Long>(0L,0L);
 	}
 	
 	/**
@@ -39,10 +39,7 @@ public class ProjectTimeRange {
 	 * @return the begin timestamp
 	 */
 	public long getBegin() {
-		if( begin!=null ) {
-			return begin.longValue();
-		}
-		return 0;
+		return range.getBegin();
 	}
 	
 	/**
@@ -50,7 +47,7 @@ public class ProjectTimeRange {
 	 * @param aBegin the timestamp
 	 */
 	public void setBegin( Long aBegin ) {
-		begin = aBegin;
+		range.setBegin(aBegin);
 	}
 	
 	/**
@@ -58,10 +55,7 @@ public class ProjectTimeRange {
 	 * @return the end timestamp
 	 */
 	public long getEnd() {
-		if( end!=null ) {
-			return end.longValue();
-		}
-		return 0;
+		return range.getEnd();
 	}
 	
 	/**
@@ -69,6 +63,15 @@ public class ProjectTimeRange {
 	 * @param anEnd the end timestamp
 	 */
 	public void setEnd( Long anEnd ) {
-		end = anEnd;
+		range.setEnd(anEnd);
 	}
+	
+	/**
+	 * Sets the project time range.
+	 * @param aRange the range
+	 */
+	public void setRange( Range<Long> aRange ) {
+		range = aRange;
+	}
+	
  }

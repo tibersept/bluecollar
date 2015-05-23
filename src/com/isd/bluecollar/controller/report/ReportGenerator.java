@@ -7,9 +7,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import com.isd.bluecollar.data.internal.Range;
+import com.isd.bluecollar.data.json.JsonRange;
 import com.isd.bluecollar.data.store.UserSettings;
-import com.isd.bluecollar.datatype.internal.Range;
-import com.isd.bluecollar.datatype.json.JsonRange;
 
 /**
  * Report generator provides reporting functionality for mavicollar.

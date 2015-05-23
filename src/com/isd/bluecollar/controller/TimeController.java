@@ -7,9 +7,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import com.isd.bluecollar.data.internal.ActiveProject;
 import com.isd.bluecollar.data.store.TimeRange;
 import com.isd.bluecollar.data.store.User;
-import com.isd.bluecollar.datatype.internal.ActiveProject;
 
 /**
  * Time card controller.

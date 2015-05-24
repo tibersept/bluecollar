@@ -23,9 +23,16 @@ import com.isd.bluecollar.data.report.ReportData;
 
 /**
  * Excel report generator.
- * @author isakov
+ * @author doan
  */
 public class XlsReport {
+	
+	/** Offset relative to day columns for the column containing cumulative hours */
+	private final static int OFFSET_HOURS = 1;
+	/** Offset relative to day columns for the column containing project numbers */
+	private final static int OFFSET_PROJECT_NUMBER = 2;
+	/** Offset relative to day columns for the column containing project names */
+	private final static int OFFSET_PROJECT_NAME = 3;
 	
 	/** The owner of the report */
 	private String user;
@@ -306,11 +313,11 @@ public class XlsReport {
 	private Sheet createSheet(Workbook wb) {
 		Sheet sheet = wb.createSheet(getMonthRange() + " " + getYearRange());
 		sheet.setDisplayGridlines(false);
-		sheet.setDefaultColumnWidth(4);
+		sheet.setDefaultColumnWidth(3);
 		sheet.setDefaultRowHeight((short)340);
 		int dayCount = getReportData().getDayCount();
-		sheet.setColumnWidth(dayCount+3, 15*256);
-		sheet.setColumnWidth(dayCount+4, 40*256);
+		sheet.setColumnWidth(dayCount+OFFSET_PROJECT_NUMBER, 15*256);
+		sheet.setColumnWidth(dayCount+OFFSET_PROJECT_NAME, 40*256);
 		return sheet;
 	}
 	
@@ -341,15 +348,15 @@ public class XlsReport {
 		
 		int dayCount = getReportData().getDayCount();
 		
-		Cell cell = row.createCell(dayCount+2);
+		Cell cell = row.createCell(dayCount+OFFSET_HOURS);
 		cell.setCellStyle(columnStyle);
 		cell.setCellValue(0.0);
 		
-		cell = row.createCell(dayCount+3);
+		cell = row.createCell(dayCount+OFFSET_PROJECT_NUMBER);
 		cell.setCellStyle(columnStyle);
 		cell.setCellValue(Math.abs(title.hashCode()%1000));
 		
-		cell = row.createCell(dayCount+4);
+		cell = row.createCell(dayCount+OFFSET_PROJECT_NAME);
 		cell.setCellStyle(columnStyle);
 		cell.setCellValue(title);
 	}
@@ -378,7 +385,7 @@ public class XlsReport {
 		
 		int dayCount = getReportData().getDayCount();
 		
-		Cell cell = row.createCell(dayCount+2);
+		Cell cell = row.createCell(dayCount+OFFSET_HOURS);
 		cell.setCellStyle(columnStyle);
 		cell.setCellValue(0.0);
 	}
@@ -398,26 +405,22 @@ public class XlsReport {
 		int cellColumn = 0;
 		for( String day : dayList ) {
 			Cell cell = row.createCell(cellColumn);
-			if( isInvalidDay(day) ) {
-				cell.setCellStyle(filledColumnStyle);
-			} else {
-				cell.setCellStyle(columnStyle);
-			}
+			cell.setCellStyle(columnStyle);
 			cell.setCellValue(createHelper.createRichTextString(day));						
 			cellColumn++;
 		}
 		
 		int dayCount = getReportData().getDayCount();
 		
-		Cell cell = row.createCell(dayCount+2);
+		Cell cell = row.createCell(dayCount+OFFSET_HOURS);
 		cell.setCellStyle(columnStyle);
 		cell.setCellValue(createHelper.createRichTextString(lang.columnhours));
-		
-		cell = row.createCell(dayCount+3);
+				
+		cell = row.createCell(dayCount+OFFSET_PROJECT_NUMBER);
 		cell.setCellStyle(columnStyle);
 		cell.setCellValue(createHelper.createRichTextString(lang.columnnumbers));
 		
-		cell = row.createCell(dayCount+4);
+		cell = row.createCell(dayCount+OFFSET_PROJECT_NAME);
 		cell.setCellStyle(columnStyle);
 		cell.setCellValue(createHelper.createRichTextString(lang.columnname));
 	}

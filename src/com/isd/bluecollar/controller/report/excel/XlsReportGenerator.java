@@ -74,7 +74,7 @@ public class XlsReportGenerator extends ReportGenerator {
 		SimpleDateFormat format = null;
 		if( isSameField(Calendar.YEAR) ) {
 			if( isSameField(Calendar.MONTH) ) {
-				format = new SimpleDateFormat("dd");
+				format = new SimpleDateFormat("d");
 			} else {
 				format = new SimpleDateFormat("dd.MM");
 			}

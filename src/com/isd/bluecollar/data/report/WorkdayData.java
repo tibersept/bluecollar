@@ -49,8 +49,10 @@ public class WorkdayData {
 		TimeRange rangeEntity = new TimeRange(projectEntity);
 		List<String> projects = projectEntity.getProjects(aUser, false);
 		
+		// copy calendar
 		Calendar cal = Calendar.getInstance(aCal.getTimeZone());
 		cal.setTime(aCal.getTime());
+		// get begin, end dates
 		setToDayBegin(cal);
 		Date begin = cal.getTime();
 		setToDayEnd(cal);

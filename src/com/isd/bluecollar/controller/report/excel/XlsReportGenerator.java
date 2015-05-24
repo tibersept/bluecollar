@@ -133,7 +133,7 @@ public class XlsReportGenerator extends ReportGenerator {
 	private ReportData computeReportData() {
 		ReportData rData = new ReportData();
 		Calendar cal = getCal();
-		Calendar end = getCal(true);
+		Calendar end = getCal();
 		SimpleDateFormat format = computeDayFormat();
 		WorkhoursExtractor we = new WorkhoursExtractor(rData, format);
 		cal.setTime(getBegin());

@@ -26,8 +26,6 @@ public abstract class ReportGenerator {
 
 	/** The report timezone */
 	private TimeZone timezone;	
-	/** Calendar set in the user timezone */
-	private Calendar cal;
 	/** Report language */
 	private ReportLanguage lang;
 	
@@ -186,28 +184,11 @@ public abstract class ReportGenerator {
 	}
 	
 	/**
-	 * Returns the general calendar instance set in the user timezone. The returned
-	 * instance is instantiated only once and is managed by the report generator.
+	 * Returns a calendar instance set in the user timezone.
 	 * @return the calendar instance
 	 */
 	protected Calendar getCal() {
-		return getCal(false);
-	}
-	
-	/**
-	 * Returns a calendar instance set in the user timezone. The returned calendar instance
-	 * might be the general calendar instance or a new calendar instance.
-	 * @param aNew whether the calendar instance is 
-	 * @return the calendar instance
-	 */
-	protected Calendar getCal( boolean aNew ) {
-		if( aNew ) {
-			return Calendar.getInstance(getTimezone());
-		}
-		if( cal==null ) {
-			cal = Calendar.getInstance(getTimezone());
-		}
-		return cal;
+		return Calendar.getInstance(getTimezone());
 	}
 	
 	/**

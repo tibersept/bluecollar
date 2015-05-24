@@ -41,7 +41,6 @@ public class WorkhoursExtractor {
 		format = aFormat;
 		overflowProjects = new HashSet<String>();
 		skippedDays = new HashSet<String>();
-		setDay(Calendar.getInstance());
 	}
 	
 	/**
@@ -50,8 +49,12 @@ public class WorkhoursExtractor {
 	 * @param aCal the calendar with the current day
 	 */
 	public void processDay( String aUser, Calendar aCal ) {
-		Date day = aCal.getTime();
-		// Day title
+		// create a copy of current day calendar
+		Calendar cal = Calendar.getInstance(aCal.getTimeZone());
+		cal.setTime(aCal.getTime());
+		
+		// day title
+		Date day = cal.getTime();
 		String dayString = getFormat().format(day);
 		getData().addDayTitle(dayString);
 		
@@ -59,11 +62,11 @@ public class WorkhoursExtractor {
 		// set day string
 		workday.setDay(dayString);
 		// load the workday data
-		workday.loadData(aUser, aCal);
+		workday.loadData(aUser, cal);
 		// process the data for the day
-		doProcessDay(aCal, dayString, workday);
+		doProcessDay(cal, dayString, workday);
 		// weekend data
-		if( isWeekend(aCal) ) {
+		if( isWeekend(cal) ) {
 			getData().addInvalidDay(dayString);
 		}
 		// clear
@@ -96,26 +99,14 @@ public class WorkhoursExtractor {
 	}
 
 	/**
-	 * Sets the day for which data will be processed.
-	 * @param aCal the calendar instance determining the day
-	 */
-	private void setDay( Calendar aCal ) {
-		
-	}
-
-	/**
 	 * Does the actual computation of workday hours
 	 * @param aCal the calendar instance
 	 * @param aDayString the day string
 	 * @param aWorkday the workday data retrieved from datastore
 	 */
 	private void doProcessDay( Calendar aCal, String aDayString, WorkdayData aWorkday ) {
-		// create mutable copy of current day calendar
-		Calendar cal = Calendar.getInstance(aCal.getTimeZone());
-		cal.setTime(aCal.getTime());
-		// compute day range
-		long dayBegin = getCalTime(cal, 0, 0, 0);
-		long dayEnd = getCalTime(cal, 23, 59, 59);
+		long dayBegin = getCalTime(aCal, 0, 0, 0);
+		long dayEnd = getCalTime(aCal, 23, 59, 59);
 		List<String> projects = aWorkday.getProjects();
 		checkCoveredByOverflowingProject(projects);
 		if( projects.isEmpty() ) {

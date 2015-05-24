@@ -45,7 +45,7 @@ public class WorkdayData {
 	 */
 	public void loadData( String aUser, Date aDay ) {
 		Project projectEntity = new Project();
-		TimeRange rangeEntity = new TimeRange();
+		TimeRange rangeEntity = new TimeRange(projectEntity);
 		List<String> projects = projectEntity.getProjects(aUser, false);
 		
 		for( String project : projects ) {

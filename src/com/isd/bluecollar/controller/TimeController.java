@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import com.isd.bluecollar.data.internal.ActiveProject;
+import com.isd.bluecollar.data.store.Project;
 import com.isd.bluecollar.data.store.TimeRange;
 import com.isd.bluecollar.data.store.User;
 
@@ -27,7 +28,7 @@ public class TimeController {
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		Date rightNow = cal.getTime();
 		
-		TimeRange tr = new TimeRange();
+		TimeRange tr = new TimeRange(new Project());
 		tr.openRange(aUser, aProject, rightNow);
 		
 		User usr = new User();
@@ -46,7 +47,7 @@ public class TimeController {
 	public String checkout( String aUser, String aProject ) {
 		Date rightNow = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
 		
-		TimeRange tr = new TimeRange();
+		TimeRange tr = new TimeRange(new Project());
 		tr.closeRange(aUser, aProject, rightNow);
 		
 		User usr = new User();

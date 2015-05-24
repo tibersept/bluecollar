@@ -49,17 +49,73 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
-    "bluecollar.wcard.generatejsonreport" : {
-      "path" : "generateJsonReport",
+    "bluecollar.wcard.checkout" : {
+      "path" : "checkout/{project}",
       "httpMethod" : "POST",
       "authLevel" : "NONE",
       "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
       "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.generateJsonReport",
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.checkout",
       "request" : {
-        "body" : "autoTemplate(backendRequest)",
-        "bodyName" : "resource"
+        "parameters" : {
+          "project" : {
+            "type" : "string",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "bluecollar.wcard.checkactive" : {
+      "path" : "checkActive",
+      "httpMethod" : "POST",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.checkActive",
+      "request" : {
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "bluecollar.wcard.checkin" : {
+      "path" : "checkin/{project}",
+      "httpMethod" : "POST",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.checkin",
+      "request" : {
+        "parameters" : {
+          "project" : {
+            "type" : "string",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "bluecollar.wcard.listprojects" : {
+      "path" : "listProjects",
+      "httpMethod" : "POST",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.listProjects",
+      "request" : {
+        "body" : "empty"
       },
       "response" : {
         "body" : "autoTemplate(backendResponse)"
@@ -90,14 +146,35 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
-    "bluecollar.wcard.generatereport" : {
-      "path" : "generateExcelReport",
+    "bluecollar.wcard.getusersetting" : {
+      "path" : "jsonstring/{setting}",
       "httpMethod" : "POST",
       "authLevel" : "NONE",
       "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
       "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.generateExcelReport",
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.getUserSetting",
+      "request" : {
+        "parameters" : {
+          "setting" : {
+            "type" : "string",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "bluecollar.wcard.generatejsonreport" : {
+      "path" : "generateJsonReport",
+      "httpMethod" : "POST",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
+      "audiences" : [ ],
+      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.generateJsonReport",
       "request" : {
         "body" : "autoTemplate(backendRequest)",
         "bodyName" : "resource"
@@ -121,94 +198,17 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
-    "bluecollar.wcard.getusersetting" : {
-      "path" : "jsonstring/{setting}",
+    "bluecollar.wcard.generatereport" : {
+      "path" : "generateExcelReport",
       "httpMethod" : "POST",
       "authLevel" : "NONE",
       "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
       "audiences" : [ ],
       "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.getUserSetting",
+      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.generateExcelReport",
       "request" : {
-        "parameters" : {
-          "setting" : {
-            "type" : "string",
-            "required" : true
-          }
-        },
-        "body" : "empty"
-      },
-      "response" : {
-        "body" : "autoTemplate(backendResponse)"
-      }
-    },
-    "bluecollar.wcard.checkout" : {
-      "path" : "checkout/{project}",
-      "httpMethod" : "POST",
-      "authLevel" : "NONE",
-      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
-      "audiences" : [ ],
-      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.checkout",
-      "request" : {
-        "parameters" : {
-          "project" : {
-            "type" : "string",
-            "required" : true
-          }
-        },
-        "body" : "empty"
-      },
-      "response" : {
-        "body" : "autoTemplate(backendResponse)"
-      }
-    },
-    "bluecollar.wcard.listprojects" : {
-      "path" : "listProjects",
-      "httpMethod" : "POST",
-      "authLevel" : "NONE",
-      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
-      "audiences" : [ ],
-      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.listProjects",
-      "request" : {
-        "body" : "empty"
-      },
-      "response" : {
-        "body" : "autoTemplate(backendResponse)"
-      }
-    },
-    "bluecollar.wcard.checkin" : {
-      "path" : "checkin/{project}",
-      "httpMethod" : "POST",
-      "authLevel" : "NONE",
-      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
-      "audiences" : [ ],
-      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.checkin",
-      "request" : {
-        "parameters" : {
-          "project" : {
-            "type" : "string",
-            "required" : true
-          }
-        },
-        "body" : "empty"
-      },
-      "response" : {
-        "body" : "autoTemplate(backendResponse)"
-      }
-    },
-    "bluecollar.wcard.checkactive" : {
-      "path" : "checkActive",
-      "httpMethod" : "POST",
-      "authLevel" : "NONE",
-      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email" ],
-      "audiences" : [ ],
-      "clientIds" : [ "458645171438.apps.googleusercontent.com" ],
-      "rosyMethod" : "com.isd.bluecollar.spi.WorkCardV1.checkActive",
-      "request" : {
-        "body" : "empty"
+        "body" : "autoTemplate(backendRequest)",
+        "bodyName" : "resource"
       },
       "response" : {
         "body" : "autoTemplate(backendResponse)"
@@ -229,6 +229,30 @@
           }
         }
       },
+      "JsonString" : {
+        "id" : "JsonString",
+        "type" : "object",
+        "properties" : {
+          "string" : {
+            "type" : "string"
+          }
+        }
+      },
+      "JsonStatus" : {
+        "id" : "JsonStatus",
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string"
+          },
+          "project" : {
+            "type" : "string"
+          },
+          "projectBegin" : {
+            "type" : "string"
+          }
+        }
+      },
       "JsonRange" : {
         "id" : "JsonRange",
         "type" : "object",
@@ -242,11 +266,11 @@
           "begin" : {
             "type" : "string"
           },
-          "endDate" : {
+          "beginDate" : {
             "type" : "string",
             "format" : "date-time"
           },
-          "beginDate" : {
+          "endDate" : {
             "type" : "string",
             "format" : "date-time"
           }
@@ -297,33 +321,6 @@
           }
         }
       },
-      "JsonStatus" : {
-        "id" : "JsonStatus",
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string"
-          },
-          "project" : {
-            "type" : "string"
-          },
-          "projectBegin" : {
-            "type" : "string"
-          }
-        }
-      },
-      "JsonByteArray" : {
-        "id" : "JsonByteArray",
-        "type" : "object",
-        "properties" : {
-          "name" : {
-            "type" : "string"
-          },
-          "byteArray" : {
-            "type" : "string"
-          }
-        }
-      },
       "JsonEasyMap" : {
         "id" : "JsonEasyMap",
         "type" : "object",
@@ -342,11 +339,14 @@
           }
         }
       },
-      "JsonString" : {
-        "id" : "JsonString",
+      "JsonByteArray" : {
+        "id" : "JsonByteArray",
         "type" : "object",
         "properties" : {
-          "string" : {
+          "name" : {
+            "type" : "string"
+          },
+          "byteArray" : {
             "type" : "string"
           }
         }
@@ -358,38 +358,17 @@
           "$ref" : "JsonList"
         }
       },
-      "com.isd.bluecollar.spi.WorkCardV1.generateJsonReport" : {
-        "request" : {
-          "$ref" : "JsonRange"
-        },
-        "response" : {
-          "$ref" : "JsonReport"
-        }
-      },
-      "com.isd.bluecollar.spi.WorkCardV1.setUserSetting" : {
-        "response" : {
-          "$ref" : "JsonStatus"
-        }
-      },
-      "com.isd.bluecollar.spi.WorkCardV1.generateExcelReport" : {
-        "request" : {
-          "$ref" : "JsonRange"
-        },
-        "response" : {
-          "$ref" : "JsonByteArray"
-        }
-      },
-      "com.isd.bluecollar.spi.WorkCardV1.getAllSettings" : {
-        "response" : {
-          "$ref" : "JsonEasyMap"
-        }
-      },
-      "com.isd.bluecollar.spi.WorkCardV1.getUserSetting" : {
+      "com.isd.bluecollar.spi.WorkCardV1.checkout" : {
         "response" : {
           "$ref" : "JsonString"
         }
       },
-      "com.isd.bluecollar.spi.WorkCardV1.checkout" : {
+      "com.isd.bluecollar.spi.WorkCardV1.checkActive" : {
+        "response" : {
+          "$ref" : "JsonStatus"
+        }
+      },
+      "com.isd.bluecollar.spi.WorkCardV1.checkin" : {
         "response" : {
           "$ref" : "JsonString"
         }
@@ -399,14 +378,35 @@
           "$ref" : "JsonList"
         }
       },
-      "com.isd.bluecollar.spi.WorkCardV1.checkin" : {
+      "com.isd.bluecollar.spi.WorkCardV1.setUserSetting" : {
+        "response" : {
+          "$ref" : "JsonStatus"
+        }
+      },
+      "com.isd.bluecollar.spi.WorkCardV1.getUserSetting" : {
         "response" : {
           "$ref" : "JsonString"
         }
       },
-      "com.isd.bluecollar.spi.WorkCardV1.checkActive" : {
+      "com.isd.bluecollar.spi.WorkCardV1.generateJsonReport" : {
+        "request" : {
+          "$ref" : "JsonRange"
+        },
         "response" : {
-          "$ref" : "JsonStatus"
+          "$ref" : "JsonReport"
+        }
+      },
+      "com.isd.bluecollar.spi.WorkCardV1.getAllSettings" : {
+        "response" : {
+          "$ref" : "JsonEasyMap"
+        }
+      },
+      "com.isd.bluecollar.spi.WorkCardV1.generateExcelReport" : {
+        "request" : {
+          "$ref" : "JsonRange"
+        },
+        "response" : {
+          "$ref" : "JsonByteArray"
         }
       }
     }

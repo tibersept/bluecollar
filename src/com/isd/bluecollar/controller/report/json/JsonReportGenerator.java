@@ -81,7 +81,7 @@ public class JsonReportGenerator extends ReportGenerator{
 		Project projectEntity = new Project();
 		List<String> projects = projectEntity.getProjects(getUser(), true);
 		
-		TimeRange range = new TimeRange();
+		TimeRange range = new TimeRange(projectEntity);
 		for( String p : projects ) {
 			List<Range<Long>> timeRanges = range.getRanges(getUser(), p, getBegin(), getEnd());
 			if( timeRanges.size() > 0 ) {

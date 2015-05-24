@@ -4,7 +4,7 @@
 
     <!-- Used 32 times in query history -->
     <datastore-index kind="TimeRange" ancestor="true" source="auto">
-        <property name="start" direction="asc"/>
+        <property name="begin" direction="asc"/>
     </datastore-index>
 
 </datastore-indexes>

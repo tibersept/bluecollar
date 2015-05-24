@@ -4,11 +4,9 @@
 package com.isd.bluecollar.data.store;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -57,19 +55,6 @@ public class TimeRange {
 		service = DatastoreServiceFactory.getDatastoreService();
 		project = aProject;
 	}
-	
-	/**
-	 * Retrieves the time ranges on a given day.
-	 * @param aUser the user
-	 * @param aProject the project
-	 * @param aDay the day
-	 * @return the list of ranges
-	 */
-	public List<Range<Long>> getRanges( String aUser, String aProject, Date aDay ) {
-		List<Entity> entityList = getRangeEntities(aUser, aProject, aDay);
-		List<Range<Long>> list = getRangeListFromEntities(entityList);
-		return list;
-	}
 
 	
 	/**
@@ -91,16 +76,14 @@ public class TimeRange {
 	 * then this operation does nothing.
 	 * @param aUser the user 
 	 * @param aProject the project
-	 * @param aTimestamp the begin timestamp
+	 * @param aBegin the begin date in milliseconds since the epoch
 	 */
-	public void openRange( String aUser, String aProject, Date aTimestamp ) {
+	public void openRange( String aUser, String aProject, long aBegin ) {
 		Key key = project.getKey(aUser, aProject);
 		if (key!=null) {
 			if( !hasOpenRange(key) ) {
 				Entity timeRange = createNewTimeRange(key);
-				Calendar cal = getCal();
-				cal.setTime(aTimestamp);
-				timeRange.setProperty(PROPERTY_BEGIN, cal.getTimeInMillis());
+				timeRange.setProperty(PROPERTY_BEGIN, aBegin);
 				timeRange.setProperty(PROPERTY_STATE, STATE_OPEN);
 				service.put(timeRange);
 			}
@@ -112,42 +95,18 @@ public class TimeRange {
 	 * project then this operation does nothing.
 	 * @param aUser the user
 	 * @param aProject  the project
-	 * @param aTimestamp the end timestamp
+	 * @param anEnd the end date in milliseconds since the epoch
 	 */
-	public void closeRange( String aUser, String aProject, Date aTimestamp ) {
+	public void closeRange( String aUser, String aProject, long anEnd ) {
 		Key key = project.getKey(aUser, aProject);
 		if (key!=null) {
 			if( hasOpenRange(key) ) {
 				Entity timeRange = getOpenRange(key);
-				Calendar cal = getCal();
-				cal.setTime(aTimestamp);
-				timeRange.setProperty(PROPERTY_END, cal.getTimeInMillis());
+				timeRange.setProperty(PROPERTY_END, anEnd);
 				timeRange.setProperty(PROPERTY_STATE, STATE_FINISHED);
 				service.put(timeRange);
 			}
 		}
-	}
-
-	/**
-	 * Retrieves all time ranges of the given project which are contained within the given day. 
-	 * @param aUser the user
-	 * @param aProject the project
-	 * @param aDay the day
-	 * @return the list of time range entities for the project of the user on that day
-	 */
-	private List<Entity> getRangeEntities( String aUser, String aProject, Date aDay ) {
-		Entity pro = project.getProject(aUser, aProject);
-		if( pro!=null ) {
-			Key proKey = pro.getKey();
-			Calendar cal = getCal();
-			cal.setTime(aDay);
-			setToDayBegin(cal);
-			long begin = cal.getTimeInMillis();
-			setToDayEnd(cal);
-			long end = cal.getTimeInMillis();
-			return getTimeRangesInRange(proKey, begin, end);
-		}
-		return Collections.emptyList();
 	}
 	
 	/**
@@ -163,11 +122,8 @@ public class TimeRange {
 		Entity pro = project.getProject(aUser, aProject);
 		if( pro!=null ) {
 			Key proKey = pro.getKey();
-			Calendar cal = getCal();
-			cal.setTime(aBegin);
-			long begin = cal.getTimeInMillis();
-			cal.setTime(anEnd);
-			long end = cal.getTimeInMillis();
+			long begin = aBegin.getTime();
+			long end = anEnd.getTime();
 			if( begin < end ) {
 				return getTimeRangesInRange(proKey, begin, end);				
 			}
@@ -248,32 +204,5 @@ public class TimeRange {
 		Query q = new Query(TIME_RANGE,aProKey).setAncestor(aProKey).setFilter(compositeFilter);
 		return service.prepare(q).asList(FetchOptions.Builder.withDefaults());
 	}
-
-	/**
-	 * Returns a UTC calendar instance.
-	 * @return the UTC calendar instance
-	 */
-	private Calendar getCal() {
-		return Calendar.getInstance( TimeZone.getTimeZone("UTC") );
-	}
 	
-	/**
-	 * Sets the calendar to a day's end.
-	 * @param cal the calendar
-	 */
-	private void setToDayEnd(Calendar cal) {
-		cal.set(Calendar.HOUR, 23);
-		cal.set(Calendar.MINUTE, 59);
-		cal.set(Calendar.SECOND, 59);
-	}
-
-	/**
-	 * Sets the calendar to a day's start.
-	 * @param cal the calendar
-	 */
-	private void setToDayBegin(Calendar cal) {
-		cal.set(Calendar.HOUR, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-	}
 }

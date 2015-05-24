@@ -4,7 +4,6 @@
 package com.isd.bluecollar.controller;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.TimeZone;
 
 import com.isd.bluecollar.data.internal.ActiveProject;
@@ -26,16 +25,16 @@ public class TimeController {
 	 */
 	public String checkin( String aUser, String aProject ) {
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		Date rightNow = cal.getTime();
+		long checkinTime = cal.getTimeInMillis();
 		
 		TimeRange tr = new TimeRange(new Project());
-		tr.openRange(aUser, aProject, rightNow);
+		tr.openRange(aUser, aProject, checkinTime);
 		
 		User usr = new User();
 		usr.setCurrentProject(aUser, aProject);
-		usr.setTaskBegin(aUser, rightNow.getTime());
+		usr.setTaskBegin(aUser, checkinTime);
 		
-		return String.valueOf(rightNow.getTime());
+		return String.valueOf(checkinTime);
 	}
 	
 	/**
@@ -45,16 +44,17 @@ public class TimeController {
 	 * @return the timestamp of the task end
 	 */
 	public String checkout( String aUser, String aProject ) {
-		Date rightNow = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		long checkoutTime = cal.getTimeInMillis();
 		
 		TimeRange tr = new TimeRange(new Project());
-		tr.closeRange(aUser, aProject, rightNow);
+		tr.closeRange(aUser, aProject, checkoutTime);
 		
 		User usr = new User();
 		usr.setCurrentProject(aUser, null);
 		usr.setTaskBegin(aUser, 0);
 
-		return String.valueOf(rightNow.getTime());
+		return String.valueOf(checkoutTime);
 	}
 	
 	/**

@@ -4,6 +4,7 @@
 package com.isd.bluecollar.data.report;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,15 +42,22 @@ public class WorkdayData {
 	/**
 	 * Loads the workday data for the given day.
 	 * @param aUser the user
-	 * @param aDay the day
+	 * @param aCal the calendar set to current day
 	 */
-	public void loadData( String aUser, Date aDay ) {
+	public void loadData( String aUser, Calendar aCal ) {
 		Project projectEntity = new Project();
 		TimeRange rangeEntity = new TimeRange(projectEntity);
 		List<String> projects = projectEntity.getProjects(aUser, false);
 		
+		Calendar cal = Calendar.getInstance(aCal.getTimeZone());
+		cal.setTime(aCal.getTime());
+		setToDayBegin(cal);
+		Date begin = cal.getTime();
+		setToDayEnd(cal);
+		Date end = cal.getTime();
+		
 		for( String project : projects ) {
-			List<Range<Long>> ranges = rangeEntity.getRanges(aUser, project, aDay);
+			List<Range<Long>> ranges = rangeEntity.getRanges(aUser, project, begin, end);
 			for (Range<Long> range : ranges ) {
 				addProjectTime(project, range);
 			}
@@ -124,5 +132,25 @@ public class WorkdayData {
 			}
 		}
 		projectTimes.clear();
+	}
+	
+	/**
+	 * Sets the calendar to a day's end.
+	 * @param cal the calendar
+	 */
+	private void setToDayEnd(Calendar cal) {
+		cal.set(Calendar.HOUR, 23);
+		cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 59);
+	}
+
+	/**
+	 * Sets the calendar to a day's start.
+	 * @param cal the calendar
+	 */
+	private void setToDayBegin(Calendar cal) {
+		cal.set(Calendar.HOUR, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
 	}
 }

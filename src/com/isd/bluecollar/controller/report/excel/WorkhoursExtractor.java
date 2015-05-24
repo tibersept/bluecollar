@@ -59,7 +59,7 @@ public class WorkhoursExtractor {
 		// set day string
 		workday.setDay(dayString);
 		// load the workday data
-		workday.loadData(aUser, day);
+		workday.loadData(aUser, aCal);
 		// process the data for the day
 		doProcessDay(aCal, dayString, workday);
 		// weekend data

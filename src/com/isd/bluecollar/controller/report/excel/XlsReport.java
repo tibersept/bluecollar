@@ -309,8 +309,8 @@ public class XlsReport {
 		sheet.setDefaultColumnWidth(4);
 		sheet.setDefaultRowHeight((short)340);
 		int dayCount = getReportData().getDayCount();
-		sheet.setColumnWidth(dayCount+2, 15*256);
-		sheet.setColumnWidth(dayCount+3, 40*256);
+		sheet.setColumnWidth(dayCount+3, 15*256);
+		sheet.setColumnWidth(dayCount+4, 40*256);
 		return sheet;
 	}
 	
@@ -341,15 +341,15 @@ public class XlsReport {
 		
 		int dayCount = getReportData().getDayCount();
 		
-		Cell cell = row.createCell(dayCount+1);
+		Cell cell = row.createCell(dayCount+2);
 		cell.setCellStyle(columnStyle);
 		cell.setCellValue(0.0);
 		
-		cell = row.createCell(dayCount+2);
-		cell.setCellStyle(columnStyle);
-		cell.setCellValue(rowIndex);
-		
 		cell = row.createCell(dayCount+3);
+		cell.setCellStyle(columnStyle);
+		cell.setCellValue(Math.abs(title.hashCode()%1000));
+		
+		cell = row.createCell(dayCount+4);
 		cell.setCellStyle(columnStyle);
 		cell.setCellValue(title);
 	}
@@ -378,7 +378,7 @@ public class XlsReport {
 		
 		int dayCount = getReportData().getDayCount();
 		
-		Cell cell = row.createCell(dayCount+1);
+		Cell cell = row.createCell(dayCount+2);
 		cell.setCellStyle(columnStyle);
 		cell.setCellValue(0.0);
 	}

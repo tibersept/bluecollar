@@ -53,14 +53,6 @@ public class ReportData {
 	}
 	
 	/**
-	 * Adds a project title to the list of project titles.
-	 * @param aTitle the project title
-	 */
-	public void addProjectTitle( String aTitle ) {
-		projectTitles.add( aTitle );
-	}
-	
-	/**
 	 * Returns the list of project titles.
 	 * @return the list of project titles
 	 */
@@ -76,8 +68,9 @@ public class ReportData {
 	 */
 	public void setHours( String aDay, String aProject, Float anHours ) {
 		dayProjectHours.put(getDayProjectKey(aDay, aProject), anHours);
+		addProjectTitle(aProject);
 	}
-	
+
 	/**
 	 * Returns the project hours on the given day.
 	 * @param aDay the day title
@@ -125,6 +118,16 @@ public class ReportData {
 		return projectTitles.size();
 	}
 	
+	/**
+	 * Adds a project title.
+	 * @param aProject the title
+	 */
+	private void addProjectTitle( String aProject ) {
+		if( !projectTitles.contains(aProject) ) {
+			projectTitles.add(aProject);
+		}
+	}
+
 	/**
 	 * Returns a combined day project key.
 	 * @param aDay the day title

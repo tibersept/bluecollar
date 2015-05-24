@@ -304,21 +304,10 @@ public class WorkhoursExtractor {
 	}
 	
 	/**
-	 * Removes the day from the skipped days.
-	 * @param aDay the skipped day
-	 * @return <code>true</code> if workday was removed from skipped days
-	 */
-	@SuppressWarnings("unused")
-	private boolean removeSkipped( String aDay ) {
-		return skippedDays.remove(aDay);
-	}
-	
-	/**
 	 * Clears the skipped days set.
 	 */
 	private void clearSkipped() {
 		skippedDays.clear();
 	}
-	
 	
 }

@@ -49,7 +49,7 @@ public class WorkdayData {
 		List<String> projects = projectEntity.getProjects(aUser, false);
 		
 		for( String project : projects ) {
-			List<Range<Long>> ranges = rangeEntity.getTimeRanges(aUser, project, aDay);
+			List<Range<Long>> ranges = rangeEntity.getRanges(aUser, project, aDay);
 			for (Range<Long> range : ranges ) {
 				addProjectTime(project, range);
 			}

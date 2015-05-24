@@ -35,20 +35,6 @@ public class UserSettings {
 	}
 	
 	/**
-	 * Retrieves the user settings or creates a new user settings entity.
-	 * @param aUser the user key
-	 * @return the user settings entity
-	 */
-	public Entity getUserSettings( Key aUser ) {
-		Query q = new Query(USER_SETTINGS,aUser).setAncestor(aUser);
-		Entity settings = service.prepare(q).asSingleEntity();
-		if( settings==null ) {
-			settings = createNewUserSettings(aUser);
-		}
-		return settings;
-	}
-	
-	/**
 	 * Returns the user setting.
 	 * @param aUser the user
 	 * @param aSetting the setting name
@@ -101,6 +87,20 @@ public class UserSettings {
 		return Collections.emptyMap();
 	}
 	
+	/**
+	 * Retrieves the user settings or creates a new user settings entity.
+	 * @param aUser the user key
+	 * @return the user settings entity
+	 */
+	private Entity getUserSettings( Key aUser ) {
+		Query q = new Query(USER_SETTINGS,aUser).setAncestor(aUser);
+		Entity settings = service.prepare(q).asSingleEntity();
+		if( settings==null ) {
+			settings = createNewUserSettings(aUser);
+		}
+		return settings;
+	}
+
 	/**
 	 * Creates a new user settings entity.
 	 * @param aUser the user key

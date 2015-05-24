@@ -15,7 +15,7 @@ import com.isd.bluecollar.data.report.ReportData;
 import com.isd.bluecollar.data.report.WorkdayData;
 
 /**
- * This class provides the algorithm to extract workhours for the projects
+ * This class provides the algorithm to extract work hours for the projects
  * from the provided data.
  * @author doan
  */
@@ -23,8 +23,6 @@ public class WorkhoursExtractor {
 
 	/** Report data */
 	private ReportData data;
-	/** Calendar instance */
-	private Calendar cal;
 	/** Date format */
 	private SimpleDateFormat format;
 	
@@ -36,44 +34,25 @@ public class WorkhoursExtractor {
 	/**
 	 * Creates a new work hours extractor instance.
 	 * @param aData the report data
-	 * @param aCal the calendar instance
 	 * @param aFormat the date format
 	 */
-	public WorkhoursExtractor( ReportData aData, Calendar aCal, SimpleDateFormat aFormat ) {
+	public WorkhoursExtractor( ReportData aData, SimpleDateFormat aFormat ) {
 		data = aData;
-		cal = aCal;
 		format = aFormat;
 		overflowProjects = new HashSet<String>();
 		skippedDays = new HashSet<String>();
-	}
-	
-	/**
-	 * Computes the report end data, ensuring that the last date of the calendar
-	 * matches the last day specified as the report end day.
-	 * @param aUser the user/owner of projects
-	 * @param anEnd the end date
-	 */
-	public void computeReportEndData( String aUser, Date anEnd ) {
-		Calendar cal = getCal();
-		int lastDay = cal.get(Calendar.DAY_OF_MONTH);
-		long lastTime = cal.getTimeInMillis();
-		cal.setTime(anEnd);
-		int endDay = cal.get(Calendar.DAY_OF_MONTH);
-		long endTime = cal.getTimeInMillis();
-		if( (lastDay!=endDay) && (lastTime<endTime) ) {
-			processDay(aUser);
-		}
+		setDay(Calendar.getInstance());
 	}
 	
 	/**
 	 * Process a single day for the report.
 	 * @param aUser the user/owner of projects
+	 * @param aCal the calendar with the current day
 	 */
-	public void processDay( String aUser ) {
-		Calendar cal = getCal();
-		Date day = cal.getTime();
-		String dayString = getFormat().format(day);
+	public void processDay( String aUser, Calendar aCal ) {
+		Date day = aCal.getTime();
 		// Day title
+		String dayString = getFormat().format(day);
 		getData().addDayTitle(dayString);
 		
 		WorkdayData workday = new WorkdayData();
@@ -81,14 +60,31 @@ public class WorkhoursExtractor {
 		workday.setDay(dayString);
 		// load the workday data
 		workday.loadData(aUser, day);
-		// process the data
-		doProcessDay( dayString, workday );
+		// process the data for the day
+		doProcessDay(aCal, dayString, workday);
 		// weekend data
-		if( isWeekend(getCal()) ) {
+		if( isWeekend(aCal) ) {
 			getData().addInvalidDay(dayString);
 		}
 		// clear
 		workday.clear();
+	}
+
+	/**
+	 * Processes the last day of the report. This day might or might not have been included in the report,
+	 * due to mismatch in hours, so the method checks whether the day has been processed and processes it 
+	 * if that is not the case.
+	 * @param aUser the user/owner of projects
+	 * @param aCal the calendar with the current day
+	 * @param anEnd the calendar with the end day
+	 */
+	public void processLastDay( String aUser, Calendar aCal, Calendar anEnd ) {
+		int lastDay = aCal.get(Calendar.DAY_OF_MONTH);
+		int endDay = anEnd.get(Calendar.DAY_OF_MONTH);
+		if( lastDay == endDay ) {
+			// the day hasn't been processed yet
+			processDay(aUser, anEnd);
+		}
 	}
 	
 	/**
@@ -98,20 +94,28 @@ public class WorkhoursExtractor {
 		clearOverflows();
 		clearSkipped();
 	}
-	
+
+	/**
+	 * Sets the day for which data will be processed.
+	 * @param aCal the calendar instance determining the day
+	 */
+	private void setDay( Calendar aCal ) {
+		
+	}
+
 	/**
 	 * Does the actual computation of workday hours
-	 * @param anRData the report data being generated
 	 * @param aCal the calendar instance
 	 * @param aDayString the day string
 	 * @param aWorkday the workday data retrieved from datastore
-	 * @param anOverflowProjects a set of projects that haven't been completed 
-	 * 							on previous days
 	 */
-	private void doProcessDay( String aDayString, WorkdayData aWorkday ) {
-		// Compute day range
-		long dayBegin = getCalTime(getCal(), 0, 0, 0);
-		long dayEnd = getCalTime(getCal(), 23, 59, 59);
+	private void doProcessDay( Calendar aCal, String aDayString, WorkdayData aWorkday ) {
+		// create mutable copy of current day calendar
+		Calendar cal = Calendar.getInstance(aCal.getTimeZone());
+		cal.setTime(aCal.getTime());
+		// compute day range
+		long dayBegin = getCalTime(cal, 0, 0, 0);
+		long dayEnd = getCalTime(cal, 23, 59, 59);
 		List<String> projects = aWorkday.getProjects();
 		checkCoveredByOverflowingProject(projects);
 		if( projects.isEmpty() ) {
@@ -248,14 +252,6 @@ public class WorkhoursExtractor {
 	 */
 	private ReportData getData() {
 		return data;
-	}
-	
-	/**
-	 * Returns the current work hours calendar instance.
-	 * @return the calendar
-	 */
-	private Calendar getCal() {
-		return cal;
 	}
 	
 	/**

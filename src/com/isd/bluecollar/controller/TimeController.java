@@ -28,7 +28,7 @@ public class TimeController {
 		Date rightNow = cal.getTime();
 		
 		TimeRange tr = new TimeRange();
-		tr.openTimeRange(aUser, aProject, rightNow);
+		tr.openRange(aUser, aProject, rightNow);
 		
 		User usr = new User();
 		usr.setCurrentProject(aUser, aProject);
@@ -47,7 +47,7 @@ public class TimeController {
 		Date rightNow = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
 		
 		TimeRange tr = new TimeRange();
-		tr.closeTimeRange(aUser, aProject, rightNow);
+		tr.closeRange(aUser, aProject, rightNow);
 		
 		User usr = new User();
 		usr.setCurrentProject(aUser, null);

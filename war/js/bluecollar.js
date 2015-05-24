@@ -483,15 +483,11 @@ com.isd.bluecollar.enableLogin = function() {
 com.isd.bluecollar.initDatepickers = function() {
 	var now = new Date();
 	var first = new Date(now.getFullYear(), now.getMonth(), 1);
-	$('#dp-start').val(com.isd.bluecollar.date.toDateString(first));
+	$('#dp-start').val(com.isd.bluecollar.date.toDateString(first)).datepicker();
 	var last = new Date(now.getFullYear(), now.getMonth()+1, 0);
-	$('#dp-end').val(com.isd.bluecollar.date.toDateString(last));
-	
-	// initialize the datepickers
-	$('#dp-start').datepicker();
-	$('#dp-end').datepicker();
+	$('#dp-end').val(com.isd.bluecollar.date.toDateString(last)).datepicker();
 	$('#tp-start').timepicker();
-	$('#tp-end').timepicker();
+	$('#tp-end').val('11:59 PM').timepicker();
 };
 
 /**

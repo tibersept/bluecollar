@@ -135,14 +135,14 @@ public class XlsReportGenerator extends ReportGenerator {
 		Calendar cal = getCal();
 		Calendar end = getCal(true);
 		SimpleDateFormat format = computeDayFormat();
-		WorkhoursExtractor we = new WorkhoursExtractor(rData, cal, format);
+		WorkhoursExtractor we = new WorkhoursExtractor(rData, format);
 		cal.setTime(getBegin());
 		end.setTime(getEnd());
 		while( cal.before(end) ) {
-			we.processDay(getUser());
+			we.processDay(getUser(), cal);
 			cal.add(Calendar.DAY_OF_MONTH, 1);
 		}
-		we.computeReportEndData(getUser(), getEnd());
+		we.processLastDay(getUser(), cal, end);
 		we.clear();
 		return rData;
 	}

@@ -28,6 +28,10 @@ public class XlsCellStyler {
 	public static final String INPUT_CENTER = "inputCenter";
 	/** Column/table cell style */
 	public static final String COLUMN = "column";
+	/** Column/table cell style with medium borders  */
+	public static final String COLUMN_MEDIUM = "columnMedium";
+	/** Column/table cell style with medium borders for end cells */
+	public static final String COLUMN_END_MEDIUM = "columnEndMedium";
 	/** Column/table cell filled style*/
 	public static final String COLUMN_FILLED = "columnFilled";
 	/** Grayed table cell style */
@@ -49,9 +53,11 @@ public class XlsCellStyler {
 		styleMap.put(INPUT_LEFT, getInputStyle(aWb, CellStyle.ALIGN_LEFT));
 		styleMap.put(INPUT_CENTER, getInputStyle(aWb, CellStyle.ALIGN_CENTER));
 		styleMap.put(COLUMN, getColumnCellStyle(aWb,false,false));
+		styleMap.put(COLUMN_MEDIUM, setBoldFont(aWb, setBorder(getColumnCellStyle(aWb,false,false),1,0,1,0)));
+		styleMap.put(COLUMN_END_MEDIUM, setBoldFont(aWb, setBorder(getColumnCellStyle(aWb,false,false),1,1,1,0)));
 		styleMap.put(COLUMN_FILLED, getColumnCellStyle(aWb,true,false));
 		styleMap.put(COLUMN_GRAYED, getColumnCellStyle(aWb, false, true));
-		styleMap.put(COLUMN_FILLED_AND_GRAYED, getColumnCellStyle(aWb, true, true));
+		styleMap.put(COLUMN_FILLED_AND_GRAYED, getColumnCellStyle(aWb,true,true));
 	}
 	
 	/**
@@ -130,7 +136,7 @@ public class XlsCellStyler {
 	 * Creates and returns the column cell style.
 	 * @param wb the workbook
 	 * @param filled <code>true</code> to fill cell content
-	 * @param grayed <code>true</code> to gray background
+	 * @param grayed <code>true</code> to gray background 
 	 * @return the column cell style
 	 */
 	private CellStyle getColumnCellStyle(Workbook wb, boolean filled, boolean grayed) {
@@ -146,18 +152,69 @@ public class XlsCellStyler {
 		columnStyle.setBorderRight(CellStyle.BORDER_THIN);
 		
 		if( grayed ) {
-			columnStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);			
+			columnStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 			if( filled ) {
 				columnStyle.setFillForegroundColor(IndexedColors.BLACK.getIndex());
-				columnStyle.setFillPattern(CellStyle.THIN_HORZ_BANDS);
-				columnStyle.setFillBackgroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+				columnStyle.setFillPattern(CellStyle.THIN_BACKWARD_DIAG);
+				columnStyle.setFillBackgroundColor(IndexedColors.PALE_BLUE.getIndex());
 			} else {
 				columnStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());	
 			}
 		} else if( filled ) {
-			columnStyle.setFillPattern(CellStyle.THIN_HORZ_BANDS);
+			columnStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+			columnStyle.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
+			columnStyle.setFillPattern(CellStyle.THIN_BACKWARD_DIAG);
+			columnStyle.setFillBackgroundColor(IndexedColors.WHITE.getIndex());
 		}
 		
 		return columnStyle;
+	}
+	
+	/**
+	 * Sets the font of the cell style to bold.
+	 * @param wb the workbook
+	 * @param aStyle the cell style
+	 * @return the cell style (for chaining)
+	 */
+	private CellStyle setBoldFont( Workbook wb, CellStyle aStyle ) {
+		Font font = wb.createFont();
+		font.setFontName(HSSFFont.FONT_ARIAL);
+		font.setFontHeightInPoints((short)10);
+		font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		aStyle.setFont(font);
+		return aStyle;
+	}
+	
+	/**
+	 * Sets the borders of a cell style.
+	 * @param aStyle the style
+	 * @param aTop the top border 
+	 * @param aRight the right border
+	 * @param aBottom the bottom border
+	 * @param aLeft the left border
+	 * @return the cell style (for chaining)
+	 */
+	private CellStyle setBorder( CellStyle aStyle, int aTop, int aRight, int aBottom, int aLeft ) {
+		aStyle.setBorderTop(getBorderStyle(aTop));
+		aStyle.setBorderRight(getBorderStyle(aRight));
+		aStyle.setBorderBottom(getBorderStyle(aBottom));
+		aStyle.setBorderLeft(getBorderStyle(aLeft));
+		return aStyle;
+	}
+	
+	/**
+	 * Converts the internal encoding of cell style to actual constants.
+	 * @param aBorderEncoding the internal encoding of border style
+	 * @return the converted POI cell style for border
+	 */
+	private short getBorderStyle( int aBorderEncoding ) {
+		switch(aBorderEncoding) {
+		case 1:
+			return CellStyle.BORDER_MEDIUM;
+		case 2:
+			return CellStyle.BORDER_THICK;
+		default:
+			return CellStyle.BORDER_THIN;
+		}
 	}
 }

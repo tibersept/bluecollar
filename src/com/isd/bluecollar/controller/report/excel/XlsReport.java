@@ -400,19 +400,25 @@ public class XlsReport {
 	 */
 	private void createTableHeaderRow(CreationHelper createHelper, Sheet sheet, CellStyle columnStyle, CellStyle filledColumnStyle, int rowIndex) {
 		Row row = sheet.createRow(rowIndex);
+		CellStyle columnMedium = getStyler().getStyle(XlsCellStyler.COLUMN_MEDIUM);
+		CellStyle columnEndMedium = getStyler().getStyle(XlsCellStyler.COLUMN_END_MEDIUM);
 		
 		List<String> dayList = getReportData().getDayTitles();
 		int cellColumn = 0;
+		Cell cell = null;
 		for( String day : dayList ) {
-			Cell cell = row.createCell(cellColumn);
-			cell.setCellStyle(columnStyle);
+			cell = row.createCell(cellColumn);
+			cell.setCellStyle(columnMedium);
 			cell.setCellValue(createHelper.createRichTextString(day));						
 			cellColumn++;
+		}
+		if( cell!=null ) {
+			cell.setCellStyle(columnEndMedium);
 		}
 		
 		int dayCount = getReportData().getDayCount();
 		
-		Cell cell = row.createCell(dayCount+OFFSET_HOURS);
+		cell = row.createCell(dayCount+OFFSET_HOURS);
 		cell.setCellStyle(columnStyle);
 		cell.setCellValue(createHelper.createRichTextString(lang.columnhours));
 				

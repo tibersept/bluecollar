@@ -54,10 +54,10 @@ public class JsonReportGenerator extends ReportGenerator{
 	
 	/**
 	 * @inheritDoc
-	 * @see com.isd.bluecollar.controller.report.ReportGenerator#initializeMonthNames()
+	 * @see com.isd.bluecollar.controller.report.ReportGenerator#initializeCalendarNames()
 	 */
 	@Override
-	protected void initializeMonthNames() {
+	protected void initializeCalendarNames() {
 		// do nothing
 	}
 	

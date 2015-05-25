@@ -23,8 +23,10 @@ public class WorkhoursExtractor {
 
 	/** Report data */
 	private ReportData data;
-	/** Date format */
-	private SimpleDateFormat format;
+	/** Day index format */
+	private SimpleDateFormat dayIndexFormat;
+	/** Day name format */
+	private SimpleDateFormat dayNameFormat;
 	
 	/** A set of overflow projects */
 	private Set<String> overflowProjects;
@@ -34,11 +36,12 @@ public class WorkhoursExtractor {
 	/**
 	 * Creates a new work hours extractor instance.
 	 * @param aData the report data
-	 * @param aFormat the date format
+	 * @param aDayIndexFormat the date format
 	 */
-	public WorkhoursExtractor( ReportData aData, SimpleDateFormat aFormat ) {
+	public WorkhoursExtractor( ReportData aData, SimpleDateFormat aDayIndexFormat, SimpleDateFormat aDayNameFormat ) {
 		data = aData;
-		format = aFormat;
+		dayIndexFormat = aDayIndexFormat;
+		dayNameFormat = aDayNameFormat;
 		overflowProjects = new HashSet<String>();
 		skippedDays = new HashSet<String>();
 	}
@@ -55,8 +58,9 @@ public class WorkhoursExtractor {
 		
 		// day title
 		Date day = cal.getTime();
-		String dayString = getFormat().format(day);
-		getData().addDayTitle(dayString);
+		String dayString = getDayIndexFormat().format(day);
+		getData().addDayIndexTitle(dayString);
+		getData().addDayNameTitle(getDayNameFormat().format(day));
 		
 		WorkdayData workday = new WorkdayData();
 		// set day string
@@ -246,11 +250,19 @@ public class WorkhoursExtractor {
 	}
 	
 	/**
-	 * Returns the date formatter.
+	 * Returns the date day index formatter.
 	 * @return the date formatter
 	 */
-	private SimpleDateFormat getFormat() {
-		return format;
+	private SimpleDateFormat getDayIndexFormat() {
+		return dayIndexFormat;
+	}
+	
+	/**
+	 * Returns the date weekday name formatter.
+	 * @return the date formatter
+	 */
+	private SimpleDateFormat getDayNameFormat() {
+		return dayNameFormat;
 	}
 	
 	/**

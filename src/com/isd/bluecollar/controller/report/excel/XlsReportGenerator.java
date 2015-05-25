@@ -7,6 +7,7 @@ import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import com.isd.bluecollar.controller.report.ReportGenerator;
 import com.isd.bluecollar.data.json.JsonRange;
@@ -18,7 +19,7 @@ import com.isd.bluecollar.data.report.ReportData;
  */
 public class XlsReportGenerator extends ReportGenerator {
 
-	/** Array of string names */
+	/** Array of month names starting with January */
 	private String[] monthNames;
 	
 	/**
@@ -61,16 +62,16 @@ public class XlsReportGenerator extends ReportGenerator {
 	 * Initializes the month names array.
 	 */
 	@Override
-	protected void initializeMonthNames() {
-		DateFormatSymbols dfs = new DateFormatSymbols();
+	protected void initializeCalendarNames() {
+		DateFormatSymbols dfs = new DateFormatSymbols(Locale.forLanguageTag(getLang().getLanguage()));
 		monthNames = dfs.getMonths();
 	}
 
 	/**
-	 * Returns the day format for reports.
+	 * Returns the day index format for reports.
 	 * @return the day format for reports
 	 */
-	private SimpleDateFormat computeDayFormat() {
+	private SimpleDateFormat computeDayIndexFormat() {
 		SimpleDateFormat format = null;
 		if( isSameField(Calendar.YEAR) ) {
 			if( isSameField(Calendar.MONTH) ) {
@@ -81,6 +82,16 @@ public class XlsReportGenerator extends ReportGenerator {
 		} else {
 			format = new SimpleDateFormat("MM/dd/yyyy");
 		}
+		format.setTimeZone(getTimezone());
+		return format;
+	}
+	
+	/**
+	 * Returns a day weekday name format.
+	 * @return the format
+	 */
+	private SimpleDateFormat computeDayNameFormat() {
+		SimpleDateFormat format =  new SimpleDateFormat("EEE", Locale.forLanguageTag(getLang().getLanguage()));
 		format.setTimeZone(getTimezone());
 		return format;
 	}
@@ -132,10 +143,9 @@ public class XlsReportGenerator extends ReportGenerator {
 	 */
 	private ReportData computeReportData() {
 		ReportData rData = new ReportData();
+		WorkhoursExtractor we = new WorkhoursExtractor(rData, computeDayIndexFormat(), computeDayNameFormat());
 		Calendar cal = getCal();
 		Calendar end = getCal();
-		SimpleDateFormat format = computeDayFormat();
-		WorkhoursExtractor we = new WorkhoursExtractor(rData, format);
 		cal.setTime(getBegin());
 		end.setTime(getEnd());
 		while( cal.before(end) ) {
@@ -176,6 +186,5 @@ public class XlsReportGenerator extends ReportGenerator {
 		}
 		return monthNames[0];
 	}
-	
 	
 }

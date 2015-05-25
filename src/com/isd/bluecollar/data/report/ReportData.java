@@ -17,9 +17,11 @@ import java.util.Set;
  */
 public class ReportData {
 
-	/** Day titles */
-	private List<String> dayTitles;
-	/** Project titles */
+	/** Day index titles */
+	private List<String> dayIndexTitles;
+	/** Day name titles */
+	private List<String> dayNameTitles;
+ 	/** Project titles */
 	private List<String> projectTitles;
 	/** Day project hours */
 	private Map<String, Float> dayProjectHours;
@@ -30,26 +32,43 @@ public class ReportData {
 	 * Creates a new report data instance.
 	 */
 	public ReportData() {
-		dayTitles = new ArrayList<String>();
+		dayIndexTitles = new ArrayList<String>();
+		dayNameTitles = new ArrayList<String>();
 		projectTitles = new ArrayList<String>();
 		dayProjectHours = new HashMap<String, Float>();
 		invalidDays = new HashSet<String>();
 	}
 	
 	/**
-	 * Adds a day title to the list of day titles.
-	 * @param aTitle the day title
+	 * Adds a day index title to the list of day index titles.
+	 * @param aTitle the day index title
 	 */
-	public void addDayTitle( String aTitle ) {
-		dayTitles.add( aTitle );
+	public void addDayIndexTitle( String aTitle ) {
+		dayIndexTitles.add(aTitle);
 	}
 	
 	/**
-	 * Returns the list of day titles.
-	 * @return the list of day titles
+	 * Returns the list of day index titles.
+	 * @return the list of day index titles
 	 */
-	public List<String> getDayTitles() {
-		return Collections.unmodifiableList(dayTitles);
+	public List<String> getDayIndexTitles() {
+		return Collections.unmodifiableList(dayIndexTitles);
+	}
+	
+	/**
+	 * Adds a day name title to the list of day name titles.
+	 * @param aTitle the day name title
+	 */
+	public void addDayNameTitle( String aTitle ) {
+		dayNameTitles.add(aTitle);
+	}
+	
+	/**
+	 * Returns the list of day name titles.
+	 * @return the list of day name titles
+	 */
+	public List<String> getDayNameTitles() {
+		return Collections.unmodifiableList(dayNameTitles);
 	}
 	
 	/**
@@ -107,7 +126,7 @@ public class ReportData {
 	 * @return the number of days
 	 */
 	public int getDayCount() {
-		return dayTitles.size();
+		return dayIndexTitles.size();
 	}
 	
 	/**

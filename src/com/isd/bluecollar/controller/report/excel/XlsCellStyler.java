@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -38,6 +39,8 @@ public class XlsCellStyler {
 	public static final String COLUMN_GRAYED = "columnGrayed";
 	/** Filled grayed table cell style */
 	public static final String COLUMN_FILLED_AND_GRAYED = "columnFilledGrayed";
+	/** Right aligned cell style */
+	public static final String CELL_RIGHT_ALIGNED = "cellRightAligned";
 	
 	/** The style map */
 	private Map<String, CellStyle> styleMap;
@@ -53,11 +56,12 @@ public class XlsCellStyler {
 		styleMap.put(INPUT_LEFT, getInputStyle(aWb, CellStyle.ALIGN_LEFT));
 		styleMap.put(INPUT_CENTER, getInputStyle(aWb, CellStyle.ALIGN_CENTER));
 		styleMap.put(COLUMN, getColumnCellStyle(aWb,false,false));
-		styleMap.put(COLUMN_MEDIUM, setBoldFont(aWb, setBorder(getColumnCellStyle(aWb,false,false),1,0,1,0)));
-		styleMap.put(COLUMN_END_MEDIUM, setBoldFont(aWb, setBorder(getColumnCellStyle(aWb,false,false),1,1,1,0)));
+		styleMap.put(COLUMN_MEDIUM, setIntegerDataFormat(aWb, setBoldFont(aWb, setBorder(getColumnCellStyle(aWb,false,false),1,0,1,0))));
+		styleMap.put(COLUMN_END_MEDIUM, setIntegerDataFormat(aWb, setBoldFont(aWb, setBorder(getColumnCellStyle(aWb,false,false),1,1,1,0))));
 		styleMap.put(COLUMN_FILLED, getColumnCellStyle(aWb,true,false));
 		styleMap.put(COLUMN_GRAYED, getColumnCellStyle(aWb, false, true));
 		styleMap.put(COLUMN_FILLED_AND_GRAYED, getColumnCellStyle(aWb,true,true));
+		styleMap.put(CELL_RIGHT_ALIGNED, getRightAlignedCellStyle(aWb));
 	}
 	
 	/**
@@ -171,10 +175,20 @@ public class XlsCellStyler {
 	}
 	
 	/**
+	 * Returns a style which only enforces right alignment and nothing else.
+	 * @return the right alignment style
+	 */
+	private CellStyle getRightAlignedCellStyle( Workbook wb ) {
+		CellStyle style = wb.createCellStyle();
+		style.setAlignment(CellStyle.ALIGN_RIGHT);
+		return style;
+	}
+	
+	/**
 	 * Sets the font of the cell style to bold.
 	 * @param wb the workbook
 	 * @param aStyle the cell style
-	 * @return the cell style (for chaining)
+	 * @return the cell style
 	 */
 	private CellStyle setBoldFont( Workbook wb, CellStyle aStyle ) {
 		Font font = wb.createFont();
@@ -186,13 +200,26 @@ public class XlsCellStyler {
 	}
 	
 	/**
+	 * Sets the cell style to integer data format.
+	 * @param wb the workbook
+	 * @param aStyle the cell style
+	 * @return the cell style
+	 */
+	private CellStyle setIntegerDataFormat( Workbook wb, CellStyle aStyle ) {
+		DataFormat format = wb.createDataFormat();
+		short indexedFormat = format.getFormat("0");
+		aStyle.setDataFormat(indexedFormat);
+		return aStyle;
+	}
+	
+	/**
 	 * Sets the borders of a cell style.
 	 * @param aStyle the style
 	 * @param aTop the top border 
 	 * @param aRight the right border
 	 * @param aBottom the bottom border
 	 * @param aLeft the left border
-	 * @return the cell style (for chaining)
+	 * @return the cell style
 	 */
 	private CellStyle setBorder( CellStyle aStyle, int aTop, int aRight, int aBottom, int aLeft ) {
 		aStyle.setBorderTop(getBorderStyle(aTop));

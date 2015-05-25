@@ -53,6 +53,8 @@ public class ReportLanguage {
 	public final String vacation;
 	/** Report name */
 	public final String reportname;
+	/** Telework */
+	public final String labeltelework;
 	
 	/** Language properties */
 	private final Properties language;
@@ -82,6 +84,7 @@ public class ReportLanguage {
 		sickness = language.getProperty("sickness");
 		vacation = language.getProperty("vacation");
 		reportname = language.getProperty("reportname");
+		labeltelework = language.getProperty("telework");
 	}
 	
 	/**
@@ -134,6 +137,7 @@ public class ReportLanguage {
 		language.setProperty("sickness", "Sickness");
 		language.setProperty("vacation", "Vacation");
 		language.setProperty("reportname", "WorkhoursReport");
+		language.setProperty("telework", "Telework");
 	}
 	
 }

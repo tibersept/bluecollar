@@ -37,8 +37,8 @@ public abstract class ReportGenerator {
 	 */
 	public ReportGenerator( String aUser, JsonRange aRange ) {
 		setUser(aUser);
-		initializeMonthNames();
 		initializeLanguage();
+		initializeCalendarNames();
 		parseRange(aRange);
 	}
 	
@@ -140,7 +140,7 @@ public abstract class ReportGenerator {
 	/**
 	 * Initializes the month names array.
 	 */
-	protected abstract void initializeMonthNames();
+	protected abstract void initializeCalendarNames();
 
 	
 	/**
@@ -200,8 +200,6 @@ public abstract class ReportGenerator {
 		setTimezone(aRange.getTimezone());
 	}
 
-	
-	
 	/**
 	 * Initializes the language properties of the report.
 	 */

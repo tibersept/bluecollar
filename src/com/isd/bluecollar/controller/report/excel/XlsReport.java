@@ -298,6 +298,7 @@ public class XlsReport {
 			} else {
 				createTableRow(createHelper, sheet, grayedColumnStyle, grayedFilledColumnStyle, rowIndex, translatedProject);
 			}
+			rowIndex++;
 		}
 		
 		int projectCount = getReportData().getProjectCount();

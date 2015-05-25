@@ -154,11 +154,11 @@ public class XlsCellStyler {
 		if( grayed ) {
 			columnStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 			if( filled ) {
-				columnStyle.setFillForegroundColor(IndexedColors.BLACK.getIndex());
+				columnStyle.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
 				columnStyle.setFillPattern(CellStyle.THIN_BACKWARD_DIAG);
-				columnStyle.setFillBackgroundColor(IndexedColors.PALE_BLUE.getIndex());
+				columnStyle.setFillBackgroundColor(IndexedColors.LIGHT_TURQUOISE.getIndex());
 			} else {
-				columnStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());	
+				columnStyle.setFillForegroundColor(IndexedColors.LIGHT_TURQUOISE.getIndex());	
 			}
 		} else if( filled ) {
 			columnStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);

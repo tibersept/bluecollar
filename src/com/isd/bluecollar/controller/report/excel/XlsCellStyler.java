@@ -165,15 +165,15 @@ public class XlsCellStyler {
 		if( grayed ) {
 			columnStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 			if( filled ) {
-				columnStyle.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
+				columnStyle.setFillForegroundColor(IndexedColors.ROYAL_BLUE.getIndex());
 				columnStyle.setFillPattern(CellStyle.THIN_BACKWARD_DIAG);
-				columnStyle.setFillBackgroundColor(IndexedColors.LIGHT_TURQUOISE.getIndex());
+				columnStyle.setFillBackgroundColor(IndexedColors.PALE_BLUE.getIndex());
 			} else {
-				columnStyle.setFillForegroundColor(IndexedColors.LIGHT_TURQUOISE.getIndex());	
+				columnStyle.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());	
 			}
 		} else if( filled ) {
 			columnStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-			columnStyle.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
+			columnStyle.setFillForegroundColor(IndexedColors.ROYAL_BLUE.getIndex());
 			columnStyle.setFillPattern(CellStyle.THIN_BACKWARD_DIAG);
 			columnStyle.setFillBackgroundColor(IndexedColors.WHITE.getIndex());
 		}

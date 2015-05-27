@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import com.isd.bluecollar.controller.report.ReportGenerator;
+import com.isd.bluecollar.controller.report.WorkhoursExtractor;
 import com.isd.bluecollar.data.json.JsonRange;
 import com.isd.bluecollar.data.report.ReportData;
 

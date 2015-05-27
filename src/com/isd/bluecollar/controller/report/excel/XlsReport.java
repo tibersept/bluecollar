@@ -253,13 +253,15 @@ public class XlsReport {
 		cell.setCellValue(aCreateHelper.createRichTextString(lang.labeltelework));
 		createTableFooterRowTelework(aCreateHelper, aSheet, 13+projectCount);
 		
-		createFooterItem(aCreateHelper, aSheet, infoStyle, inputCenterStyle, 16+projectCount, 8, 14, lang.labeltotalhours);
-		createFooterItem(aCreateHelper, aSheet, infoStyle, inputCenterStyle, 18+projectCount, 8, 14, lang.labelrequiredhours);
-		
+		String totalHours = String.valueOf(getReportData().getTotalWorkhours());
+		createFooterItem(aCreateHelper, aSheet, infoStyle, inputCenterStyle, 16+projectCount, 8, 14, lang.labeltotalhours, totalHours);
+		String requiredHours = String.valueOf(getReportData().getRequiredWorkhours());
+		createFooterItem(aCreateHelper, aSheet, infoStyle, inputCenterStyle, 18+projectCount, 8, 14, lang.labelrequiredhours, requiredHours);		
 		int rowIndex = 20+projectCount;
-		row = createFooterItem(aCreateHelper, aSheet, infoStyle, inputCenterStyle, rowIndex, 8, 14, lang.labelovertime);		
-		createTextInputField(aSheet, aCreateHelper, inputCenterStyle, row, rowIndex, 20, 33, "");
+		row = createFooterItem(aCreateHelper, aSheet, infoStyle, inputCenterStyle, rowIndex, 8, 14, lang.labelovertime, "");
 		
+		// signature input field
+		createTextInputField(aSheet, aCreateHelper, inputCenterStyle, row, rowIndex, 20, 33, "");		
 		rowIndex = 21+projectCount;
 		row = aSheet.createRow(rowIndex);
 		String signatureFieldTitle = lang.labelpds;
@@ -279,15 +281,16 @@ public class XlsReport {
 	 * @param aCellBeg
 	 * @param aCellEnd
 	 * @param aTitle
+	 * @param aData
 	 */
 	private Row createFooterItem( CreationHelper aCreateHelper, Sheet aSheet,
 			CellStyle anInfoStyle, CellStyle anInputStyleCenter, int aRowIndex,
-			int aCellBeg, int aCellEnd, String aTitle ) {				
+			int aCellBeg, int aCellEnd, String aTitle, String aData ) {				
 		Row row = aSheet.createRow(aRowIndex);
 		Cell cell = row.createCell(0);
 		cell.setCellStyle(anInfoStyle);
 		cell.setCellValue(aCreateHelper.createRichTextString(aTitle));		
-		createTextInputField(aSheet, aCreateHelper, anInputStyleCenter, row, aRowIndex, aCellBeg, aCellEnd, "");
+		createTextInputField(aSheet, aCreateHelper, anInputStyleCenter, row, aRowIndex, aCellBeg, aCellEnd, aData);
 		return row;
 	}
 
@@ -523,7 +526,7 @@ public class XlsReport {
 	 * @return <code>true</code> if day maps to a holiday or weekend
 	 */
 	private boolean isInvalidDay( String aDay ) {
-		return getReportData().isInvalidDay(aDay);
+		return getReportData().isFreeDay(aDay);
 	}
 
 	/**

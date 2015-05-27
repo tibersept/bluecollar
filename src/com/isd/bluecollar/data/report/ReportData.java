@@ -31,8 +31,12 @@ public class ReportData {
 	private Map<String, Float> projectHours;
 	/** Day project hours */
 	private Map<String, Float> dayProjectHours;
-	/** Invalid days */
-	private Set<String> invalidDays;
+	/** Free days (holidays, weekends) */
+	private Set<String> freeDays;
+	/** Total workhours for the period */
+	private float totalWorkhours;
+	/** Required workhours */
+	private float requiredWorkhours;
 	
 	/**
 	 * Creates a new report data instance.
@@ -44,7 +48,9 @@ public class ReportData {
 		dayHours = new HashMap<String,Float>();
 		projectHours = new HashMap<String,Float>();
 		dayProjectHours = new HashMap<String,Float>();
-		invalidDays = new HashSet<String>();
+		freeDays = new HashSet<String>();
+		totalWorkhours = 0.0f;
+		requiredWorkhours = 0.0f;
 	}
 	
 	/**
@@ -88,6 +94,23 @@ public class ReportData {
 	}
 	
 	/**
+	 * Adds a free day to the set of invalid days.
+	 * @param aDay the day
+	 */
+	public void addFreeDay( String aDay ) {
+		freeDays.add(aDay);
+	}
+	
+	/**
+	 * Checks whether the given day is free (a holiday or a weekend).
+	 * @param aDay the day
+	 * @return <code>true</code> if day is a holiday or a weekend
+	 */
+	public boolean isFreeDay( String aDay ) {
+		return freeDays.contains(aDay);
+	}
+	
+	/**
 	 * Sets the hours as the project hours on the given day.
 	 * @param aDay the day title
 	 * @param aProject the project title
@@ -98,8 +121,9 @@ public class ReportData {
 		addDayHours(aDay, anHours);
 		addProjectHours(aProject, anHours);
 		addDayProjectHours(aDay, aProject, anHours);
+		totalWorkhours += anHours.floatValue();
 	}
-	
+
 	/**
 	 * Returns the work hours on a given day.
 	 * @param aDay the day
@@ -108,7 +132,7 @@ public class ReportData {
 	public float getTotalDayHours( String aDay ) {
 		return getHours(dayHours, aDay);
 	}
-	
+
 	/**
 	 * Returns the total project hours spent on a project within the specified period of time. 
 	 * @param aProject the project
@@ -129,22 +153,29 @@ public class ReportData {
 	}
 	
 	/**
-	 * Adds an invalid day to the set of invalid days.
-	 * @param aDay the day
+	 * Returns the total work hours for the report period.
+	 * @return the total work hours
 	 */
-	public void addInvalidDay( String aDay ) {
-		invalidDays.add(aDay);
+	public float getTotalWorkhours() {
+		return totalWorkhours;
 	}
 	
 	/**
-	 * Checks whether the given day is invalid.
-	 * @param aDay the day
-	 * @return <code>true</code> if day is invalid
+	 * Returns the required work hours for the report period.
+	 * @return the required work hours
 	 */
-	public boolean isInvalidDay( String aDay ) {
-		return invalidDays.contains(aDay);
+	public float getRequiredWorkhours() {
+		return requiredWorkhours;
 	}
 	
+	/**
+	 * Sets the required work hours for the report period.
+	 * @param anHours the required work hours 
+	 */
+	public void setRequiredWorkhours( float anHours ) {
+		requiredWorkhours = anHours;
+	}
+
 	/**
 	 * Returns the number of days in this report data.
 	 * @return the number of days
@@ -170,7 +201,7 @@ public class ReportData {
 		dayNameTitles.clear();
 		dayHours.clear();
 		dayProjectHours.clear();
-		invalidDays.clear();
+		freeDays.clear();
 	}
 	
 	/**

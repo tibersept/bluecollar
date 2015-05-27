@@ -1,7 +1,7 @@
 /**
  * 23.05.2015
  */
-package com.isd.bluecollar.controller.report.excel;
+package com.isd.bluecollar.controller.report;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -61,8 +61,15 @@ public class WorkhoursExtractor {
 		// day title
 		Date day = cal.getTime();
 		String dayString = getDayIndexFormat().format(day);
-		getData().addDayIndexTitle(dayString);
-		getData().addDayNameTitle(getDayNameFormat().format(day));
+		ReportData rd = getData();
+		rd.addDayIndexTitle(dayString);
+		rd.addDayNameTitle(getDayNameFormat().format(day));
+		// weekend data
+		if( isWeekend(cal) ) {
+			rd.addFreeDay(dayString);
+		} else {
+			rd.setRequiredWorkhours(rd.getRequiredWorkhours()+8);
+		}
 		
 		WorkdayData workday = new WorkdayData();
 		// set day string
@@ -71,10 +78,6 @@ public class WorkhoursExtractor {
 		workday.loadData(aUser, cal);
 		// process the data for the day
 		doProcessDay(cal, dayString, workday);
-		// weekend data
-		if( isWeekend(cal) ) {
-			getData().addInvalidDay(dayString);
-		}
 		// clear
 		workday.clear();
 	}
@@ -95,6 +98,8 @@ public class WorkhoursExtractor {
 			processDay(aUser, anEnd);
 		}
 	}
+	
+	
 	
 	/**
 	 * Clears the internal data of the work hours extractor.

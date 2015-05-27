@@ -6,6 +6,7 @@ package com.isd.bluecollar.controller.report.excel;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
@@ -19,6 +20,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.isd.bluecollar.controller.report.ReportLanguage;
+import com.isd.bluecollar.data.internal.Project;
 import com.isd.bluecollar.data.report.ReportData;
 
 /**
@@ -71,7 +73,7 @@ public class XlsReport {
 	 * Sets the user of the report.
 	 * @param aUser the user
 	 */
-	public void setUser(String aUser) {
+	public void setUser( String aUser ) {
 		user = aUser;
 	}
 		
@@ -90,7 +92,7 @@ public class XlsReport {
 	 * Sets the month range.
 	 * @param aMonthRange the month range
 	 */
-	public void setMonthRange(String aMonthRange) {
+	public void setMonthRange( String aMonthRange ) {
 		monthRange = aMonthRange;
 	}
 	
@@ -109,7 +111,7 @@ public class XlsReport {
 	 * Sets the year range as a string.
 	 * @param aYearRange the year range
 	 */
-	public void setYearRange(String aYearRange) {
+	public void setYearRange( String aYearRange ) {
 		yearRange = aYearRange;
 	}
 	
@@ -125,7 +127,7 @@ public class XlsReport {
 	 * Sets the company name for the report.
 	 * @param aCompanyName the company name
 	 */
-	public void setCompanyName(String aCompanyName) {
+	public void setCompanyName( String aCompanyName ) {
 		companyName = aCompanyName;
 	}
 	
@@ -162,12 +164,14 @@ public class XlsReport {
 			createTable(createHelper, sheet);
 			createFooter(createHelper, sheet);
 			
+			clearReportData();
+			
 			return convertToBase64(wb);
 		} else {
 			return "";
 		}
 	}
-	
+
 	/**
 	 * Validates the report input data.
 	 * @return <code>true</code> if input data is valid
@@ -177,6 +181,13 @@ public class XlsReport {
 				&& getYearRange()!=null && getReportData()!=null; 
 	}
 	
+	/**
+	 * Clears the report data.
+	 */
+	private void clearReportData() {
+		getReportData().clear();
+	}
+
 	/**
 	 * Retrieves the cell styler.
 	 * @return the cell styler
@@ -189,7 +200,7 @@ public class XlsReport {
 	 * Sets the cell styler.
 	 * @param aStyler the styler
 	 */
-	private void setStyler(XlsCellStyler aStyler) {
+	private void setStyler( XlsCellStyler aStyler ) {
 		styler = aStyler;
 	}
 	
@@ -198,7 +209,7 @@ public class XlsReport {
 	 * @param aCreateHelper the workbook creation helper
 	 * @param aSheet the worksheet
 	 */
-	private void createTopRow(CreationHelper aCreateHelper, Sheet aSheet) {
+	private void createTopRow( CreationHelper aCreateHelper, Sheet aSheet ) {
 		Row row = aSheet.createRow(2);
 		Cell cell = row.createCell(0);
 		CellStyle infoStyle = getStyler().getStyle(XlsCellStyler.INFO);
@@ -221,95 +232,95 @@ public class XlsReport {
 	
 	/**
 	 * Creates the footer of the worksheet.
-	 * @param createHelper the create helper
-	 * @param sheet the worksheet
+	 * @param aCreateHelper the create helper
+	 * @param aSheet the worksheet
 	 */
-	private void createFooter( CreationHelper createHelper, Sheet sheet ) {
+	private void createFooter( CreationHelper aCreateHelper, Sheet aSheet ) {
 		CellStyle infoStyle = getStyler().getStyle(XlsCellStyler.INFO);
 		CellStyle infoSmallStyle = getStyler().getStyle(XlsCellStyler.SMALL_INFO);
 		CellStyle inputCenterStyle = getStyler().getStyle(XlsCellStyler.INPUT_CENTER);
 		int projectCount = getReportData().getProjectCount();
 		
-		Row row = sheet.createRow(10+projectCount);
+		Row row = aSheet.createRow(10+projectCount);
 		Cell cell = row.createCell(0);
 		cell.setCellStyle(infoStyle);
-		cell.setCellValue(createHelper.createRichTextString(lang.labelovertimecompensation));		
-		createTableFooterRow(createHelper, sheet, 11+projectCount);
+		cell.setCellValue(aCreateHelper.createRichTextString(lang.labelovertimecompensation));		
+		createTableFooterRowOvertime(aCreateHelper, aSheet, 11+projectCount);
 		
-		row = sheet.createRow(12+projectCount);
+		row = aSheet.createRow(12+projectCount);
 		cell = row.createCell(0);
 		cell.setCellStyle(infoStyle);
-		cell.setCellValue(createHelper.createRichTextString(lang.labeltelework));
-		createTableFooterRow(createHelper, sheet, 13+projectCount);
+		cell.setCellValue(aCreateHelper.createRichTextString(lang.labeltelework));
+		createTableFooterRowTelework(aCreateHelper, aSheet, 13+projectCount);
 		
-		createFooterItem(createHelper, sheet, infoStyle, inputCenterStyle, 16+projectCount, 8, 14, lang.labeltotalhours);
-		createFooterItem(createHelper, sheet, infoStyle, inputCenterStyle, 18+projectCount, 8, 14, lang.labelrequiredhours);
+		createFooterItem(aCreateHelper, aSheet, infoStyle, inputCenterStyle, 16+projectCount, 8, 14, lang.labeltotalhours);
+		createFooterItem(aCreateHelper, aSheet, infoStyle, inputCenterStyle, 18+projectCount, 8, 14, lang.labelrequiredhours);
 		
 		int rowIndex = 20+projectCount;
-		row = createFooterItem(createHelper, sheet, infoStyle, inputCenterStyle, rowIndex, 8, 14, lang.labelovertime);		
-		createTextInputField(sheet, createHelper, inputCenterStyle, row, rowIndex, 20, 33, "");
+		row = createFooterItem(aCreateHelper, aSheet, infoStyle, inputCenterStyle, rowIndex, 8, 14, lang.labelovertime);		
+		createTextInputField(aSheet, aCreateHelper, inputCenterStyle, row, rowIndex, 20, 33, "");
 		
 		rowIndex = 21+projectCount;
-		row = sheet.createRow(rowIndex);
+		row = aSheet.createRow(rowIndex);
 		String signatureFieldTitle = lang.labelpds;
 		if( getCompanyName()!=null && getCompanyName().length()>0 ) {
 			signatureFieldTitle += " " + lang.labelemployee + " " + getCompanyName();
 		}
-		createTextInputField(sheet, createHelper, infoSmallStyle, row, rowIndex, 20, 33, signatureFieldTitle);
+		createTextInputField(aSheet, aCreateHelper, infoSmallStyle, row, rowIndex, 20, 33, signatureFieldTitle);
 	}
 
 	/**
 	 * Creates a footer info item.
-	 * @param createHelper
-	 * @param sheet
-	 * @param infoStyle
-	 * @param inputStyleCenter
-	 * @param rowIndex
-	 * @param cellBeg
-	 * @param cellEnd
-	 * @param title
+	 * @param aCreateHelper
+	 * @param aSheet
+	 * @param anInfoStyle
+	 * @param anInputStyleCenter
+	 * @param aRowIndex
+	 * @param aCellBeg
+	 * @param aCellEnd
+	 * @param aTitle
 	 */
-	private Row createFooterItem(CreationHelper createHelper, Sheet sheet,
-			CellStyle infoStyle, CellStyle inputStyleCenter, int rowIndex,
-			int cellBeg, int cellEnd, String title) {				
-		Row row = sheet.createRow(rowIndex);
+	private Row createFooterItem( CreationHelper aCreateHelper, Sheet aSheet,
+			CellStyle anInfoStyle, CellStyle anInputStyleCenter, int aRowIndex,
+			int aCellBeg, int aCellEnd, String aTitle ) {				
+		Row row = aSheet.createRow(aRowIndex);
 		Cell cell = row.createCell(0);
-		cell.setCellStyle(infoStyle);
-		cell.setCellValue(createHelper.createRichTextString(title));		
-		createTextInputField(sheet, createHelper, inputStyleCenter, row, rowIndex, cellBeg, cellEnd, "");
+		cell.setCellStyle(anInfoStyle);
+		cell.setCellValue(aCreateHelper.createRichTextString(aTitle));		
+		createTextInputField(aSheet, aCreateHelper, anInputStyleCenter, row, aRowIndex, aCellBeg, aCellEnd, "");
 		return row;
 	}
 
 	/**
 	 * Creates the main table.
-	 * @param createHelper the workbook create helper
-	 * @param sheet the worksheet
+	 * @param aCreateHelper the workbook create helper
+	 * @param aSheet the worksheet
 	 */
-	private void createTable(CreationHelper createHelper, Sheet sheet) {
-		createTableDayNamesRow(createHelper, sheet, 4);
-		createTableHeaderRow(createHelper, sheet, 5);
+	private void createTable( CreationHelper aCreateHelper, Sheet aSheet ) {
+		createTableDayNamesRow(aCreateHelper, aSheet, 4);
+		createTableHeaderRow(aCreateHelper, aSheet, 5);
 		
-		List<String> projectList = getReportData().getProjectTitles();
+		List<Project> projectList = getReportData().getProjects();
 		int rowIndex = 6;
-		for( String project : projectList ) {
-			String translatedProject = translateProjectName(project);
-			createTableRow(createHelper, sheet, rowIndex, translatedProject);
+		for( Project project : projectList ) {
+			String translatedProject = translateProjectName(project.getName());
+			createTableRow(aCreateHelper, aSheet, rowIndex, project.getId(), translatedProject);
 			rowIndex++;
 		}
 		
 		int projectCount = getReportData().getProjectCount();
 		
-		createTableDayNamesRow(createHelper, sheet, projectCount+6);
-		createTableFooterRow(createHelper, sheet, projectCount+8);
+		createTableDayNamesRow(aCreateHelper, aSheet, projectCount+6);
+		createTableFooterRowDayTotals(aCreateHelper, aSheet, projectCount+8);
 	}
 
 	/**
 	 * Creates the worksheet.
-	 * @param wb the workbook
+	 * @param aWb the workbook
 	 * @return the worksheet
 	 */
-	private Sheet createSheet(Workbook wb) {
-		Sheet sheet = wb.createSheet(getMonthRange() + " " + getYearRange());
+	private Sheet createSheet( Workbook aWb ) {
+		Sheet sheet = aWb.createSheet(getMonthRange() + " " + getYearRange());
 		sheet.setDisplayGridlines(false);
 		sheet.setDefaultColumnWidth(3);
 		sheet.setDefaultRowHeight((short)340);
@@ -321,14 +332,15 @@ public class XlsReport {
 	
 	/**
 	 * Creates a row in the main table.
-	 * @param createHelper the workbook create helper
-	 * @param sheet the worksheet
-	 * @param rowIndex the row index
-	 * @param title the project title
+	 * @param aCreateHelper the workbook create helper
+	 * @param aSheet the worksheet
+	 * @param aRowIndex the row index
+	 * @param aProjectId the project id
+	 * @param aProject the project title
 	 */
-	private void createTableRow(CreationHelper createHelper, Sheet sheet, int rowIndex, String title) {
+	private void createTableRow( CreationHelper aCreateHelper, Sheet aSheet, int aRowIndex, long aProjectId, String aProject ) {
 		CellStyle cellStyle, floatCellStyle, filledCellStyle;
-		if( rowIndex%2 == 0 ) {
+		if( aRowIndex%2 == 0 ) {
 			cellStyle = getStyler().getStyle(XlsCellStyler.CELL);
 			floatCellStyle = getStyler().getStyle(XlsCellStyler.CELL_FLOAT);
 			filledCellStyle = getStyler().getStyle(XlsCellStyler.CELL_FILLED_FLOAT);
@@ -338,7 +350,7 @@ public class XlsReport {
 			filledCellStyle = getStyler().getStyle(XlsCellStyler.CELL_FILLED_AND_GRAYED_FLOAT);
 		}
 
-		Row row = sheet.createRow(rowIndex);
+		Row row = aSheet.createRow(aRowIndex);
 		
 		List<String> dayList = getReportData().getDayIndexTitles();
 		int cellColumn = 0;
@@ -349,7 +361,7 @@ public class XlsReport {
 			} else {
 				cell.setCellStyle(floatCellStyle);
 			}
-			cell.setCellValue(getReportData().getHours(day, title));
+			cell.setCellValue(getReportData().getProjectHoursOnDay(day, aProject));
 			cellColumn++;
 		}
 		
@@ -357,28 +369,78 @@ public class XlsReport {
 		
 		Cell cell = row.createCell(dayCount+OFFSET_HOURS);
 		cell.setCellStyle(floatCellStyle);
-		cell.setCellValue(0.0);
+		cell.setCellValue(getReportData().getTotalProjectHours(aProject));
 		
 		cell = row.createCell(dayCount+OFFSET_PROJECT_NUMBER);
 		cell.setCellStyle(cellStyle);
-		cell.setCellValue(Math.abs(title.hashCode()%1000));
+		cell.setCellValue(aProjectId);
 		
 		cell = row.createCell(dayCount+OFFSET_PROJECT_NAME);
 		cell.setCellStyle(cellStyle);
-		cell.setCellValue(title);
+		cell.setCellValue(aProject);
+	}
+	
+	/**
+	 * Creates a footer row under the main table containing the day totals and the general total workhours.
+	 * @param aCreateHelper the workbook create helper
+	 * @param aSheet the worksheet
+	 * @param aRowIndex the row index
+	 */
+	private void createTableFooterRowDayTotals( CreationHelper aCreateHelper, Sheet aSheet, int aRowIndex ) {
+		List<String> dayList = getReportData().getDayIndexTitles();
+		List<Float> hours = new ArrayList<Float>(dayList.size());
+		float total = 0.0f;
+		for( String day : dayList ) {
+			float dayHours = getReportData().getTotalDayHours(day);
+			hours.add(dayHours);
+			total += dayHours;
+		}
+		createTableFooterRow(aCreateHelper, aSheet, aRowIndex, hours, total);
+	}
+	
+	/**
+	 * Creates a footer row under the main table containing the telework compensation hours.
+	 * @param aCreateHelper the workbook create helper
+	 * @param aSheet the worksheet
+	 * @param aRowIndex the row index
+	 */
+	private void createTableFooterRowTelework(  CreationHelper aCreateHelper, Sheet aSheet, int aRowIndex ) {
+		List<String> dayList = getReportData().getDayIndexTitles();
+		List<Float> hours = new ArrayList<Float>(dayList.size());
+		float total = 0.0f;
+		for( int i=0; i< dayList.size(); i++ ) {
+			hours.add(0.0f);
+		}
+		createTableFooterRow(aCreateHelper, aSheet, aRowIndex, hours, total);
+	}
+	
+	/**
+	 * Creates a footer row under the main table containing the overtime compensation hours.
+	 * @param aCreateHelper the workbook create helper
+	 * @param aSheet the worksheet
+	 * @param aRowIndex the row index
+	 */
+	private void createTableFooterRowOvertime(  CreationHelper aCreateHelper, Sheet aSheet, int aRowIndex ) {
+		List<String> dayList = getReportData().getDayIndexTitles();
+		List<Float> hours = new ArrayList<Float>(dayList.size());
+		float total = 0.0f;
+		for( int i=0; i< dayList.size(); i++ ) {
+			hours.add(0.0f);
+		}
+		createTableFooterRow(aCreateHelper, aSheet, aRowIndex, hours, total);
 	}
 	
 	/**
 	 * Creates the footer row for the main table.
-	 * @param createHelper the workbook create helper
-	 * @param sheet the worksheet
-	 * @param rowIndex the row index
+	 * @param aCreateHelper the workbook create helper
+	 * @param aSheet the worksheet
+	 * @param aRowIndex the row index
 	 */
-	private void createTableFooterRow(CreationHelper createHelper, Sheet sheet, int rowIndex) {
+	private void createTableFooterRow( CreationHelper aCreateHelper, Sheet aSheet, int aRowIndex, List<Float> anHoursList, float aTotal ) {
 		CellStyle floatCellStyle = getStyler().getStyle(XlsCellStyler.CELL_FLOAT);
 		CellStyle filledCellStyle = getStyler().getStyle(XlsCellStyler.CELL_FILLED_FLOAT);
 		
-		Row row = sheet.createRow(rowIndex);
+		Row row = aSheet.createRow(aRowIndex);
 		
 		List<String> dayList = getReportData().getDayIndexTitles();
 		int cellColumn=0;
@@ -389,24 +451,24 @@ public class XlsReport {
 			} else {
 				cell.setCellStyle(floatCellStyle);
 			}
+			cell.setCellValue(anHoursList.get(cellColumn));
 			cellColumn++;
 		}
-		
 		int dayCount = getReportData().getDayCount();
 		
 		Cell cell = row.createCell(dayCount+OFFSET_HOURS);
 		cell.setCellStyle(floatCellStyle);
-		cell.setCellValue(0.0);
+		cell.setCellValue(aTotal);
 	}
 
 	/**
 	 * Creates the header row for the main table.
-	 * @param createHelper the workbook create helper
-	 * @param sheet the worksheet
-	 * @param rowIndex the row index
+	 * @param aCreateHelper the workbook create helper
+	 * @param aSheet the worksheet
+	 * @param aRowIndex the row index
 	 */
-	private void createTableHeaderRow(CreationHelper createHelper, Sheet sheet, int rowIndex) {
-		Row row = sheet.createRow(rowIndex);
+	private void createTableHeaderRow( CreationHelper aCreateHelper, Sheet aSheet, int aRowIndex ) {
+		Row row = aSheet.createRow(aRowIndex);
 		CellStyle columnStyle = getStyler().getStyle(XlsCellStyler.CELL);
 		CellStyle columnMedium = getStyler().getStyle(XlsCellStyler.CELL_BOLD_BORDER);
 		
@@ -416,7 +478,7 @@ public class XlsReport {
 		for( String day : dayList ) {
 			cell = row.createCell(cellColumn);
 			cell.setCellStyle(columnMedium);
-			cell.setCellValue(createHelper.createRichTextString(day));						
+			cell.setCellValue(aCreateHelper.createRichTextString(day));						
 			cellColumn++;
 		}
 		
@@ -424,33 +486,33 @@ public class XlsReport {
 		
 		cell = row.createCell(dayCount+OFFSET_HOURS);
 		cell.setCellStyle(columnStyle);
-		cell.setCellValue(createHelper.createRichTextString(lang.columnhours));
+		cell.setCellValue(aCreateHelper.createRichTextString(lang.columnhours));
 				
 		cell = row.createCell(dayCount+OFFSET_PROJECT_NUMBER);
 		cell.setCellStyle(columnStyle);
-		cell.setCellValue(createHelper.createRichTextString(lang.columnnumbers));
+		cell.setCellValue(aCreateHelper.createRichTextString(lang.columnnumbers));
 		
 		cell = row.createCell(dayCount+OFFSET_PROJECT_NAME);
 		cell.setCellStyle(columnStyle);
-		cell.setCellValue(createHelper.createRichTextString(lang.columnname));
+		cell.setCellValue(aCreateHelper.createRichTextString(lang.columnname));
 	}
 	
 	/**
 	 * Creates a row containing the abbreviated names of the weekdays.
-	 * @param createHelper the Apache POI content creation helper
-	 * @param sheet the worksheet
-	 * @param rowIndex the index of the row which will be created
+	 * @param aCreateHelper the Apache POI content creation helper
+	 * @param aSheet the worksheet
+	 * @param aRowIndex the index of the row which will be created
 	 */
-	private void createTableDayNamesRow(CreationHelper createHelper, Sheet sheet, int rowIndex) {
+	private void createTableDayNamesRow( CreationHelper aCreateHelper, Sheet aSheet, int aRowIndex ) {
 		CellStyle style = getStyler().getStyle(XlsCellStyler.CELL_RIGHT_ALIGNED);
 		
-		Row row = sheet.createRow(rowIndex);
+		Row row = aSheet.createRow(aRowIndex);
 		int cellColumn = 0;
 		List<String> dayNames = getReportData().getDayNameTitles();
 		for( String name : dayNames ) {
 			Cell cell = row.createCell(cellColumn);
 			cell.setCellStyle(style);
-			cell.setCellValue(createHelper.createRichTextString(name));
+			cell.setCellValue(aCreateHelper.createRichTextString(name));
 			cellColumn++;
 		}
 	}
@@ -466,48 +528,48 @@ public class XlsReport {
 
 	/**
 	 * Creates an input field marking in the provided region.
-	 * @param sheet the worksheet
-	 * @param helper workbook creation helper 
-	 * @param inputStyle the input style
-	 * @param row the row
-	 * @param rowIndex the row index
-	 * @param beg the range begin
-	 * @param end the range end 
-	 * @param data the data to be inserted into the input cell range
+	 * @param aSheet the worksheet
+	 * @param aHelper workbook creation helper 
+	 * @param anInputStyle the input style
+	 * @param aRow the row
+	 * @param aRowIndex the row index
+	 * @param aBeg the range begin
+	 * @param anEnd the range end 
+	 * @param aData the data to be inserted into the input cell range
 	 */
-	private void createTextInputField(Sheet sheet, CreationHelper helper, CellStyle inputStyle, Row row, int rowIndex, int beg, int end, String data) {
-		Cell firstCell = row.createCell(beg);
-		firstCell.setCellStyle(inputStyle);
-		firstCell.setCellValue(helper.createRichTextString(data));
-		for( int i=(beg+1); i<(end+1); i++ ) {
-			row.createCell(i).setCellStyle(inputStyle);
+	private void createTextInputField( Sheet aSheet, CreationHelper aHelper, CellStyle anInputStyle, Row aRow, int aRowIndex, int aBeg, int anEnd, String aData ) {
+		Cell firstCell = aRow.createCell(aBeg);
+		firstCell.setCellStyle(anInputStyle);
+		firstCell.setCellValue(aHelper.createRichTextString(aData));
+		for( int i=(aBeg+1); i<(anEnd+1); i++ ) {
+			aRow.createCell(i).setCellStyle(anInputStyle);
 		}
-		sheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, beg, end));				
+		aSheet.addMergedRegion(new CellRangeAddress(aRowIndex, aRowIndex, aBeg, anEnd));				
 	}
 	
 	/**
 	 * Creates an input field marking in the provided region.
-	 * @param sheet the worksheet
-	 * @param helper workbook creation helper 
-	 * @param inputStyle the input style
-	 * @param row the row
-	 * @param rowIndex the row index
-	 * @param beg the range begin
-	 * @param end the range end 
-	 * @param data the data to be inserted into the input cell range
+	 * @param aSheet the worksheet
+	 * @param aHelper workbook creation helper 
+	 * @param anInputStyle the input style
+	 * @param aRow the row
+	 * @param aRowIndex the row index
+	 * @param aBeg the range begin
+	 * @param anEnd the range end 
+	 * @param aData the data to be inserted into the input cell range
 	 */
-	private void createIntegerInputField(Sheet sheet, CreationHelper helper, CellStyle inputStyle, Row row, int rowIndex, int beg, int end, String data) {
-		Cell firstCell = row.createCell(beg);		
-		firstCell.setCellStyle(inputStyle);
+	private void createIntegerInputField( Sheet aSheet, CreationHelper aHelper, CellStyle anInputStyle, Row aRow, int aRowIndex, int aBeg, int anEnd, String aData ) {
+		Cell firstCell = aRow.createCell(aBeg);		
+		firstCell.setCellStyle(anInputStyle);
 		try {
-			firstCell.setCellValue(Integer.valueOf(data));
+			firstCell.setCellValue(Integer.valueOf(aData));
 		} catch( NumberFormatException e ) {
 			// do nothing
 		}
-		for( int i=(beg+1); i<(end+1); i++ ) {
-			row.createCell(i).setCellStyle(inputStyle);
+		for( int i=(aBeg+1); i<(anEnd+1); i++ ) {
+			aRow.createCell(i).setCellStyle(anInputStyle);
 		}
-		sheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, beg, end));				
+		aSheet.addMergedRegion(new CellRangeAddress(aRowIndex, aRowIndex, aBeg, anEnd));				
 	}
 
 	/**
@@ -515,7 +577,7 @@ public class XlsReport {
 	 * @param aWb the workbook
 	 * @return BASE64 encoded version of the byte array
 	 */
-	private String convertToBase64(Workbook aWb) {
+	private String convertToBase64( Workbook aWb ) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		String output = "<empty>";
 		try {

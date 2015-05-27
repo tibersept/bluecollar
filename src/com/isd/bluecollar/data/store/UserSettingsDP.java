@@ -13,25 +13,25 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.Query;
 
 /**
- * User settings entity wrapper.
+ * User settings entity datastore proxy.
  * @author doan
  */
-public class UserSettings {
+public class UserSettingsDP {
 
 	/** User settings entity */
 	private static final String USER_SETTINGS = "UserSettings";
 	
 	/** The user entity wrapper */
-	private User user;
+	private UserDP user;
 	/** The datastore service */
 	private DatastoreService service;
 	
 	/**
 	 * Creates a new instance of the user settings entity. 
 	 */
-	public UserSettings() {
+	public UserSettingsDP() {
 		service = DatastoreServiceFactory.getDatastoreService();
-		user = new User();
+		user = new UserDP();
 	}
 	
 	/**

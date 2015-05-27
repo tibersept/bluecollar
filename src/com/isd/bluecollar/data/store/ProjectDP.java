@@ -16,46 +16,42 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.isd.bluecollar.data.internal.Project;
 
 /**
- * Project entity wrapper.
+ * Project entity datastore proxy.
  * @author doan
  */
-public class Project {
+public class ProjectDP {
 
+	/** Initial project id */
+	private final static long INITIAL_PROJECT_ID = 1;
+	
 	/** Project entity */
 	private static final String PROJECT = "Project";
+	/** Property project id */
+	private static final String PROPERTY_ID = "id";
 	/** Property project name */
 	private static final String PROPERTY_NAME = "name";
 	/** Property project description */
 	private static final String PROPERTY_DESCRIPTION = "description";
 	
+	/** A second entity to manage project ids */
+	private static final String PROJECT_IDS = "ProjectIds";
+	/** The count returns the next project id */
+	private static final String PROPERTY_COUNT = "count";
 	
 	/** The user entity wrapper */
-	private User user;
+	private UserDP user;
 	/** The datastore service */
 	private DatastoreService service;
 	
 	/**
 	 * Creates a new project entity wrapper instance.
 	 */
-	public Project() {
+	public ProjectDP() {
 		service = DatastoreServiceFactory.getDatastoreService();
-		user = new User();
-	}
-	
-	/**
-	 * Returns a project entity matching the project name.
-	 * @param aUserKey the user key
-	 * @param aProject the project name
-	 * @return the project matching the project name
-	 */
-	public Entity getProject( String aUser, String aProject ) {
-		Key key = user.getKey(aUser);
-		if( key!=null ) {
-			return doGetProject(key, aProject);
-		}
-		return null;
+		user = new UserDP();
 	}
 	
 	/**
@@ -97,14 +93,16 @@ public class Project {
 	 * @param anAlphaSorted flag indicates whether list should be sorted
 	 * @return the list of all projects
 	 */
-	public List<String> getProjects( String aUser, boolean anAlphaSorted ) {
+	public List<Project> getProjects( String aUser, boolean anAlphaSorted ) {
 		Key key = user.getKey(aUser);
 		if( key!=null ) {
-			List<String> list = new ArrayList<String>();
+			List<Project> list = new ArrayList<Project>();
 			List<Entity> projects = getAllProjects(key);
 			for( Entity project : projects ) {
-				String projectName = (String) project.getProperty(PROPERTY_NAME);
-				list.add(projectName);
+				Long id = (Long) project.getProperty(PROPERTY_ID); 
+				String name = (String) project.getProperty(PROPERTY_NAME);
+				String desc = (String) project.getProperty(PROPERTY_DESCRIPTION);
+				list.add(new Project(id.longValue(),name,desc));
 			}
 			if( anAlphaSorted ) {
 				Collections.sort(list);
@@ -114,6 +112,20 @@ public class Project {
 		return Collections.emptyList();
 	}
 	
+	/**
+	 * Returns a project entity matching the project name.
+	 * @param aUserKey the user key
+	 * @param aProject the project name
+	 * @return the project matching the project name
+	 */
+	private Entity getProject( String aUser, String aProject ) {
+		Key key = user.getKey(aUser);
+		if( key!=null ) {
+			return doGetProject(key, aProject);
+		}
+		return null;
+	}
+
 	/**
 	 * Returns a project entity matching the project name.
 	 * @param aUserKey the user key
@@ -145,10 +157,27 @@ public class Project {
 	 */
 	private Entity createNewProject(String aName, String aDescription, Key aUserKey) {
 		Entity project = new Entity(PROJECT, aName, aUserKey);
+		project.setProperty(PROPERTY_ID, getNextProjectId(aUserKey));
 		project.setProperty(PROPERTY_NAME, aName);
 		project.setProperty(PROPERTY_DESCRIPTION, aDescription);
 		service.put(project);
 		return project;
+	}
+	
+	private long getNextProjectId( Key aUserKey ) {
+		Query q = new Query(PROJECT_IDS, aUserKey);
+		Entity e = service.prepare(q).asSingleEntity();
+		if( e==null ) {
+			e = new Entity(PROJECT_IDS, PROJECT_IDS, aUserKey);
+			e.setProperty(PROPERTY_COUNT, INITIAL_PROJECT_ID+1);
+			service.put(e);
+			return INITIAL_PROJECT_ID;
+		}
+		
+		Long val = (Long)e.getProperty(PROPERTY_COUNT);
+		e.setProperty(PROPERTY_COUNT, val.longValue()+1);
+		service.put(e);
+		return val.longValue();
 	}
 	
 }

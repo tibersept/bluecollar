@@ -16,7 +16,7 @@ import com.isd.bluecollar.controller.TimeController;
 import com.isd.bluecollar.controller.report.ReportGenerator;
 import com.isd.bluecollar.controller.report.excel.XlsReportGenerator;
 import com.isd.bluecollar.controller.report.json.JsonReportGenerator;
-import com.isd.bluecollar.data.internal.ActiveProject;
+import com.isd.bluecollar.data.internal.Project;
 import com.isd.bluecollar.data.json.JsonByteArray;
 import com.isd.bluecollar.data.json.JsonEasyMap;
 import com.isd.bluecollar.data.json.JsonList;
@@ -63,10 +63,10 @@ public class WorkCardV1 {
 	public JsonStatus checkActive( User aUser ) {
 		String username = getUserName(aUser);
 		TimeController card = new TimeController();
-		ActiveProject project = card.checkActive(username);
+		Project project = card.checkActive(username);
 		
 		JsonStatus status = new JsonStatus();
-		if( project.exists() ) {
+		if( project.hasTimestamp() ) {
 			status.setProject(project.getName());
 			status.setProjectBegin(String.valueOf(project.getTimestamp()));
 		}

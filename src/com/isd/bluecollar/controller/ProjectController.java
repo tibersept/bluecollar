@@ -3,9 +3,11 @@
  */
 package com.isd.bluecollar.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import com.isd.bluecollar.data.store.Project;
+import com.isd.bluecollar.data.internal.Project;
+import com.isd.bluecollar.data.store.ProjectDP;
 
 /**
  * Project controller.
@@ -21,9 +23,9 @@ public class ProjectController {
 	 * @return the list of all user projects
 	 */
 	public List<String> addProject( String aUser, String aName, String aDescription ) {
-		Project project = new Project();
+		ProjectDP project = new ProjectDP();
 		project.addProject(aUser, aName, aDescription);
-		return project.getProjects(aUser, true);
+		return mapProjectsToNames(project.getProjects(aUser, true));
 	}
 	
 	/**
@@ -32,7 +34,20 @@ public class ProjectController {
 	 * @return the list of all projects
 	 */
 	public List<String> getProjects( String aUser ) {
-		Project project = new Project();
-		return project.getProjects(aUser,  true);
+		ProjectDP project = new ProjectDP();
+		return mapProjectsToNames(project.getProjects(aUser,  true));
+	}
+	
+	/**
+	 * Extracts the project names from the project list.
+	 * @param aProjects the project list
+	 * @return a project name list
+	 */
+	private List<String> mapProjectsToNames( List<Project> aProjects ) {
+		List<String> list = new ArrayList<String>(aProjects.size());
+		for( Project p : aProjects ) {
+			list.add(p.getName());
+		}
+		return list;
 	}
 }

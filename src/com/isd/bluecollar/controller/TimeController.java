@@ -6,10 +6,10 @@ package com.isd.bluecollar.controller;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import com.isd.bluecollar.data.internal.ActiveProject;
-import com.isd.bluecollar.data.store.Project;
-import com.isd.bluecollar.data.store.TimeRange;
-import com.isd.bluecollar.data.store.User;
+import com.isd.bluecollar.data.internal.Project;
+import com.isd.bluecollar.data.store.ProjectDP;
+import com.isd.bluecollar.data.store.TimeRangeDP;
+import com.isd.bluecollar.data.store.UserDP;
 
 /**
  * Time card controller.
@@ -27,10 +27,10 @@ public class TimeController {
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		long checkinTime = cal.getTimeInMillis();
 		
-		TimeRange tr = new TimeRange(new Project());
+		TimeRangeDP tr = new TimeRangeDP(new ProjectDP());
 		tr.openRange(aUser, aProject, checkinTime);
 		
-		User usr = new User();
+		UserDP usr = new UserDP();
 		usr.setCurrentProject(aUser, aProject);
 		usr.setTaskBegin(aUser, checkinTime);
 		
@@ -47,10 +47,10 @@ public class TimeController {
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		long checkoutTime = cal.getTimeInMillis();
 		
-		TimeRange tr = new TimeRange(new Project());
+		TimeRangeDP tr = new TimeRangeDP(new ProjectDP());
 		tr.closeRange(aUser, aProject, checkoutTime);
 		
-		User usr = new User();
+		UserDP usr = new UserDP();
 		usr.setCurrentProject(aUser, null);
 		usr.setTaskBegin(aUser, 0);
 
@@ -64,11 +64,11 @@ public class TimeController {
 	 * @param aUser the user
 	 * @return the active project
 	 */
-	public ActiveProject checkActive( String aUser ) {
-		User usr = new User();
+	public Project checkActive( String aUser ) {
+		UserDP usr = new UserDP();
 		String project = usr.getCurrentProject(aUser);
 		long begin = usr.getTaskBegin(aUser);
-		return new ActiveProject(project, begin);
+		return new Project(project, begin);
 	}
 	
 }

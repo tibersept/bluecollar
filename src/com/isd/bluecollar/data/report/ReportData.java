@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.isd.bluecollar.data.internal.Project;
+
 /**
  * Structured report data.
  * @author doan
@@ -22,7 +24,11 @@ public class ReportData {
 	/** Day name titles */
 	private List<String> dayNameTitles;
  	/** Project titles */
-	private List<String> projectTitles;
+	private List<Project> projects;
+	/** Total hours per day */
+	private Map<String, Float> dayHours;
+	/** Total hours spent on project */
+	private Map<String, Float> projectHours;
 	/** Day project hours */
 	private Map<String, Float> dayProjectHours;
 	/** Invalid days */
@@ -32,10 +38,12 @@ public class ReportData {
 	 * Creates a new report data instance.
 	 */
 	public ReportData() {
+		projects = new ArrayList<Project>();
 		dayIndexTitles = new ArrayList<String>();
 		dayNameTitles = new ArrayList<String>();
-		projectTitles = new ArrayList<String>();
-		dayProjectHours = new HashMap<String, Float>();
+		dayHours = new HashMap<String,Float>();
+		projectHours = new HashMap<String,Float>();
+		dayProjectHours = new HashMap<String,Float>();
 		invalidDays = new HashSet<String>();
 	}
 	
@@ -75,8 +83,8 @@ public class ReportData {
 	 * Returns the list of project titles.
 	 * @return the list of project titles
 	 */
-	public List<String> getProjectTitles() {
-		return Collections.unmodifiableList(projectTitles);
+	public List<Project> getProjects() {
+		return Collections.unmodifiableList(projects);
 	}
 	
 	/**
@@ -85,9 +93,29 @@ public class ReportData {
 	 * @param aProject the project title
 	 * @param anHours the hours
 	 */
-	public void setHours( String aDay, String aProject, Float anHours ) {
-		dayProjectHours.put(getDayProjectKey(aDay, aProject), anHours);
-		addProjectTitle(aProject);
+	public void setHours( String aDay, Project aProject, Float anHours ) {
+		addProject(aProject);
+		addDayHours(aDay, anHours);
+		addProjectHours(aProject, anHours);
+		addDayProjectHours(aDay, aProject, anHours);
+	}
+	
+	/**
+	 * Returns the work hours on a given day.
+	 * @param aDay the day
+	 * @return the hours
+	 */
+	public float getTotalDayHours( String aDay ) {
+		return getHours(dayHours, aDay);
+	}
+	
+	/**
+	 * Returns the total project hours spent on a project within the specified period of time. 
+	 * @param aProject the project
+	 * @return the total project hours
+	 */
+	public float getTotalProjectHours( String aProject ) {
+		return getHours(projectHours, aProject);
 	}
 
 	/**
@@ -96,12 +124,8 @@ public class ReportData {
 	 * @param aProject the project title
 	 * @return the hours
 	 */
-	public float getHours( String aDay, String aProject ) {
-		Float val = dayProjectHours.get(getDayProjectKey(aDay,aProject));
-		if( val==null ) {
-			return 0.0f;
-		}
-		return val.floatValue();
+	public float getProjectHoursOnDay( String aDay, String aProjectTitle ) {
+		return getHours(dayProjectHours, getDayProjectKey(aDay,aProjectTitle));
 	}
 	
 	/**
@@ -134,17 +158,87 @@ public class ReportData {
 	 * @return the number of projects
 	 */
 	public int getProjectCount() {
-		return projectTitles.size();
+		return projects.size();
 	}
 	
 	/**
-	 * Adds a project title.
-	 * @param aProject the title
+	 * Clears computed data. Should be executed after report generation.
 	 */
-	private void addProjectTitle( String aProject ) {
-		if( !projectTitles.contains(aProject) ) {
-			projectTitles.add(aProject);
+	public void clear() {
+		projects.clear();
+		dayIndexTitles.clear();
+		dayNameTitles.clear();
+		dayHours.clear();
+		dayProjectHours.clear();
+		invalidDays.clear();
+	}
+	
+	/**
+	 * Adds a project.
+	 * @param aProject the project
+	 */
+	private void addProject( Project aProject ) {
+		if( !projects.contains(aProject) ) {
+			projects.add(aProject);
 		}
+	}
+
+	/**
+	 * Adds the given amount of hours to the total hours of work on the given day.
+	 * @param aDay the day
+	 * @param anHours the hours
+	 */
+	private void addDayHours( String aDay, Float anHours ) {
+		addHours(dayHours, aDay, anHours);
+	}
+	
+	/**
+	 * Adds the given amount of hours to the total hours of work spent on the project.
+	 * @param aProject the project
+	 * @param anHours the hours
+	 */
+	private void addProjectHours( Project aProject, Float anHours ) {
+		addHours(projectHours, aProject.getName(), anHours);
+	}
+
+	/**
+	 * Adds the given amount of hours to the project hours on that given day.
+	 * @param aDay the day
+	 * @param aProject the project
+	 * @param anHours the hours
+	 */
+	private void addDayProjectHours(String aDay, Project aProject, Float anHours) {
+		String key = getDayProjectKey(aDay, aProject.getName());
+		addHours(dayProjectHours, key, anHours);
+	}
+	
+	/**
+	 * Adds the given amount of hours to the hours map, to the item matching the key.
+	 * @param anHoursMap
+	 * @param aKey
+	 * @param aVal
+	 */
+	private void addHours( Map<String, Float> anHoursMap, String aKey, Float aVal ) {
+		Float f = anHoursMap.get(aKey);
+		if( f==null ) {
+			f = new Float(0);
+		}
+		float total = f.floatValue()+aVal.floatValue();
+		dayHours.put(aKey, total);
+	}
+
+	/**
+	 * Returns stored hours for the given key.
+	 * @param anHoursMap the map
+	 * @param aKey the key
+	 * @return the value in hours or 0 hours if key not found
+	 */
+	private float getHours( Map<String, Float> anHoursMap, String aKey ) {
+		Float f = anHoursMap.get(aKey);
+		if( f==null ) {
+			return 0.0f;
+		}
+		return f.floatValue();
 	}
 
 	/**
@@ -153,7 +247,7 @@ public class ReportData {
 	 * @param aProject the project title
 	 * @return the day project key
 	 */
-	private String getDayProjectKey( String aDay, String aProject ) {
-		return aDay + "-" + aProject;
+	private String getDayProjectKey( String aDay, String aProjectTitle ) {
+		return aDay + "-" + aProjectTitle;
 	}
 }

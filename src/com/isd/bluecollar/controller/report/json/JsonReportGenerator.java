@@ -7,12 +7,13 @@ import java.util.Calendar;
 import java.util.List;
 
 import com.isd.bluecollar.controller.report.ReportGenerator;
+import com.isd.bluecollar.data.internal.Project;
 import com.isd.bluecollar.data.internal.Range;
 import com.isd.bluecollar.data.json.JsonProject;
 import com.isd.bluecollar.data.json.JsonRange;
 import com.isd.bluecollar.data.json.JsonReport;
-import com.isd.bluecollar.data.store.Project;
-import com.isd.bluecollar.data.store.TimeRange;
+import com.isd.bluecollar.data.store.ProjectDP;
+import com.isd.bluecollar.data.store.TimeRangeDP;
 
 /**
  * Generates an XML report.
@@ -78,14 +79,14 @@ public class JsonReportGenerator extends ReportGenerator{
 	 * @param aReport the report
 	 */
 	private void setReportContent( JsonReport aReport ) {
-		Project projectEntity = new Project();
-		List<String> projects = projectEntity.getProjects(getUser(), true);
+		ProjectDP projectEntity = new ProjectDP();
+		List<Project> projects = projectEntity.getProjects(getUser(), true);
 		
-		TimeRange range = new TimeRange(projectEntity);
-		for( String p : projects ) {
-			List<Range<Long>> timeRanges = range.getRanges(getUser(), p, getBegin(), getEnd());
+		TimeRangeDP range = new TimeRangeDP(projectEntity);
+		for( Project p : projects ) {
+			List<Range<Long>> timeRanges = range.getRanges(getUser(), p.getName(), getBegin(), getEnd());
 			if( timeRanges.size() > 0 ) {
-				JsonProject jsonProject = new JsonProject(p);
+				JsonProject jsonProject = new JsonProject(p.getName());
 				for( Range<Long> timeRange : timeRanges ) {
 					JsonRange jsonRange = new JsonRange();
 					jsonRange.setBegin(String.valueOf(timeRange.getBegin()));

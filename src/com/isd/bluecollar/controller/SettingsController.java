@@ -5,7 +5,7 @@ package com.isd.bluecollar.controller;
 
 import java.util.Map;
 
-import com.isd.bluecollar.data.store.UserSettings;
+import com.isd.bluecollar.data.store.UserSettingsDP;
 
 /**
  * User settings controller.
@@ -20,7 +20,7 @@ public class SettingsController {
 	 * @return the property value
 	 */
 	public String getSetting( String aUser, String aProperty ) {
-		UserSettings us = new UserSettings();
+		UserSettingsDP us = new UserSettingsDP();
 		return us.getUserSetting(aUser, aProperty);
 	}
 	
@@ -31,7 +31,7 @@ public class SettingsController {
 	 * @param aValue the property value
 	 */
 	public void setSetting( String aUser, String aProperty, String aValue ) {
-		UserSettings us = new UserSettings();
+		UserSettingsDP us = new UserSettingsDP();
 		us.setUserSetting(aUser, aProperty, aValue);
 	}
 	
@@ -41,7 +41,7 @@ public class SettingsController {
 	 * @return the collection of user settings
 	 */
 	public Map<String,Object> getAllSettings( String aUser ) {
-		UserSettings wtd = new UserSettings();		
+		UserSettingsDP wtd = new UserSettingsDP();		
 		return wtd.getUserSettingsAsMap(aUser);
 	}
 }

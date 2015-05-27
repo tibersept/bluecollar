@@ -4,12 +4,14 @@
 package com.isd.bluecollar.controller.report.excel;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.isd.bluecollar.data.internal.Project;
 import com.isd.bluecollar.data.report.ProjectTimeRange;
 import com.isd.bluecollar.data.report.ReportData;
 import com.isd.bluecollar.data.report.WorkdayData;
@@ -28,8 +30,8 @@ public class WorkhoursExtractor {
 	/** Day name format */
 	private SimpleDateFormat dayNameFormat;
 	
-	/** A set of overflow projects */
-	private Set<String> overflowProjects;
+	/** A list of overflow projects */
+	private List<Project> overflowProjects;
 	/** A set of days without any data */
 	private Set<String> skippedDays;
 	
@@ -42,7 +44,7 @@ public class WorkhoursExtractor {
 		data = aData;
 		dayIndexFormat = aDayIndexFormat;
 		dayNameFormat = aDayNameFormat;
-		overflowProjects = new HashSet<String>();
+		overflowProjects = new ArrayList<Project>();
 		skippedDays = new HashSet<String>();
 	}
 	
@@ -111,12 +113,12 @@ public class WorkhoursExtractor {
 	private void doProcessDay( Calendar aCal, String aDayString, WorkdayData aWorkday ) {
 		long dayBegin = getCalTime(aCal, 0, 0, 0);
 		long dayEnd = getCalTime(aCal, 23, 59, 59);
-		List<String> projects = aWorkday.getProjects();
+		List<Project> projects = aWorkday.getProjects();
 		checkCoveredByOverflowingProject(projects);
 		if( projects.isEmpty() ) {
 			addSkipped(aWorkday.getDay());
 		} else {			
-			for( String project : projects ) {
+			for( Project project : projects ) {
 				List<ProjectTimeRange> ranges = aWorkday.getRanges(project);
 				processProjectRanges(aDayString, dayBegin, dayEnd, project, ranges);
 			}
@@ -132,11 +134,11 @@ public class WorkhoursExtractor {
 	 * @param aRanges the list of ranges
 	 */
 	private void processProjectRanges(String aDayString, long aDayBegin,
-			long aDayEnd, String aProject, List<ProjectTimeRange> aRanges) {
+			long aDayEnd, Project aProject, List<ProjectTimeRange> aRanges) {
 		float totalTime = 0.0f;
 		for( ProjectTimeRange range : aRanges ) {
-			long begin = getProjectBegin(range, aDayBegin, aProject);
-			long end = getProjectEnd(range, aDayEnd, aProject);
+			long begin = getTaskBegin(range, aDayBegin, aProject);
+			long end = getTaskEnd(range, aDayEnd, aProject);
 			float tim = getTimeDifference(begin, end);
 			totalTime += tim;
 		}
@@ -147,10 +149,10 @@ public class WorkhoursExtractor {
 	 * Determines the end timestamp of the project on that workday.
 	 * @param aRange one of the project ranges for that project on the workday
 	 * @param aDayEnd the end timestamp of the day
-	 * @param aProject the project name
+	 * @param aProject the project
 	 * @return the end timestamp of the project
 	 */
-	private long getProjectEnd( ProjectTimeRange aRange, long aDayEnd, String aProject ) {
+	private long getTaskEnd( ProjectTimeRange aRange, long aDayEnd, Project aProject ) {
 		long end = aRange.getEnd();
 		if( end == 0 ) {
 			// Overflow project
@@ -167,7 +169,7 @@ public class WorkhoursExtractor {
 	 * @param aProject the project
 	 * @return the begin timestamp of the project range
 	 */
-	private long getProjectBegin( ProjectTimeRange aRange, long aDayBegin, String aProject ) {
+	private long getTaskBegin( ProjectTimeRange aRange, long aDayBegin, Project aProject ) {
 		long begin = aRange.getBegin();
 		if( begin == 0 ) {
 			// Completed overflow project
@@ -188,10 +190,10 @@ public class WorkhoursExtractor {
 	 * the overflow project is added as the only entry of the project list for the day.
 	 * @param aProjects the list of projects
 	 */
-	private void checkCoveredByOverflowingProject( List<String> aProjects ) {
+	private void checkCoveredByOverflowingProject( List<Project> aProjects ) {
 		if( aProjects.isEmpty() ) {
 			// Just add the first project from the overflow projects
-			for( String project : getOverflows() ) {
+			for( Project project : getOverflows() ) {
 				aProjects.add(project);
 				break;
 			}
@@ -269,7 +271,7 @@ public class WorkhoursExtractor {
 	 * Returns the overflow projects.
 	 * @return the overflow projects
 	 */
-	private Set<String> getOverflows() {
+	private List<Project> getOverflows() {
 		return overflowProjects;
 	}
 	
@@ -278,8 +280,11 @@ public class WorkhoursExtractor {
 	 * @param aProject the project
 	 * @return <code>true</code> if overflow was added
 	 */
-	private boolean addOverflow( String aProject ) {
-		return overflowProjects.add(aProject);
+	private boolean addOverflow( Project aProject ) {
+		if( !overflowProjects.contains(aProject) ) {
+			return overflowProjects.add(aProject);
+		}
+		return false; 
 	}
 	
 	/**
@@ -287,7 +292,7 @@ public class WorkhoursExtractor {
 	 * @param aProject the project
 	 * @return <code>true</code> if overflow was removed
 	 */
-	private boolean removeOverflow( String aProject ) {
+	private boolean removeOverflow( Project aProject ) {
 		return overflowProjects.remove(aProject);
 	}
 	

@@ -12,10 +12,10 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 
 /**
- * User entity wrapper.
+ * User entity datastore proxy.
  * @author doan
  */
-public class User {
+public class UserDP {
 
 	/** User entity */
 	private static final String USER = "User";
@@ -32,7 +32,7 @@ public class User {
 	/**
 	 * Creates a new instance of the user entity wrapper.
 	 */
-	public User() {
+	public UserDP() {
 		service = DatastoreServiceFactory.getDatastoreService();
 	}
 	

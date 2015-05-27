@@ -9,7 +9,7 @@ import java.util.TimeZone;
 
 import com.isd.bluecollar.data.internal.Range;
 import com.isd.bluecollar.data.json.JsonRange;
-import com.isd.bluecollar.data.store.UserSettings;
+import com.isd.bluecollar.data.store.UserSettingsDP;
 
 /**
  * Report generator provides reporting functionality for mavicollar.
@@ -148,7 +148,7 @@ public abstract class ReportGenerator {
 	 * @return the company name
 	 */
 	protected String loadCompanyName() {
-		UserSettings wtd = new UserSettings();
+		UserSettingsDP wtd = new UserSettingsDP();
 		return wtd.getUserSetting(getUser(), "companyName");
 	}
 	
@@ -157,7 +157,7 @@ public abstract class ReportGenerator {
 	 * @return the report user name
 	 */
 	protected String loadUserName() {
-		UserSettings wtd = new UserSettings();
+		UserSettingsDP wtd = new UserSettingsDP();
 		return wtd.getUserSetting(getUser(), "reportUser");
 	}
 
@@ -204,7 +204,7 @@ public abstract class ReportGenerator {
 	 * Initializes the language properties of the report.
 	 */
 	private void initializeLanguage() {
-		UserSettings wtd = new UserSettings();
+		UserSettingsDP wtd = new UserSettingsDP();
 		String lng = wtd.getUserSetting(getUser(), "language");
 		lang = new ReportLanguage(lng);
 	}

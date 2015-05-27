@@ -13,9 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.isd.bluecollar.data.internal.Project;
 import com.isd.bluecollar.data.internal.Range;
-import com.isd.bluecollar.data.store.Project;
-import com.isd.bluecollar.data.store.TimeRange;
+import com.isd.bluecollar.data.store.ProjectDP;
+import com.isd.bluecollar.data.store.TimeRangeDP;
 
 /**
  * Workday data.
@@ -25,8 +26,10 @@ public class WorkdayData {
 
 	/** The workday */
 	private String day;
-	/** Project titles */
-	private Set<String> projects;
+	/** List of projects */
+	private List<Project> projects;
+	/** Project already added to the data */
+	private Set<Long> addedProjects;
 	/** Begin times */
 	private Map<String, List<ProjectTimeRange>> projectTimes;
 	
@@ -35,7 +38,8 @@ public class WorkdayData {
 	 */
 	public WorkdayData() {
 		day = "";
-		projects = new HashSet<String>();
+		projects = new ArrayList<Project>();
+		addedProjects = new HashSet<Long>();
 		projectTimes = new HashMap<String, List<ProjectTimeRange>>();
 	}
 	
@@ -45,9 +49,9 @@ public class WorkdayData {
 	 * @param aCal the calendar set to current day
 	 */
 	public void loadData( String aUser, Calendar aCal ) {
-		Project projectEntity = new Project();
-		TimeRange rangeEntity = new TimeRange(projectEntity);
-		List<String> projects = projectEntity.getProjects(aUser, false);
+		ProjectDP projectEntity = new ProjectDP();
+		TimeRangeDP rangeEntity = new TimeRangeDP(projectEntity);
+		List<Project> projects = projectEntity.getProjects(aUser, false);
 		
 		// copy calendar
 		Calendar cal = Calendar.getInstance(aCal.getTimeZone());
@@ -58,8 +62,8 @@ public class WorkdayData {
 		setToDayEnd(cal);
 		Date end = cal.getTime();
 		
-		for( String project : projects ) {
-			List<Range<Long>> ranges = rangeEntity.getRanges(aUser, project, begin, end);
+		for( Project project : projects ) {
+			List<Range<Long>> ranges = rangeEntity.getRanges(aUser, project.getName(), begin, end);
 			for (Range<Long> range : ranges ) {
 				addProjectTime(project, range);
 			}
@@ -87,35 +91,35 @@ public class WorkdayData {
 	 * @param aProject the project
 	 * @param aRange the project time range
 	 */
-	public void addProjectTime( String aProject, Range<Long> aRange ) {
+	public void addProjectTime( Project aProject, Range<Long> aRange ) {
 		if( aProject!=null ) {
-			projects.add(aProject);
-			List<ProjectTimeRange> list = projectTimes.get(aProject);
+			addProject(aProject);
+			List<ProjectTimeRange> list = projectTimes.get(aProject.getName());
 			if( list==null ) {
 				list = new ArrayList<ProjectTimeRange>();
-				projectTimes.put(aProject, list);
+				projectTimes.put(aProject.getName(), list);
 			}
-			ProjectTimeRange range = new ProjectTimeRange(aProject);
+			ProjectTimeRange range = new ProjectTimeRange(aProject.getName());
 			range.setRange(aRange);
 			list.add(range);
 		}
 	}
-	
+
 	/**
 	 * Returns the projects of the workday.
 	 * @return the projects
 	 */
-	public List<String> getProjects() {
-		return new ArrayList<String>(projects);
+	public List<Project> getProjects() {
+		return projects;
 	}
  
 	/**
 	 * Returns the list of ranges for that project on the given day.
-	 * @param aProject the project name
+	 * @param aProject the project
 	 * @return the list of ranges or an empty list if no ranges are present
 	 */
-	public List<ProjectTimeRange> getRanges( String aProject ) {
-		List<ProjectTimeRange> ranges = projectTimes.get(aProject);
+	public List<ProjectTimeRange> getRanges( Project aProject ) {
+		List<ProjectTimeRange> ranges = projectTimes.get(aProject.getName());
 		if( ranges==null ) {
 			return Collections.emptyList();
 		}
@@ -127,6 +131,7 @@ public class WorkdayData {
 	 */
 	public void clear() {
 		projects.clear();
+		addedProjects.clear();
 		for( Map.Entry<String, List<ProjectTimeRange>> entry : projectTimes.entrySet() ) {
 			List<ProjectTimeRange> ranges = entry.getValue();
 			if( ranges!=null ) {
@@ -136,6 +141,17 @@ public class WorkdayData {
 		projectTimes.clear();
 	}
 	
+	/**
+	 * Adds the project to the list of projects.
+	 * @param aProject the project
+	 */
+	private void addProject(Project aProject) {
+		if( !addedProjects.contains(aProject.getId()) ) {
+			projects.add(aProject);
+			addedProjects.add(aProject.getId());
+		}
+	}
+
 	/**
 	 * Sets the calendar to a day's end.
 	 * @param cal the calendar

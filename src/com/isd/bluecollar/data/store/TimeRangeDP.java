@@ -21,10 +21,10 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.isd.bluecollar.data.internal.Range;
 
 /**
- * Time range entity wrapper.
+ * Time range entity datastore proxy.
  * @author doan
  */
-public class TimeRange {
+public class TimeRangeDP {
 		
 	/** Time range entity */
 	private static final String TIME_RANGE = "TimeRange";
@@ -43,7 +43,7 @@ public class TimeRange {
 	private static final String STATE_OPEN = "open";
 
 	/** The project */
-	private Project project;
+	private ProjectDP project;
 	/** The datastore service */
 	private DatastoreService service;
 	
@@ -51,7 +51,7 @@ public class TimeRange {
 	 * Creates an instance of the time range wrapper.
 	 * @param aProject a required project entity wrapper
 	 */
-	public TimeRange( Project aProject ) {
+	public TimeRangeDP( ProjectDP aProject ) {
 		service = DatastoreServiceFactory.getDatastoreService();
 		project = aProject;
 	}
@@ -119,13 +119,12 @@ public class TimeRange {
 	 * @return all time range entities that belong to this project and user in that range
 	 */
 	private List<Entity> getRangeEntities( String aUser, String aProject, Date aBegin, Date anEnd ) {
-		Entity pro = project.getProject(aUser, aProject);
-		if( pro!=null ) {
-			Key proKey = pro.getKey();
+		Key projectKey = project.getKey(aUser, aProject);
+		if( projectKey!=null ) {
 			long begin = aBegin.getTime();
 			long end = anEnd.getTime();
 			if( begin < end ) {
-				return getTimeRangesInRange(proKey, begin, end);				
+				return getTimeRangesInRange(projectKey, begin, end);				
 			}
 		}
 		return Collections.emptyList();

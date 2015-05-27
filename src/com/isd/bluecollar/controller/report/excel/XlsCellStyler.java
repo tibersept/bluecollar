@@ -27,18 +27,20 @@ public class XlsCellStyler {
 	public static final String INPUT_LEFT = "inputLeft";
 	/** Input field with centered alignment */
 	public static final String INPUT_CENTER = "inputCenter";
-	/** Column/table cell style */
-	public static final String COLUMN = "column";
-	/** Column/table cell style with medium borders  */
-	public static final String COLUMN_MEDIUM = "columnMedium";
-	/** Column/table cell style with medium borders for end cells */
-	public static final String COLUMN_END_MEDIUM = "columnEndMedium";
-	/** Column/table cell filled style*/
-	public static final String COLUMN_FILLED = "columnFilled";
-	/** Grayed table cell style */
-	public static final String COLUMN_GRAYED = "columnGrayed";
-	/** Filled grayed table cell style */
-	public static final String COLUMN_FILLED_AND_GRAYED = "columnFilledGrayed";
+	/** Cell style with medium top/bottom border and bold text  */
+	public static final String CELL_BOLD_BORDER = "cellBoldBorder";
+	/** Normal cell style */
+	public static final String CELL = "cell";
+	/** Float content cell style */
+	public static final String CELL_FLOAT = "cellFloat";
+	/** Filled cell style*/
+	public static final String CELL_FILLED_FLOAT = "cellFilled";
+	/** Grayed cell style */
+	public static final String CELL_GRAYED = "cellGrayed";
+	/** Grayed float cell style */
+	public static final String CELL_GRAYED_FLOAT = "cellGrayedFloat";
+	/** Filled grayed cell style */
+	public static final String CELL_FILLED_AND_GRAYED_FLOAT = "cellFilledGrayed";
 	/** Right aligned cell style */
 	public static final String CELL_RIGHT_ALIGNED = "cellRightAligned";
 	
@@ -51,17 +53,18 @@ public class XlsCellStyler {
 	 */
 	public XlsCellStyler( Workbook aWb ) {
 		styleMap = new HashMap<String, CellStyle>();		
-		styleMap.put(INFO, getInfoCellStyle(aWb));
-		styleMap.put(SMALL_INFO, getInfoSmallCellStyle(aWb));
-		styleMap.put(INPUT_LEFT, getInputStyle(aWb, CellStyle.ALIGN_LEFT));
-		styleMap.put(INPUT_CENTER, getInputStyle(aWb, CellStyle.ALIGN_CENTER));
-		styleMap.put(COLUMN, getColumnCellStyle(aWb,false,false));
-		styleMap.put(COLUMN_MEDIUM, setIntegerDataFormat(aWb, setBoldFont(aWb, setBorder(getColumnCellStyle(aWb,false,false),1,0,1,0))));
-		styleMap.put(COLUMN_END_MEDIUM, setIntegerDataFormat(aWb, setBoldFont(aWb, setBorder(getColumnCellStyle(aWb,false,false),1,1,1,0))));
-		styleMap.put(COLUMN_FILLED, getColumnCellStyle(aWb,true,false));
-		styleMap.put(COLUMN_GRAYED, getColumnCellStyle(aWb, false, true));
-		styleMap.put(COLUMN_FILLED_AND_GRAYED, getColumnCellStyle(aWb,true,true));
-		styleMap.put(CELL_RIGHT_ALIGNED, getRightAlignedCellStyle(aWb));
+		styleMap.put(INFO, getInfo(aWb));
+		styleMap.put(SMALL_INFO, getInfoSmall(aWb));
+		styleMap.put(INPUT_LEFT, getInput(aWb, CellStyle.ALIGN_LEFT));
+		styleMap.put(INPUT_CENTER, getInput(aWb, CellStyle.ALIGN_CENTER));
+		styleMap.put(CELL, getCell(aWb,false,false));
+		styleMap.put(CELL_FLOAT, setFloat(aWb,getCell(aWb,false,false)));
+		styleMap.put(CELL_BOLD_BORDER, setBold(aWb, setBorder(getCell(aWb,false,false),1,0,1,0)));
+		styleMap.put(CELL_FILLED_FLOAT, setFloat(aWb, getCell(aWb,true,false)));
+		styleMap.put(CELL_GRAYED, getCell(aWb, false, true));
+		styleMap.put(CELL_GRAYED_FLOAT, setFloat(aWb, getCell(aWb, false, true)));
+		styleMap.put(CELL_FILLED_AND_GRAYED_FLOAT, setFloat(aWb, getCell(aWb,true,true)));
+		styleMap.put(CELL_RIGHT_ALIGNED, getRightAligned(aWb));
 	}
 	
 	/**
@@ -72,10 +75,14 @@ public class XlsCellStyler {
 	 * <li>{@link #SMALL_INFO}</li>
 	 * <li>{@link #INPUT_LEFT}</li>
 	 * <li>{@link #INPUT_CENTER}</li>
-	 * <li>{@link #COLUMN}</li>
-	 * <li>{@link #COLUMN_FILLED}</li>
-	 * <li>{@link #COLUMN_GRAYED}</li>
-	 * <li>{@link #COLUMN_FILLED_AND_GRAYED}</li>
+	 * <li>{@link #CELL}</li>
+	 * <li>{@link #CELL_FLOAT}</li>
+	 * <li>{@link #CELL_BOLD_BORDER}</li>
+	 * <li>{@link #CELL_FILLED_FLOAT}</li>
+	 * <li>{@link #CELL_GRAYED}</li>
+	 * <li>{@link #CELL_GRAYED_FLOAT}</li>
+	 * <li>{@link #CELL_FILLED_AND_GRAYED_FLOAT}</li>
+	 * <li>{@link #CELL_RIGHT_ALIGNED}</li>
 	 * </ul>
 	 * @param aStyleName the style name
 	 * @return the cell style corresponding to the style name
@@ -93,7 +100,7 @@ public class XlsCellStyler {
 	 * @param alignment the alignment
 	 * @return the input cell style
 	 */
-	private CellStyle getInputStyle(Workbook wb, short alignment) {
+	private CellStyle getInput(Workbook wb, short alignment) {
 		CellStyle inputStyle = wb.createCellStyle();		
 		Font font = wb.createFont();
 		font.setFontName(HSSFFont.FONT_ARIAL);
@@ -111,7 +118,7 @@ public class XlsCellStyler {
 	 * @param wb the workbook
 	 * @return the info cell style
 	 */
-	private CellStyle getInfoCellStyle(Workbook wb) {
+	private CellStyle getInfo(Workbook wb) {
 		CellStyle infoStyle = wb.createCellStyle();		
 		Font font = wb.createFont();
 		font.setFontName(HSSFFont.FONT_ARIAL);
@@ -126,7 +133,7 @@ public class XlsCellStyler {
 	 * @param wb the workbook
 	 * @return the info cell style
 	 */
-	private CellStyle getInfoSmallCellStyle(Workbook wb) {
+	private CellStyle getInfoSmall(Workbook wb) {
 		CellStyle infoStyle = wb.createCellStyle();		
 		Font font = wb.createFont();
 		font.setFontName(HSSFFont.FONT_ARIAL);
@@ -137,13 +144,13 @@ public class XlsCellStyler {
 	}
 	
 	/**
-	 * Creates and returns the column cell style.
+	 * Creates and returns the table cell style.
 	 * @param wb the workbook
 	 * @param filled <code>true</code> to fill cell content
 	 * @param grayed <code>true</code> to gray background 
 	 * @return the column cell style
 	 */
-	private CellStyle getColumnCellStyle(Workbook wb, boolean filled, boolean grayed) {
+	private CellStyle getCell(Workbook wb, boolean filled, boolean grayed) {
 		CellStyle columnStyle = wb.createCellStyle();		
 		Font font = wb.createFont();
 		font.setFontName(HSSFFont.FONT_ARIAL);
@@ -178,7 +185,7 @@ public class XlsCellStyler {
 	 * Returns a style which only enforces right alignment and nothing else.
 	 * @return the right alignment style
 	 */
-	private CellStyle getRightAlignedCellStyle( Workbook wb ) {
+	private CellStyle getRightAligned( Workbook wb ) {
 		CellStyle style = wb.createCellStyle();
 		style.setAlignment(CellStyle.ALIGN_RIGHT);
 		return style;
@@ -190,7 +197,7 @@ public class XlsCellStyler {
 	 * @param aStyle the cell style
 	 * @return the cell style
 	 */
-	private CellStyle setBoldFont( Workbook wb, CellStyle aStyle ) {
+	private CellStyle setBold( Workbook wb, CellStyle aStyle ) {
 		Font font = wb.createFont();
 		font.setFontName(HSSFFont.FONT_ARIAL);
 		font.setFontHeightInPoints((short)10);
@@ -200,12 +207,27 @@ public class XlsCellStyler {
 	}
 	
 	/**
-	 * Sets the cell style to integer data format.
+	 * Sets the cell style to float data format.
 	 * @param wb the workbook
 	 * @param aStyle the cell style
 	 * @return the cell style
 	 */
-	private CellStyle setIntegerDataFormat( Workbook wb, CellStyle aStyle ) {
+	private CellStyle setFloat( Workbook wb, CellStyle aStyle ) {
+		DataFormat format = wb.createDataFormat();
+		short indexedFormat = format.getFormat("0.0");
+		aStyle.setDataFormat(indexedFormat);
+		return aStyle;
+	}
+	
+	/**
+	 * Sets the cell style to integer data format.
+	 * @param wb the workbook
+	 * @param aStyle the cell style
+	 * @return the cell style
+	 * 
+	 */
+	@SuppressWarnings("unused")
+	private CellStyle setInteger( Workbook wb, CellStyle aStyle ) {
 		DataFormat format = wb.createDataFormat();
 		short indexedFormat = format.getFormat("0");
 		aStyle.setDataFormat(indexedFormat);

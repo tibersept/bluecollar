@@ -327,13 +327,15 @@ public class XlsReport {
 	 * @param title the project title
 	 */
 	private void createTableRow(CreationHelper createHelper, Sheet sheet, int rowIndex, String title) {
-		CellStyle columnStyle, filledColumnStyle;
+		CellStyle cellStyle, floatCellStyle, filledCellStyle;
 		if( rowIndex%2 == 0 ) {
-			columnStyle = getStyler().getStyle(XlsCellStyler.COLUMN);
-			filledColumnStyle = getStyler().getStyle(XlsCellStyler.COLUMN_FILLED);
+			cellStyle = getStyler().getStyle(XlsCellStyler.CELL);
+			floatCellStyle = getStyler().getStyle(XlsCellStyler.CELL_FLOAT);
+			filledCellStyle = getStyler().getStyle(XlsCellStyler.CELL_FILLED_FLOAT);
 		} else {
-			columnStyle = getStyler().getStyle(XlsCellStyler.COLUMN_GRAYED);
-			filledColumnStyle = getStyler().getStyle(XlsCellStyler.COLUMN_FILLED_AND_GRAYED);
+			cellStyle = getStyler().getStyle(XlsCellStyler.CELL_GRAYED);
+			floatCellStyle = getStyler().getStyle(XlsCellStyler.CELL_GRAYED_FLOAT);
+			filledCellStyle = getStyler().getStyle(XlsCellStyler.CELL_FILLED_AND_GRAYED_FLOAT);
 		}
 
 		Row row = sheet.createRow(rowIndex);
@@ -343,9 +345,9 @@ public class XlsReport {
 		for( String day : dayList ) {			
 			Cell cell = row.createCell(cellColumn);
 			if( isInvalidDay(day) ) {
-				cell.setCellStyle(filledColumnStyle);
+				cell.setCellStyle(filledCellStyle);
 			} else {
-				cell.setCellStyle(columnStyle);
+				cell.setCellStyle(floatCellStyle);
 			}
 			cell.setCellValue(getReportData().getHours(day, title));
 			cellColumn++;
@@ -354,15 +356,15 @@ public class XlsReport {
 		int dayCount = getReportData().getDayCount();
 		
 		Cell cell = row.createCell(dayCount+OFFSET_HOURS);
-		cell.setCellStyle(columnStyle);
+		cell.setCellStyle(floatCellStyle);
 		cell.setCellValue(0.0);
 		
 		cell = row.createCell(dayCount+OFFSET_PROJECT_NUMBER);
-		cell.setCellStyle(columnStyle);
+		cell.setCellStyle(cellStyle);
 		cell.setCellValue(Math.abs(title.hashCode()%1000));
 		
 		cell = row.createCell(dayCount+OFFSET_PROJECT_NAME);
-		cell.setCellStyle(columnStyle);
+		cell.setCellStyle(cellStyle);
 		cell.setCellValue(title);
 	}
 	
@@ -373,8 +375,8 @@ public class XlsReport {
 	 * @param rowIndex the row index
 	 */
 	private void createTableFooterRow(CreationHelper createHelper, Sheet sheet, int rowIndex) {
-		CellStyle columnStyle = getStyler().getStyle(XlsCellStyler.COLUMN);
-		CellStyle filledColumnStyle = getStyler().getStyle(XlsCellStyler.COLUMN_FILLED);
+		CellStyle floatCellStyle = getStyler().getStyle(XlsCellStyler.CELL_FLOAT);
+		CellStyle filledCellStyle = getStyler().getStyle(XlsCellStyler.CELL_FILLED_FLOAT);
 		
 		Row row = sheet.createRow(rowIndex);
 		
@@ -383,9 +385,9 @@ public class XlsReport {
 		for( String day : dayList ) {			
 			Cell cell = row.createCell(cellColumn);
 			if( isInvalidDay(day) ) {
-				cell.setCellStyle(filledColumnStyle);
+				cell.setCellStyle(filledCellStyle);
 			} else {
-				cell.setCellStyle(columnStyle);
+				cell.setCellStyle(floatCellStyle);
 			}
 			cellColumn++;
 		}
@@ -393,7 +395,7 @@ public class XlsReport {
 		int dayCount = getReportData().getDayCount();
 		
 		Cell cell = row.createCell(dayCount+OFFSET_HOURS);
-		cell.setCellStyle(columnStyle);
+		cell.setCellStyle(floatCellStyle);
 		cell.setCellValue(0.0);
 	}
 
@@ -405,9 +407,8 @@ public class XlsReport {
 	 */
 	private void createTableHeaderRow(CreationHelper createHelper, Sheet sheet, int rowIndex) {
 		Row row = sheet.createRow(rowIndex);
-		CellStyle columnStyle = getStyler().getStyle(XlsCellStyler.COLUMN);
-		CellStyle columnMedium = getStyler().getStyle(XlsCellStyler.COLUMN_MEDIUM);
-		CellStyle columnEndMedium = getStyler().getStyle(XlsCellStyler.COLUMN_END_MEDIUM);
+		CellStyle columnStyle = getStyler().getStyle(XlsCellStyler.CELL);
+		CellStyle columnMedium = getStyler().getStyle(XlsCellStyler.CELL_BOLD_BORDER);
 		
 		List<String> dayList = getReportData().getDayIndexTitles();
 		int cellColumn = 0;
@@ -417,9 +418,6 @@ public class XlsReport {
 			cell.setCellStyle(columnMedium);
 			cell.setCellValue(createHelper.createRichTextString(day));						
 			cellColumn++;
-		}
-		if( cell!=null ) {
-			cell.setCellStyle(columnEndMedium);
 		}
 		
 		int dayCount = getReportData().getDayCount();

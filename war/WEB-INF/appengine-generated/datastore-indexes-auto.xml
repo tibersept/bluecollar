@@ -1,8 +1,8 @@
-<!-- Indices written at Mon, 25 May 2015 16:35:27 UTC -->
+<!-- Indices written at Mon, 25 May 2015 17:22:57 UTC -->
 
 <datastore-indexes>
 
-    <!-- Used 62 times in query history -->
+    <!-- Used 124 times in query history -->
     <datastore-index kind="TimeRange" ancestor="true" source="auto">
         <property name="begin" direction="asc"/>
     </datastore-index>

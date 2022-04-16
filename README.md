@@ -1,4 +1,4 @@
-## Work report generator for Google App Engine
+## Work report generator running on Google App Engine
 
 This project contains a basic implementation of a work report generator, utilizing
 functionality provided by the Google App Engine. However, this implementation most 
